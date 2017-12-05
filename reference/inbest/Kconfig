@@ -1,0 +1,13 @@
+config TVC_EXTRA_VIQE_SHARE
+	bool "Enable VIQE share interface"
+	depends on TVC
+	default n
+	help
+		Enable VIQE share interface for rear-cam
+
+config TVC_EXTRA_DIRECT_DISPLAY
+	bool "Enable direct display inaterface"
+	depends on TVC
+	default n
+	help
+		Enable direct display inaterface for test
