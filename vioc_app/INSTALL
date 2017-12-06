@@ -1,0 +1,27 @@
+Installation
+============
+
+Configuration
+-------------
+./configure.sh
+
+Compiling
+---------
+make
+
+Install package into PREFIX (refer to configure.sh)
+---------------------------------------------------
+make install
+
+Uninstalling
+------------
+make uninstall
+
+Cleaning
+--------
+make clean
+make distclean
+
+Removing config files (Run after git add)
+-----------------------------------------
+./cleanup.sh
