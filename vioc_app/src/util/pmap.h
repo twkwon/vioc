@@ -6,7 +6,6 @@ typedef struct {
     unsigned int size;
 } pmap_t;
 
-extern int test_pmap(void);
-extern int pmap_get_info(const char *name, pmap_t *mem);
+int test_pmap(void);
 
 #endif

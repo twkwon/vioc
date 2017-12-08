@@ -12,11 +12,16 @@ done
 rm -rf autom4te.cache/
 rm -rf m4/
 rm -rf src/prog/.deps
-rm -rf src/lib/.deps
-rm -rf src/lib/.libs
-rm -f src/lib/*.lo
-rm -f src/lib/*.la
-rm -f src/lib/*.a
+rm -rf src/util/.deps
+rm -rf src/util/.libs
+rm -f src/util/*.lo
+rm -f src/util/*.la
+rm -f src/util/*.a
+rm -rf src/vioc/.deps
+rm -rf src/vioc/.libs
+rm -f src/vioc/*.lo
+rm -f src/vioc/*.la
+rm -f src/vioc/*.a
 
 # files
 if [ -f doc/Makefile ]; then
@@ -43,11 +48,17 @@ fi
 if [ -f src/prog/Makefile.in ]; then
 	rm src/prog/Makefile.in
 fi
-if [ -f src/lib/Makefile ]; then
-	rm src/lib/Makefile
+if [ -f src/util/Makefile ]; then
+	rm src/util/Makefile
 fi
-if [ -f src/lib/Makefile.in ]; then
-	rm src/lib/Makefile.in
+if [ -f src/util/Makefile.in ]; then
+	rm src/util/Makefile.in
+fi
+if [ -f src/vioc/Makefile ]; then
+	rm src/vioc/Makefile
+fi
+if [ -f src/vioc/Makefile.in ]; then
+	rm src/vioc/Makefile.in
 fi
 
 if [ -f aclocal.m4 ]; then
@@ -64,6 +75,9 @@ if [ -f config.h ]; then
 fi
 if [ -f config.h.in ]; then
 	rm config.h.in
+fi
+if [ -f config.h.in~ ]; then
+	rm config.h.in~
 fi
 if [ -f configure ]; then
 	rm configure

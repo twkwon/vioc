@@ -1,1 +1,1 @@
-SUBDIRS = lib prog
+SUBDIRS = util vioc prog

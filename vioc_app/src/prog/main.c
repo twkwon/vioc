@@ -12,7 +12,6 @@
 
 #include <pmap.h>
 #include <mmap.h>
-#include <dummy.h>
 
 
 /** @brief Function List
@@ -28,9 +27,7 @@ int main(void)
 {
 	signal(SIGINT, sighandler);
 
-	test_pmap();
-
-	test_mmap();
+	test_main();
 
 	while(1)
 		pause();

@@ -13,8 +13,8 @@ echo "-----------------"
 echo " configure       "
 echo "-----------------"
 ./configure \
-            CC=$CROSS_COMPILE \
-			CFLAGS="-O2 -s" \
-            --host=arm-linux \
-            --target=arm-linux \
-            --prefix=$PREFIX
+		CC=$CROSS_COMPILE \
+		CFLAGS="-O2 -s" \
+		--host=arm-linux \
+		--target=arm-linux \
+		--prefix=$PREFIX

@@ -9,7 +9,9 @@ AC_CONFIG_HEADERS([config.h])
 AM_INIT_AUTOMAKE
 
 # Checks for programs.
+AC_PROG_CXX
 AC_PROG_CC
+AC_PROG_INSTALL
 
 # Checks for libraries.
 
@@ -27,6 +29,7 @@ AC_CONFIG_FILES([Makefile
                  doc/Makefile
                  man/Makefile
                  src/Makefile
-                 src/lib/Makefile
-                 src/prog/Makefile])
+                 src/prog/Makefile
+                 src/util/Makefile
+                 src/vioc/Makefile])
 AC_OUTPUT
