@@ -7,7 +7,24 @@
 
 #define PATH_PROC_PMAP	"/proc/pmap"
 
-int pmap_get_info(const char *name, pmap_t *mem)
+int pmap_get_info(const char *name, struct pmap_t *mem);
+
+int get_pmap(char *pname, struct pmap_t *pmap)
+{
+	int ret = 0;
+
+	ret = pmap_get_info(pname, pmap);
+	if (ret < 0)
+		printf("error get pmap\n");
+
+	printf("pmap->video.name = %s\n", pname);
+	printf("pmap->video.base = 0x%08x\n", pmap->base);
+	printf("pmap->video.size = 0x%08x\n", pmap->size);
+
+	return ret;
+}
+
+int pmap_get_info(const char *name, struct pmap_t *mem)
 {
     int fd;
     int matches;
@@ -47,7 +64,7 @@ int pmap_get_info(const char *name, pmap_t *mem)
 int test_pmap(void)
 {
 	int ret = 0;
-	pmap_t pmap;
+	struct pmap_t pmap;
 	char *pmap_name = "video";
 
 	ret = pmap_get_info(pmap_name, &pmap);

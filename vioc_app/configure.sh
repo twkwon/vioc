@@ -9,6 +9,7 @@ echo " autoreconf -vfi "
 echo "-----------------"
 autoreconf -vfi
 
+echo ""
 echo "-----------------"
 echo " configure       "
 echo "-----------------"

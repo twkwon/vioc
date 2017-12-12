@@ -1,6 +1,7 @@
 #ifndef __VIOC_H__
 #define __VIOC_H__
 
+#include <list.h>
 #include <vioc_rdma.h>
 
 #define REG_OFFSET(offset)	(offset / 4)
@@ -23,6 +24,7 @@ struct vioc_component_t {
 	int id;						// component id
 	int addr_offset;			// offset from vioc base address
 	unsigned int reset_bit;		// soft-reset bit
+	int reg[160];				// get register's value from data(.txt);
 };
 
 struct vioc_rdma_t {
@@ -34,6 +36,19 @@ struct vioc_rdma_t {
 struct test_case_t {
 	addr_t *vioc_base_addr;
 	struct vioc_rdma_t rdma;
+};
+
+struct test_data_t {
+	int test_no;
+	char test_name[64];
+	struct vioc_component_t rdma;
+	struct vioc_component_t wdma;
+	struct vioc_component_t wmix;
+	struct vioc_component_t sc;
+	struct vioc_component_t lut;
+	struct vioc_component_t outcfg;
+	struct vioc_component_t intrcfg;
+	struct list_head list;
 };
 
 #endif /*__VIOC_H__*/

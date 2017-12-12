@@ -1,11 +1,12 @@
 #ifndef __PMAP_H__
 #define __PMAP_H__
 
-typedef struct {
+struct pmap_t {
     unsigned int base;
     unsigned int size;
-} pmap_t;
+};
 
+int get_pmap(char *, struct pmap_t *);
 int test_pmap(void);
 
 #endif
