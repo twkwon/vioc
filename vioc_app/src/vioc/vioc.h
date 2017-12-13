@@ -20,11 +20,24 @@
 typedef unsigned int addr_t;
 typedef unsigned int reg_t;
 
+enum vioc_components {
+	RDMA,
+	WDMA,
+	WMIX,
+	SC,
+	LUT,
+	OUTCFG,
+	INTRCFG,
+};
+
 struct vioc_component_t {
 	int id;						// component id
 	int addr_offset;			// offset from vioc base address
 	unsigned int reset_bit;		// soft-reset bit
+
+	/* parsed data */
 	int reg[160];				// get register's value from data(.txt);
+	int nr_regs;				// number of parsed regs
 };
 
 struct vioc_rdma_t {

@@ -89,16 +89,16 @@ void exit_function(int status)
 
 char *string_malloc(char *sz)
 {
-    char *ret = NULL;
-    size_t len = 0;
+	char *ret = NULL;
+	size_t len = 0;
 
-    if (sz) {
-        len = strlen(sz);
-        ret = (char *)malloc((len * sizeof(char)) + sizeof(char));
-        if (ret) {
-            strcpy(ret, sz);
-        }
-    }
-    return ret;
+	if (sz) {
+		len = strlen(sz);
+		ret = (char *)malloc((len * sizeof(char)) + sizeof(char));
+		if (ret) {
+			strcpy(ret, sz);
+		}
+	}
+	return ret;
 }
 

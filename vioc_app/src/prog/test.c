@@ -100,14 +100,14 @@ static int setup_vioc_path(struct test_case_t *test_case)
 
 void delete_test_data_list(struct test_data_t *t)
 {
-    struct list_head *pos, *q;
-    printf("\n[%s]\n", __func__);
+	struct list_head *pos, *q;
+	printf("\n[%s]\n", __func__);
 
-    list_for_each_safe(pos, q, &t->list) {
-        struct test_data_t *k = list_entry(pos, struct test_data_t, list);
-        printf("remove test_data->test_no : %d\n", k->test_no);
-        list_del(pos);
-        free(k);
-    }
+	list_for_each_safe(pos, q, &t->list) {
+		struct test_data_t *k = list_entry(pos, struct test_data_t, list);
+		printf("remove test_data->test_no : %d\n", k->test_no);
+		list_del(pos);
+		free(k);
+	}
 }
 
