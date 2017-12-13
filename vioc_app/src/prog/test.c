@@ -6,8 +6,8 @@
 #include <parser.h>
 #include <pmap.h>
 
-static int setup_vioc_path(struct test_case_t *);
 void delete_test_data_list(struct test_data_t *);
+
 
 int test_main(char *file_name, char *pmap_name)
 {
@@ -47,7 +47,6 @@ int test_main(char *file_name, char *pmap_name)
 	printf("pmap.video.base = 0x%08x\n", pmap.base);
 	printf("pmap.video.size = 0x%08x\n", pmap.size);
 
-
 	/*
 	 * setup vioc components & path
 	 */
@@ -62,40 +61,6 @@ err2:
 err1:
 	free(test_data);
 	return ret;
-}
-
-
-int parse_rdma(struct vioc_rdma_t *rdma, addr_t *base_addr)
-{
-	int ret = 0;
-
-	//test
-	rdma->info.id = 0;
-	rdma->info.addr_offset = 0x00000400;
-	rdma->addr = (VIOC_RDMA *)(base_addr + REG_OFFSET(rdma->info.addr_offset));
-
-	rdma->reg.uCTRL.bREG.R2Y = 1;
-
-err:
-	return ret;
-}
-
-static int setup_vioc_path(struct test_case_t *test_case)
-{
-	printf("\n\n-------------------------------------\n");
-	printf("parse vioc components\n");
-	parse_rdma(&(test_case->rdma), test_case->vioc_base_addr);
-	printf("test_case->rdma.info.id(%d)\n", test_case->rdma.info.id);
-	printf("test_case->rdma.info.addr_offset(0x%x)\n", test_case->rdma.info.addr_offset);
-	printf("test_case->rdma.reg.uCTRL.bREG.R2Y(%d)\n", test_case->rdma.reg.uCTRL.bREG.R2Y);
-	printf("test_case->rdma.reg.uCTRL.nREG.R2Y(0x%08x)\n", test_case->rdma.reg.uCTRL.nREG);
-	printf("test_case->rdma.addr(0x%p)\n", test_case->rdma.addr);
-
-
-	printf("\nsetup vioc components\n");
-	printf("0x%08x\n", *(addr_t *)(test_case->vioc_base_addr + REG_OFFSET(0x400)));
-	printf("0x%08x\n", *(addr_t *)(test_case->vioc_base_addr + REG_OFFSET(0x408)));
-	rdma_setup(&(test_case->rdma));
 }
 
 void delete_test_data_list(struct test_data_t *t)

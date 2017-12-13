@@ -9,8 +9,8 @@
 #include <mmap.h>
 #include <vioc.h>
 
-#define MMAP_ADDR	(0x12000000)	/* VIOC base address */
-#define MMAP_LEN	(0x00100000)	/* 1 MBytea */
+#define MMAP_ADDR	(BASE_ADDR_VIOC)	/* VIOC base address */
+#define MMAP_LEN	(0x00100000)		/* 1 MBytea */
 
 addr_t *vioc_mmap(addr_t paddr, unsigned int size)
 {

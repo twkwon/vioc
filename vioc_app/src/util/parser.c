@@ -9,8 +9,9 @@
 
 int read_data(FILE *, struct getbuf_t *);
 int parser(struct test_data_t *, struct getbuf_t *, int);
-void print_all(struct getbuf_t *);
-void delete_all(struct getbuf_t *);
+void print_all_list(struct getbuf_t *);
+void delete_all_list(struct getbuf_t *);
+void print_parsed_data(struct test_data_t *);
 
 
 /** @brief  function
@@ -49,8 +50,8 @@ int parse_test_case(char *file_name, struct test_data_t *test_data)
 		list_add_tail(&tdata->list, &test_data->list);
 	}
 
-	print_all(tcase);
-	delete_all(tcase);
+	print_all_list(tcase);
+	delete_all_list(tcase);
 	free(tcase);
 
 	return nr_test;
@@ -139,13 +140,7 @@ int parser(struct test_data_t *tdata, struct getbuf_t *tcase, int test_no)
 	printf("nr_vioc(%d) nr_regs(%d)\n", nr_vioc, nr_regs);
 
 	sscanf(buf, "%[^',']", tdata->test_name);
-#if 0
-	/* this code is gae-no-ga-da */
-	sscanf(buf + nr_vioc_start[0], "%d,%d,%d,%d,%d,",
-			&tdata->rdma.reg[0], &tdata->rdma.reg[1], &tdata->rdma.reg[2], &tdata->rdma.reg[3], &tdata->rdma.reg[4]);
-	sscanf(buf + nr_vioc_start[1], "%d,%d,%d,%d,%d",
-			&tdata->wdma.reg[0], &tdata->wdma.reg[1], &tdata->wdma.reg[2], &tdata->wdma.reg[3], &tdata->wdma.reg[4]);
-#else
+
 	start_pos = 0;
 	for (i = 0; i < nr_vioc; i++) {
 		int count = 0;
@@ -181,33 +176,48 @@ int parser(struct test_data_t *tdata, struct getbuf_t *tcase, int test_no)
 			printf("offset %d\n", offset);
 
 			switch (i) {
-				case 0:
+				case VC_RDMA:
 					tdata->rdma.reg[j] = val;
 					tdata->rdma.nr_regs = count;
 					break;
-				case 1:
+				case VC_WDMA:
 					tdata->wdma.reg[j] = val;
 					tdata->wdma.nr_regs = count;
+					break;
+				case VC_WMIX:
+					tdata->wmix.reg[j] = val;
+					tdata->wmix.nr_regs = count;
+					break;
+				case VC_SC:
+					tdata->sc.reg[j] = val;
+					tdata->sc.nr_regs = count;
+					break;
+				case VC_LUT:
+					tdata->lut.reg[j] = val;
+					tdata->lut.nr_regs = count;
+					break;
+				case VC_OUTCFG:
+					tdata->outcfg.reg[j] = val;
+					tdata->outcfg.nr_regs = count;
+					break;
+				case VC_CONFIG:
+					tdata->config.reg[j] = val;
+					tdata->config.nr_regs = count;
 					break;
 				default:
 					break;
 			}
 		}
 	}
-#endif
 
-	printf("\n=== %s ===\n", tdata->test_name);
-	printf("RDMA:%d:%d:%d:%d:%d\n",
-			tdata->rdma.reg[0], tdata->rdma.reg[1], tdata->rdma.reg[2], tdata->rdma.reg[3], tdata->rdma.reg[4]);
-	printf("WDMA:%d:%d:%d:%d:%d\n",
-			tdata->wdma.reg[0], tdata->wdma.reg[1], tdata->wdma.reg[2], tdata->wdma.reg[3], tdata->wdma.reg[4]);
+	print_parsed_data(tdata);
 
 	free(buf);
 
 	return ret;
 }
 
-void print_all(struct getbuf_t *t)
+void print_all_list(struct getbuf_t *t)
 {
 	struct list_head *pos;
 	printf("\n[%s]\n", __func__);
@@ -220,7 +230,7 @@ void print_all(struct getbuf_t *t)
 	}
 }
 
-void delete_all(struct getbuf_t *t)
+void delete_all_list(struct getbuf_t *t)
 {
 	struct list_head *pos, *q;
 	printf("\n[%s]\n", __func__);
@@ -234,3 +244,42 @@ void delete_all(struct getbuf_t *t)
 	}
 }
 
+void print_parsed_data(struct test_data_t *t)
+{
+	int i;
+
+	printf("\n=======================================\n");
+	printf(" PARSED DATA\n");
+	printf("=============");
+
+	printf("\n  RDMA:");
+	for (i = 0; i < t->rdma.nr_regs; i++) {
+		printf("%d,", t->rdma.reg[i]);
+	}
+	printf("\n  WDMA:");
+	for (i = 0; i < t->wdma.nr_regs; i++) {
+		printf("%d,", t->wdma.reg[i]);
+	}
+	printf("\n  WMIX:");
+	for (i = 0; i < t->wmix.nr_regs; i++) {
+		printf("%d,", t->wmix.reg[i]);
+	}
+	printf("\n    SC:");
+	for (i = 0; i < t->sc.nr_regs; i++) {
+		printf("%d,", t->sc.reg[i]);
+	}
+	printf("\n   LUT:");
+	for (i = 0; i < t->lut.nr_regs; i++) {
+		printf("%d,", t->lut.reg[i]);
+	}
+	printf("\nOUTCFG:");
+	for (i = 0; i < t->outcfg.nr_regs; i++) {
+		printf("%d,", t->outcfg.reg[i]);
+	}
+	printf("\nCONFIG:");
+	for (i = 0; i < t->config.nr_regs; i++) {
+		printf("%d,", t->config.reg[i]);
+	}
+
+	printf("\n=======================================\n\n");
+}
