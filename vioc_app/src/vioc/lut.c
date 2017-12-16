@@ -5,7 +5,7 @@
 
 int rdma_map_regs(struct vioc_rdma_t *rdma, struct test_data_reg_val_t *data)
 {
-	int idx, reg_start_offset;
+	int idx;
 	int *dat;
 	VIOC_RDMA *reg;
 
@@ -16,8 +16,7 @@ int rdma_map_regs(struct vioc_rdma_t *rdma, struct test_data_reg_val_t *data)
 	dat = data->reg;
 
 	/* rdma's starting index is 2 (0:id, 1:plugin) */
-	reg_start_offset = 2;
-	idx = reg_start_offset;
+	idx = 2;
 
 	/* CTRL */
 	map_reg(reg->uCTRL.bREG.INTL,	dat[idx++]);
@@ -124,7 +123,7 @@ int rdma_map_regs(struct vioc_rdma_t *rdma, struct test_data_reg_val_t *data)
 	map_reg(reg->uCROPPOS.bREG.YPOS,	dat[idx++]);
 	map_reg(reg->uCROPPOS.bREG.XPOS,	dat[idx++]);
 
-	return (idx - reg_start_offset - 1);
+	return (idx - 1 - 2);
 }
 
 int rdma_setup(struct vioc_rdma_t *rdma)

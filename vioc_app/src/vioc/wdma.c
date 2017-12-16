@@ -1,0 +1,147 @@
+#include <stdio.h>
+
+#include <vioc.h>
+
+
+int wdma_map_regs(struct vioc_wdma_t *wdma, struct test_data_reg_val_t *data)
+{
+	int idx, reg_start_offset;
+	int *dat;
+	VIOC_WDMA *reg;
+
+	/* read value of physical register */
+	wdma->reg = *wdma->addr;
+
+	reg = &wdma->reg;
+	dat = data->reg;
+
+	/* wdma's starting index is 2 (0:id, 1:plugin) */
+	reg_start_offset = 2;
+	idx = reg_start_offset;
+
+	/* CTRL */
+	map_reg(reg->uCTRL.bREG.INTL,		dat[idx++]);
+	map_reg(reg->uCTRL.bREG.FU,			dat[idx++]);
+	map_reg(reg->uCTRL.bREG.IEN,		dat[idx++]);
+	map_reg(reg->uCTRL.bREG.DITHSEL,	dat[idx++]);
+	map_reg(reg->uCTRL.bREG.DITHEN,		dat[idx++]);
+	map_reg(reg->uCTRL.bREG.CONT,		dat[idx++]);
+	map_reg(reg->uCTRL.bREG.SREQ,		dat[idx++]);
+	map_reg(reg->uCTRL.bREG.Y2RMD,		dat[idx++]);
+	map_reg(reg->uCTRL.bREG.Y2R,		dat[idx++]);
+	map_reg(reg->uCTRL.bREG.UPD,		dat[idx++]);
+	map_reg(reg->uCTRL.bREG.BR,			dat[idx++]);
+	map_reg(reg->uCTRL.bREG.SWAP,		dat[idx++]);
+	map_reg(reg->uCTRL.bREG.R2YMD,		dat[idx++]);
+	map_reg(reg->uCTRL.bREG.R2Y,		dat[idx++]);
+	map_reg(reg->uCTRL.bREG.FMT10,		dat[idx++]);
+	map_reg(reg->uCTRL.bREG.FMT,		dat[idx++]);
+
+	/* RATE */
+	map_reg(reg->uRATE.bREG.REN,		dat[idx++]);
+	map_reg(reg->uRATE.bREG.MAXRATE,	dat[idx++]);
+	map_reg(reg->uRATE.bREG.SYNCMD,		dat[idx++]);
+	map_reg(reg->uRATE.bREG.SEN,		dat[idx++]);
+	map_reg(reg->uRATE.bREG.SYNCSEL,	dat[idx++]);
+
+	/* SIZE */
+	map_reg(reg->uSIZE.bREG.HEIGHT,	dat[idx++]);
+	map_reg(reg->uSIZE.bREG.WIDTH,	dat[idx++]);
+
+	/* BASE0 */
+	map_reg(reg->nBASE0, dat[idx++]);
+
+	/* CADDR (RO) */
+	map_reg(reg->nCBASE, dat[idx++]);
+
+	/* BASE1 */
+	map_reg(reg->nBASE1, dat[idx++]);
+
+	/* BASE2 */
+	map_reg(reg->nBASE2, dat[idx++]);
+
+	/* OFFS */
+	map_reg(reg->uOFFSET.bREG.OFFSET1, dat[idx++]);
+	map_reg(reg->uOFFSET.bREG.OFFSET0, dat[idx++]);
+
+	/* BG0 */
+	map_reg(reg->uBG.bREG.BG1, dat[idx++]);
+	map_reg(reg->uBG.bREG.BG0, dat[idx++]);
+
+	/* BG1 */
+	map_reg(reg->uBG.bREG.BG3, dat[idx++]);
+	map_reg(reg->uBG.bREG.BG2, dat[idx++]);
+
+	/* PTS */
+	map_reg(reg->uPTS.bREG.PTS, dat[idx++]);
+
+	/* DMAT0 */
+	map_reg(reg->uDMAT.bREG.DITH13, dat[idx++]);
+	map_reg(reg->uDMAT.bREG.DITH12, dat[idx++]);
+	map_reg(reg->uDMAT.bREG.DITH11, dat[idx++]);
+	map_reg(reg->uDMAT.bREG.DITH10, dat[idx++]);
+	map_reg(reg->uDMAT.bREG.DITH03, dat[idx++]);
+	map_reg(reg->uDMAT.bREG.DITH02, dat[idx++]);
+	map_reg(reg->uDMAT.bREG.DITH01, dat[idx++]);
+	map_reg(reg->uDMAT.bREG.DITH00, dat[idx++]);
+
+	/* DMAT1 */
+	map_reg(reg->uDMAT.bREG.DITH33, dat[idx++]);
+	map_reg(reg->uDMAT.bREG.DITH32, dat[idx++]);
+	map_reg(reg->uDMAT.bREG.DITH31, dat[idx++]);
+	map_reg(reg->uDMAT.bREG.DITH30, dat[idx++]);
+	map_reg(reg->uDMAT.bREG.DITH23, dat[idx++]);
+	map_reg(reg->uDMAT.bREG.DITH22, dat[idx++]);
+	map_reg(reg->uDMAT.bREG.DITH21, dat[idx++]);
+	map_reg(reg->uDMAT.bREG.DITH20, dat[idx++]);
+
+	/* ROLL */
+	map_reg(reg->uROLL.bREG.ROLL,		dat[idx++]);
+	map_reg(reg->uROLL.bREG.ROLLCNT,	dat[idx++]);
+
+	/* SBASE */
+	map_reg(reg->nSBASE, dat[idx++]);
+
+	/* IRQSTS */
+	map_reg(reg->uIRQSTS.bREG.STS_EOF,		dat[idx++]);
+	map_reg(reg->uIRQSTS.bREG.STS_BFIELD,	dat[idx++]);
+	map_reg(reg->uIRQSTS.bREG.STS_SEN,		dat[idx++]);
+	map_reg(reg->uIRQSTS.bREG.SEOFFALL,		dat[idx++]);
+	map_reg(reg->uIRQSTS.bREG.SEOFRISE,		dat[idx++]);
+	map_reg(reg->uIRQSTS.bREG.EOFFALL,		dat[idx++]);
+	map_reg(reg->uIRQSTS.bREG.EOFRISE,		dat[idx++]);
+	map_reg(reg->uIRQSTS.bREG.ENFALL,		dat[idx++]);
+	map_reg(reg->uIRQSTS.bREG.ENRISE,		dat[idx++]);
+	map_reg(reg->uIRQSTS.bREG.ROLL,			dat[idx++]);
+	map_reg(reg->uIRQSTS.bREG.STOPREQ,		dat[idx++]);
+	map_reg(reg->uIRQSTS.bREG.UPDDONE,		dat[idx++]);
+
+	/* IRQMSK */
+	map_reg(reg->uIRQMSK.bREG.SEOFFALL,	dat[idx++]);
+	map_reg(reg->uIRQMSK.bREG.SEOFRISE,	dat[idx++]);
+	map_reg(reg->uIRQMSK.bREG.EOFFALL,	dat[idx++]);
+	map_reg(reg->uIRQMSK.bREG.EOFRISE,	dat[idx++]);
+	map_reg(reg->uIRQMSK.bREG.ENFALL,	dat[idx++]);
+	map_reg(reg->uIRQMSK.bREG.ENRISE,	dat[idx++]);
+	map_reg(reg->uIRQMSK.bREG.ROLL,		dat[idx++]);
+	map_reg(reg->uIRQMSK.bREG.STOPREQ,	dat[idx++]);
+	map_reg(reg->uIRQMSK.bREG.UPDDONE,	dat[idx++]);
+
+	return (idx - reg_start_offset - 1);
+}
+
+int wdma_setup(struct vioc_wdma_t *wdma)
+{
+	int ret = 0;
+
+	/* check UPD (update-bit) is 0 */
+	if (wdma->reg.uCTRL.bREG.UPD) {
+		wdma->reg.uCTRL.bREG.UPD = 0;
+		printf("wdma%d UPD was set, so disable it\n", wdma->info.id);
+	}
+
+	/* set physical register */
+	*wdma->addr = wdma->reg;
+
+	return ret;
+}

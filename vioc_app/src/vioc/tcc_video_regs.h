@@ -85,6 +85,7 @@
 
 
 /* WMIX */
+#define HwVIOC_WMIX_GAP     	(0x100)
 #define HwVIOC_WMIX0            ( (BASE_ADDR_VIOC  + 0x0000 + 0x1800)) // 64 words
 #define HwVIOC_WMIX1            ( (BASE_ADDR_VIOC  + 0x0000 + 0x1900)) // 64 words
 #define HwVIOC_WMIX2            ( (BASE_ADDR_VIOC  + 0x0000 + 0x1A00)) // 64 words
@@ -98,6 +99,7 @@
 #define HwVIOC_WMIX2_ALPHA      ( (BASE_ADDR_VIOC  + 0x0000 + 0x1A60)) // 64 words
 
 /* SCALER */
+#define HwVIOC_SC_GAP     		(0x100)
 #define HwVIOC_SC0              ( (BASE_ADDR_VIOC  + 0x0000 + 0x2000)) // 64 words
 #define HwVIOC_SC1              ( (BASE_ADDR_VIOC  + 0x0000 + 0x2100)) // 64 words
 #define HwVIOC_SC2              ( (BASE_ADDR_VIOC  + 0x0000 + 0x2200)) // 64 words
@@ -106,6 +108,7 @@
 #define HwVIOC_SC5              ( (BASE_ADDR_VIOC  + 0x0000 + 0x2500)) // 64 words
 
 /* WDMA */
+#define HwVIOC_WDMA_GAP     	(0x100)
 #define HwVIOC_WDMA00           ( (BASE_ADDR_VIOC  + 0x0000 + 0x2800)) // 64 words
 #define HwVIOC_WDMA01           ( (BASE_ADDR_VIOC  + 0x0000 + 0x2900)) // 64 words
 #define HwVIOC_WDMA02           ( (BASE_ADDR_VIOC  + 0x0000 + 0x2A00)) // 64 words
@@ -116,6 +119,7 @@
 #define HwVIOC_WDMA07           ( (BASE_ADDR_VIOC  + 0x0000 + 0x2F00)) // 64 words
 #define HwVIOC_WDMA08           ( (BASE_ADDR_VIOC  + 0x0000 + 0x3000)) // 64 words
 
+#define HwVIOC_DISP_GAP     	(0x100)
 #define HwVIOC_DISP0_MIX        ( (BASE_ADDR_VIOC  + 0x0000 + 0x3200)) // NOT USED
 #define HwVIOC_DISP0_MD         ( (BASE_ADDR_VIOC  + 0x0000 + 0x3300)) // NOT USED
 #define HwVIOC_DISP1_MIX        ( (BASE_ADDR_VIOC  + 0x0000 + 0x3400)) // NOT USED

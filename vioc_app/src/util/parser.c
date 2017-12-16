@@ -9,9 +9,7 @@
 
 int read_data(FILE *, struct getbuf_t *);
 int parser(struct test_data_t *, struct getbuf_t *, int);
-void print_all_list(struct getbuf_t *);
 void delete_all_list(struct getbuf_t *);
-void print_parsed_data(struct test_data_t *);
 
 
 /** @brief  function
@@ -50,7 +48,7 @@ int parse_test_case(char *file_name, struct test_data_t *test_data)
 		list_add_tail(&tdata->list, &test_data->list);
 	}
 
-	print_all_list(tcase);
+	print_all_list(tcase, test_data);
 	delete_all_list(tcase);
 	free(tcase);
 
@@ -176,13 +174,29 @@ int parser(struct test_data_t *tdata, struct getbuf_t *tcase, int test_no)
 			printf("offset %d\n", offset);
 
 			switch (i) {
-				case VC_RDMA:
-					tdata->rdma.reg[j] = val;
-					tdata->rdma.nr_regs = count;
+				case VC_RDMA_1st:
+					tdata->rdma1.reg[j] = val;
+					tdata->rdma1.nr_regs = count;
 					break;
-				case VC_WDMA:
-					tdata->wdma.reg[j] = val;
-					tdata->wdma.nr_regs = count;
+				case VC_RDMA_2nd:
+					tdata->rdma1.reg[j] = val;
+					tdata->rdma1.nr_regs = count;
+					break;
+				case VC_RDMA_3rd:
+					tdata->rdma1.reg[j] = val;
+					tdata->rdma1.nr_regs = count;
+					break;
+				case VC_RDMA_4th:
+					tdata->rdma1.reg[j] = val;
+					tdata->rdma1.nr_regs = count;
+					break;
+				case VC_WDMA_1st:
+					tdata->wdma1.reg[j] = val;
+					tdata->wdma1.nr_regs = count;
+					break;
+				case VC_WDMA_2nd:
+					tdata->wdma2.reg[j] = val;
+					tdata->wdma2.nr_regs = count;
 					break;
 				case VC_WMIX:
 					tdata->wmix.reg[j] = val;
@@ -217,16 +231,27 @@ int parser(struct test_data_t *tdata, struct getbuf_t *tcase, int test_no)
 	return ret;
 }
 
-void print_all_list(struct getbuf_t *t)
+void print_all_list(struct getbuf_t *t, struct test_data_t *td)
 {
 	struct list_head *pos;
 	printf("\n[%s]\n", __func__);
 
-	list_for_each(pos, &t->list) {
-		struct getbuf_t *k = list_entry(pos, struct getbuf_t, list);
-		printf("idx : %d\n", k->idx);
-		printf("size: %d\n", k->buf_size);
-		printf("buf : %s\n", k->buf);
+	if (t != NULL) {
+		printf("PRINT getbuf_t list\n");
+		list_for_each(pos, &t->list) {
+			struct getbuf_t *k = list_entry(pos, struct getbuf_t, list);
+			printf("idx : %d\n", k->idx);
+			printf("size: %d\n", k->buf_size);
+			printf("buf : %s\n", k->buf);
+		}
+	}
+
+	if (td != NULL) {
+		printf("PRINT test_data_t list");
+		list_for_each(pos, &td->list) {
+			struct test_data_t *tmp = list_entry(pos, struct test_data_t, list);
+			print_parsed_data(tmp);
+		}
 	}
 }
 
@@ -250,15 +275,32 @@ void print_parsed_data(struct test_data_t *t)
 
 	printf("\n=======================================\n");
 	printf(" PARSED DATA\n");
-	printf("=============");
+	printf(" test_no(%d) test_name(%s)\n", t->test_no, t->test_name);
+	printf("=========================================");
 
-	printf("\n  RDMA:");
-	for (i = 0; i < t->rdma.nr_regs; i++) {
-		printf("%d,", t->rdma.reg[i]);
+	printf("\n  1st RDMA:");
+	for (i = 0; i < t->rdma1.nr_regs; i++) {
+		printf("%d,", t->rdma1.reg[i]);
 	}
-	printf("\n  WDMA:");
-	for (i = 0; i < t->wdma.nr_regs; i++) {
-		printf("%d,", t->wdma.reg[i]);
+	printf("\n  2nd RDMA:");
+	for (i = 0; i < t->rdma2.nr_regs; i++) {
+		printf("%d,", t->rdma2.reg[i]);
+	}
+	printf("\n  3rd RDMA:");
+	for (i = 0; i < t->rdma3.nr_regs; i++) {
+		printf("%d,", t->rdma3.reg[i]);
+	}
+	printf("\n  4th RDMA:");
+	for (i = 0; i < t->rdma4.nr_regs; i++) {
+		printf("%d,", t->rdma4.reg[i]);
+	}
+	printf("\n  1st WDMA:");
+	for (i = 0; i < t->wdma1.nr_regs; i++) {
+		printf("%d,", t->wdma1.reg[i]);
+	}
+	printf("\n  2nd WDMA:");
+	for (i = 0; i < t->wdma2.nr_regs; i++) {
+		printf("%d,", t->wdma2.reg[i]);
 	}
 	printf("\n  WMIX:");
 	for (i = 0; i < t->wmix.nr_regs; i++) {

@@ -111,13 +111,11 @@ typedef	struct
 {
 	unsigned	SYNCSEL :  8;
 	unsigned	SEN		:  1;
-	unsigned	SYNCMD_ADDR	:  1;
-	unsigned	RESERVE0		:  1;
-	unsigned	SYNCMD_SENS	:  1;
-	unsigned	RESERVE1		:  4;
-	unsigned	MAXRATE		:  8;
-	unsigned	RESERVE2		:  7;
-	unsigned	REN			:  1;
+	unsigned	SYNCMD	:  3;
+	unsigned	RESERVE0:  4;
+	unsigned	MAXRATE	:  8;
+	unsigned	RESERVE2:  7;
+	unsigned	REN		:  1;
 }	VIOC_WDMA_RATE;
 
 typedef	union
@@ -302,18 +300,18 @@ typedef	struct _VIOC_WDMA
 	volatile VIOC_WDMA_CTRL_u 		uCTRL; 			// 0x00  R/W  0x00000400 WMDA Control Register
 	volatile VIOC_WDMA_RATE_u 		uRATE; 			// 0x04  R/W  0x00000000 WDMA Rate Control Register
 	volatile VIOC_WDMA_SIZE_u 		uSIZE; 			// 0x08  R/W  0x00000000 WDMA Size Register
-	volatile unsigned  int 			uBASE0; 		// 0x0C  R/W  0x00000000 WDMA Base Address 0 Register
-	volatile unsigned  int 			uCBASE; 		// 0x10  R/W  0x00000000 WDMA Current Address Register
-	volatile unsigned  int 			uBASE1; 		// 0x14  R/W  0x00000000 WDMA Base Address 1 Register
-	volatile unsigned  int 			uBASE2; 		// 0x18  R/W  0x00000000 WDMA Base Address 2 Register
-	volatile VIOC_WDMA_OFFS_u 		uOFFS; 			// 0x1C  R/W  0x00000000 WDMA Offset Register
+	volatile unsigned  int 			nBASE0; 		// 0x0C  R/W  0x00000000 WDMA Base Address 0 Register
+	volatile unsigned  int 			nCBASE; 		// 0x10  R/W  0x00000000 WDMA Current Address Register
+	volatile unsigned  int 			nBASE1; 		// 0x14  R/W  0x00000000 WDMA Base Address 1 Register
+	volatile unsigned  int 			nBASE2; 		// 0x18  R/W  0x00000000 WDMA Base Address 2 Register
+	volatile VIOC_WDMA_OFFS_u 		uOFFSET;		// 0x1C  R/W  0x00000000 WDMA Offset Register
 	volatile unsigned  int 			reserved0; 		// 0x20
 	volatile VIOC_WDMA_BG_u 		uBG; 			// 0x24, 0x28  R/W  0x00000000 WDMA Back Ground Color Register
 	volatile VIOC_WDMA_PTS_u 		uPTS; 			// 0x2C  R/W  0x00000000 WDMA PTS Register
 	volatile VIOC_WDMA_DMAT_u 		uDMAT; 			// 0x30, 0x34  R/W  0x00000000 WDMA Dither Matrix 0,1 Register
 	volatile VIOC_WDMA_ENH_u 		uENH; 			// 0x38  R/W  0x00000000 WDMA Color Enhancement Register
 	volatile VIOC_WDMA_ROLL_u 		uROLL; 			// 0x3C  R/W  0x00000000 WDMA Rolling Control Register
-	volatile unsigned  int 			uSBASE; 		// 0x40  R/W  0x00000000 WMA Synchronized Base Address Register
+	volatile unsigned  int 			nSBASE; 		// 0x40  R/W  0x00000000 WMA Synchronized Base Address Register
 	volatile VIOC_WDMA_STATUS_u 	uIRQSTS; 		// 0x44  R/W  0x00000000 WDMA Interrupt Status Register
 	volatile VIOC_WDMA_IRQMSK_u 	uIRQMSK; 		// 0x48  R/W  0x000001FF WDMA Interrupt Mask Register
 }VIOC_WDMA, *PVIOC_WDMA;

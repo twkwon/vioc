@@ -6,7 +6,8 @@
 #include <parser.h>
 #include <pmap.h>
 
-void delete_test_data_list(struct test_data_t *);
+static void delete_test_data_list(struct test_data_t *);
+static int run_test_single(struct test_case_t *, struct test_data_t *);
 
 
 int test_main(char *file_name, char *pmap_name)
@@ -14,8 +15,9 @@ int test_main(char *file_name, char *pmap_name)
 	int ret = 0;
 	int nr_test;	// number of test cases
 	struct test_case_t *test_case;
-	struct test_data_t *test_data;
+	struct test_data_t *test_data, *td;
 	struct pmap_t pmap;
+	struct list_head *pos = NULL;
 
 	/*
 	 * parse data from test_case.txt
@@ -31,7 +33,7 @@ int test_main(char *file_name, char *pmap_name)
 	}
 
 	/*
-	 * get vioc base address and pmap info
+	 * get vioc base address
 	 */
 	test_case = (struct test_case_t *)malloc(sizeof(struct test_case_t));
 	memset(test_case, 0, sizeof(struct test_case_t));
@@ -42,15 +44,21 @@ int test_main(char *file_name, char *pmap_name)
 		goto err2;
 	}
 
+	/*
+	 * get pmap info for image buffers
+	 */
 	get_pmap(pmap_name, &pmap);
-	printf("pmap.video.name = %s\n", pmap_name);
-	printf("pmap.video.base = 0x%08x\n", pmap.base);
-	printf("pmap.video.size = 0x%08x\n", pmap.size);
 
 	/*
-	 * setup vioc components & path
+	 * RUN the test case on the list of test_data one by one
 	 */
-	setup_vioc_path(test_case);
+	list_for_each(pos, &test_data->list) {
+		td = list_entry(pos, struct test_data_t, list);
+
+		print_parsed_data(td);
+
+		run_test_single(test_case, td);
+	}
 
 
 err3:
@@ -63,7 +71,28 @@ err1:
 	return ret;
 }
 
-void delete_test_data_list(struct test_data_t *t)
+static int run_test_single(struct test_case_t *test_case, struct test_data_t *test_data)
+{
+	int ret = 0;
+	printf("\n\n==================================\n");
+	printf("     RUN TEST CASE No.%d\n", test_case->test_no);
+	printf("      - %s\n", test_case->test_name);
+	printf("==================================\n");
+
+	/*
+	 * setup vioc components & path
+	 */
+	setup_vioc_path(test_case, test_data);
+
+	/*
+	 * run single test case
+	 */
+
+
+	return ret;
+}
+
+static void delete_test_data_list(struct test_data_t *t)
 {
 	struct list_head *pos, *q;
 	printf("\n[%s]\n", __func__);

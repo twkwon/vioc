@@ -59,7 +59,8 @@ typedef	struct
 	unsigned	BP		:  1;
 	unsigned	RESERVE0: 15;
 	unsigned	UPD 	:  1;
-	unsigned	RESERVE1     : 15;
+	unsigned	RESERVE1: 13;
+	unsigned	MODE_3D	:  2;
 } VIOC_SC_CTRL;
 
 typedef	union

@@ -38,6 +38,7 @@ int main(int argc, char **argv)
 		printf("%s [file name] [pmap name]\n", argv[0]);
 		printf("- file name: data file about test cases\n");
 		printf("- pmap name: pmap name for video buffers\n");
+		printf("If you exit, press Ctrl-C\n");
 		exit(-1);
 	}
 

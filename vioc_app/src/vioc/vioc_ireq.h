@@ -500,6 +500,47 @@ typedef	union {
 	VIOC_CONFIG_WDMA_MISC	bREG;
 } VIOC_CONFIG_WDMA_MISC_u;
 
+typedef	struct {
+	unsigned		RESERVED0	: 8;
+	unsigned		EDR_S		: 1;
+	unsigned		RESERVED1	: 7;
+	unsigned		RESERVED2	:16;
+} VIOC_CONFIG_PATH_EDR;
+
+typedef	union {
+	unsigned long			nREG;
+	VIOC_CONFIG_PATH_EDR	bREG;
+} VIOC_CONFIG_PATH_EDR_u;
+
+typedef struct {
+	unsigned 			L0_EVS_SEL	:  3;
+	unsigned 						:  1;
+	unsigned 			L1_EVS_SEL	:  3;
+	unsigned 						:  1;
+	unsigned 			L2_EVS_SEL	:  3;
+	unsigned 						:  5;
+	unsigned 			MIX00		:  1;
+	unsigned 			MIX03		:  1;
+	unsigned 			MIX10		:  1;
+	unsigned 			MIX13		:  1;
+	unsigned 						:  2;
+	unsigned 			MIX30		:  1;
+	unsigned 						:  1;
+	unsigned 			MIX40		:  1;
+	unsigned 						:  1;
+	unsigned 			MIX50		:  1;
+	unsigned 						:  1;
+	unsigned 			MIX60		:  1;
+	unsigned 						:  1;
+	unsigned 			RD12		:  1;
+	unsigned 			RD14		:  1;
+} VIOC_CONFIG_MISC0;
+
+typedef	union {
+	unsigned long		nREG;
+	VIOC_CONFIG_MISC0	bREG;
+} VIOC_CONFIG_MISC0_u;
+
 typedef	struct	_VIOC_IREQ_CONFIG
 {
 	volatile VIOC_IREQ_IREQ_u 			uRAWSTATUS;			// 0x00, 0x04
@@ -511,8 +552,8 @@ typedef	struct	_VIOC_IREQ_CONFIG
 	unsigned int 						reserved0[3];		// 0x2C, 0x30, 0x34
 
 	volatile VIOC_CONFIG_TEST_LOOP_u	TEST_LOOP;			// 0x38
-	volatile VIOC_CONFIG_PATH_MC_u 		uMC;				// 0x3C
-	volatile VIOC_CONFIG_ETC_u 			uMISC;				// 0x40
+	volatile VIOC_CONFIG_PATH_EDR_u		uPATH_EDR;			// 0x3C
+	volatile VIOC_CONFIG_MISC0_u 		uMISC0;				// 0x40
 	volatile VIOC_CONFIG_PATH_u 		uSC0;				// 0x44
 	volatile VIOC_CONFIG_PATH_u 		uSC1;				// 0x48
 	volatile VIOC_CONFIG_PATH_u 		uSC2;				// 0x4C
@@ -539,14 +580,14 @@ typedef	struct	_VIOC_IREQ_CONFIG
 	unsigned int						nAWID;				// 0xC4
 	volatile VIOC_POWER_AUTOPD_u 		uAUTOPD;			// 0xC8
 	volatile VIOC_POWER_CLKCTRL_u 		uCLKCTRL;			// 0xCC
-	volatile VIOC_POWER_BLOCKS_u 		uPOWERDOWN;			// 0xD0~0xD4
-	volatile VIOC_POWER_BLOCKS_u 		uSOFTRESET;			// 0xD8~0xDC
+	volatile VIOC_POWER_BLOCKS_u 		uPOWERDOWN;			// 0xD0, 0xD4
+	volatile VIOC_POWER_BLOCKS_u 		uSOFTRESET;			// 0xD8, 0xDC
 
 	unsigned int 						reserved5[6];		// 0xE0~0xF4
 	volatile VIOC_CONFIG_PATH_u 		uSC4;				// 0xF8
 	unsigned int 						reserved6[11];		// 0xFC~0x124
 	volatile VIOC_POWER_BLOCKS2_u 		uPOWERDOWN2;		// 0x128
-	volatile VIOC_POWER_BLOCKS2_u 		uSOFTRESET2;			// 0x12C
+	volatile VIOC_POWER_BLOCKS2_u 		uSOFTRESET2;		// 0x12C
 	volatile VIOC_CONFIG_PATH_u 		uVIQE1;				// 0x130
 	unsigned int 						reserved7[3];		// 0x134~13C
 	volatile VIOC_CONFIG_WDMA_MISC_u	uWDMA_MISC;			// 0x140
