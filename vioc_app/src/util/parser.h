@@ -11,7 +11,8 @@ struct getbuf_t {
 	struct list_head list;
 };
 
-void print_all_list(struct getbuf_t *, struct test_data_t *);
-void print_parsed_data(struct test_data_t *);
+extern int parse_test_case(char *, struct test_data_t *);
+extern void print_all_list(struct getbuf_t *, struct test_data_t *);
+extern void print_parsed_data(struct test_data_t *);
 
 #endif	//__PARSER_H__

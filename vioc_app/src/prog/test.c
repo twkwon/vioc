@@ -5,6 +5,7 @@
 #include <vioc.h>
 #include <parser.h>
 #include <pmap.h>
+#include <mmap.h>
 
 static void delete_test_data_list(struct test_data_t *);
 static int run_test_single(struct test_case_t *, struct test_data_t *);

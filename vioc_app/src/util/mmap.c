@@ -38,7 +38,7 @@ addr_t *vioc_mmap(addr_t paddr, unsigned int size)
 				paddr);
 	if (vaddr == MAP_FAILED) {
 		perror("mmap failed");
-		vaddr == NULL;
+		vaddr = NULL;
 		goto err_mmap;
 	}
 	printf("mmap: phy_addr:0x%08x -> virt_addr:%p, size:0x%08x\n", paddr, vaddr, size);
@@ -58,7 +58,7 @@ int test_mmap(void)
 {
 	unsigned int *vaddr = NULL;
 	int dev, i;
-	unsigned long tmp1, tmp2;
+	unsigned int tmp1, tmp2;
 	unsigned int paddr, length;
 
 	dev = open("/dev/mem", O_RDWR|O_SYNC);
@@ -84,15 +84,15 @@ int test_mmap(void)
 
 	/* read test */
 	for (i = 0; i < 10; i++) {
-		tmp1 = *((unsigned long *)(vaddr + i));
+		tmp1 = *((unsigned int *)(vaddr + i));
 		printf("offset %d 0x%08X\n", i * 4, tmp1);
 	}
 
 	/* write test */
 	for (i = 0; i < 10; i++) {
 		tmp2 = 0x1 + i;
-		*((unsigned long *)vaddr + i) = tmp2;
-		tmp1 = *((unsigned long *)(vaddr + i));
+		*((unsigned int *)vaddr + i) = tmp2;
+		tmp1 = *((unsigned int *)(vaddr + i));
 		printf("offset 0x%02x: 0x%08X == 0x%08X\n", i * 4, tmp2, tmp1);
 	}
 _EXIT:
