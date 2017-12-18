@@ -61,7 +61,7 @@ int config_verify_regs(struct vioc_config_t *config)
 
 	printf("VERIFY CONFIG%d", config->info.id);
 	if (config->info.id < 0) {
-		printf("%tN/A\n");
+		printf("\tN/A\n");
 		return ret;
 	}
 
@@ -69,9 +69,9 @@ int config_verify_regs(struct vioc_config_t *config)
 	dv = read_reg(&d->uPATH_EDR);
 	sv = read_reg(&s->uPATH_EDR);
 	if (dv == sv) {
-		printf("%tCONFIG.uPATH_EDR: 0x%08x\n", sv);
+		printf("\tCONFIG.uPATH_EDR: 0x%08x\n", sv);
 	} else {
-		printf("%tCONFIG.uPATH_EDR: 0x%08x != 0x%08x\n", sv, dv);
+		printf("\tCONFIG.uPATH_EDR: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
 
@@ -79,9 +79,9 @@ int config_verify_regs(struct vioc_config_t *config)
 	dv = read_reg(&d->uMISC0);
 	sv = read_reg(&s->uMISC0);
 	if (dv == sv) {
-		printf("%tCONFIG.uMISC0: 0x%08x\n", sv);
+		printf("\tCONFIG.uMISC0: 0x%08x\n", sv);
 	} else {
-		printf("%tCONFIG.uMISC0: 0x%08x != 0x%08x\n", sv, dv);
+		printf("\tCONFIG.uMISC0: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
 

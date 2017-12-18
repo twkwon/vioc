@@ -81,7 +81,7 @@ int sc_verify_regs(struct vioc_sc_t *sc)
 
 	printf("VERIFY SC%d", sc->info.id);
 	if (sc->info.id < 0) {
-		printf("%tN/A\n");
+		printf("\tN/A\n");
 		return ret;
 	}
 
@@ -89,9 +89,9 @@ int sc_verify_regs(struct vioc_sc_t *sc)
 	dv = read_reg(&d->uCTRL);
 	sv = read_reg(&s->uCTRL);
 	if (dv == sv) {
-		printf("%tSC.uCTRL: 0x%08x\n", sv);
+		printf("\tSC.uCTRL: 0x%08x\n", sv);
 	} else {
-		printf("%tSC.uCTRL: 0x%08x != 0x%08x\n", sv, dv);
+		printf("\tSC.uCTRL: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
 
@@ -99,9 +99,9 @@ int sc_verify_regs(struct vioc_sc_t *sc)
 	dv = read_reg(&d->uSRCSIZE);
 	sv = read_reg(&s->uSRCSIZE);
 	if (dv == sv) {
-		printf("%tSC.uSRCSIZE: 0x%08x\n", sv);
+		printf("\tSC.uSRCSIZE: 0x%08x\n", sv);
 	} else {
-		printf("%tSC.uSRCSIZE: 0x%08x != 0x%08x\n", sv, dv);
+		printf("\tSC.uSRCSIZE: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
 
@@ -109,9 +109,9 @@ int sc_verify_regs(struct vioc_sc_t *sc)
 	dv = read_reg(&d->uDSTSIZE);
 	sv = read_reg(&s->uDSTSIZE);
 	if (dv == sv) {
-		printf("%tSC.uDSTSIZE: 0x%08x\n", sv);
+		printf("\tSC.uDSTSIZE: 0x%08x\n", sv);
 	} else {
-		printf("%tSC.uDSTSIZE: 0x%08x != 0x%08x\n", sv, dv);
+		printf("\tSC.uDSTSIZE: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
 
@@ -119,9 +119,9 @@ int sc_verify_regs(struct vioc_sc_t *sc)
 	dv = read_reg(&d->uOUTPOS);
 	sv = read_reg(&s->uOUTPOS);
 	if (dv == sv) {
-		printf("%tSC.uOUTPOS: 0x%08x\n", sv);
+		printf("\tSC.uOUTPOS: 0x%08x\n", sv);
 	} else {
-		printf("%tSC.uOUTPOS: 0x%08x != 0x%08x\n", sv, dv);
+		printf("\tSC.uOUTPOS: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
 
@@ -129,9 +129,9 @@ int sc_verify_regs(struct vioc_sc_t *sc)
 	dv = read_reg(&d->uOUTSIZE);
 	sv = read_reg(&s->uOUTSIZE);
 	if (dv == sv) {
-		printf("%tSC.uOUTSIZE: 0x%08x\n", sv);
+		printf("\tSC.uOUTSIZE: 0x%08x\n", sv);
 	} else {
-		printf("%tSC.uOUTSIZE: 0x%08x != 0x%08x\n", sv, dv);
+		printf("\tSC.uOUTSIZE: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
 
@@ -139,9 +139,9 @@ int sc_verify_regs(struct vioc_sc_t *sc)
 	dv = read_reg(&d->uSTATUS);
 	sv = read_reg(&s->uSTATUS);
 	if (dv == sv) {
-		printf("%tSC.uSTATUS: 0x%08x\n", sv);
+		printf("\tSC.uSTATUS: 0x%08x\n", sv);
 	} else {
-		printf("%tSC.uSTATUS: 0x%08x != 0x%08x\n", sv, dv);
+		printf("\tSC.uSTATUS: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
 
@@ -149,9 +149,9 @@ int sc_verify_regs(struct vioc_sc_t *sc)
 	dv = read_reg(&d->uIRQMSK);
 	sv = read_reg(&s->uIRQMSK);
 	if (dv == sv) {
-		printf("%tSC.uIRQMSK: 0x%08x\n", sv);
+		printf("\tSC.uIRQMSK: 0x%08x\n", sv);
 	} else {
-		printf("%tSC.uIRQMSK: 0x%08x != 0x%08x\n", sv, dv);
+		printf("\tSC.uIRQMSK: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
 

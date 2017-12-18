@@ -106,7 +106,7 @@ int lut_verify_regs(struct vioc_lut_t *lut)
 
 	printf("VERIFY LUT%d", lut->info.id);
 	if (lut->info.id < 0) {
-		printf("%tN/A\n");
+		printf("\tN/A\n");
 		return ret;
 	}
 
@@ -114,9 +114,9 @@ int lut_verify_regs(struct vioc_lut_t *lut)
 	dv = read_reg(&d->uCTRL);
 	sv = read_reg(&s->uCTRL);
 	if (dv == sv) {
-		printf("%tLUT.uCTRL: 0x%08x\n", sv);
+		printf("\tLUT.uCTRL: 0x%08x\n", sv);
 	} else {
-		printf("%tLUT.uCTRL: 0x%08x != 0x%08x\n", sv, dv);
+		printf("\tLUT.uCTRL: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
 
@@ -124,9 +124,9 @@ int lut_verify_regs(struct vioc_lut_t *lut)
 	dv = read_reg(&d->uDEV0_CFG);
 	sv = read_reg(&s->uDEV0_CFG);
 	if (dv == sv) {
-		printf("%tLUT.uDEV0_CFG: 0x%08x\n", sv);
+		printf("\tLUT.uDEV0_CFG: 0x%08x\n", sv);
 	} else {
-		printf("%tLUT.uDEV0_CFG: 0x%08x != 0x%08x\n", sv, dv);
+		printf("\tLUT.uDEV0_CFG: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
 
@@ -134,9 +134,9 @@ int lut_verify_regs(struct vioc_lut_t *lut)
 	dv = read_reg(&d->uDEV1_CFG);
 	sv = read_reg(&s->uDEV1_CFG);
 	if (dv == sv) {
-		printf("%tLUT.uDEV1_CFG: 0x%08x\n", sv);
+		printf("\tLUT.uDEV1_CFG: 0x%08x\n", sv);
 	} else {
-		printf("%tLUT.uDEV1_CFG: 0x%08x != 0x%08x\n", sv, dv);
+		printf("\tLUT.uDEV1_CFG: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
 
@@ -144,9 +144,9 @@ int lut_verify_regs(struct vioc_lut_t *lut)
 	dv = read_reg(&d->uDEV2_CFG);
 	sv = read_reg(&s->uDEV2_CFG);
 	if (dv == sv) {
-		printf("%tLUT.uDEV2_CFG: 0x%08x\n", sv);
+		printf("\tLUT.uDEV2_CFG: 0x%08x\n", sv);
 	} else {
-		printf("%tLUT.uDEV2_CFG: 0x%08x != 0x%08x\n", sv, dv);
+		printf("\tLUT.uDEV2_CFG: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
 
@@ -154,9 +154,9 @@ int lut_verify_regs(struct vioc_lut_t *lut)
 	dv = read_reg(&d->uVIOC0_CFG);
 	sv = read_reg(&s->uVIOC0_CFG);
 	if (dv == sv) {
-		printf("%tLUT.uVIOC0_CFG: 0x%08x\n", sv);
+		printf("\tLUT.uVIOC0_CFG: 0x%08x\n", sv);
 	} else {
-		printf("%tLUT.uVIOC0_CFG: 0x%08x != 0x%08x\n", sv, dv);
+		printf("\tLUT.uVIOC0_CFG: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
 
@@ -164,9 +164,9 @@ int lut_verify_regs(struct vioc_lut_t *lut)
 	dv = read_reg(&d->uVIOC1_CFG);
 	sv = read_reg(&s->uVIOC1_CFG);
 	if (dv == sv) {
-		printf("%tLUT.uVIOC1_CFG: 0x%08x\n", sv);
+		printf("\tLUT.uVIOC1_CFG: 0x%08x\n", sv);
 	} else {
-		printf("%tLUT.uVIOC1_CFG: 0x%08x != 0x%08x\n", sv, dv);
+		printf("\tLUT.uVIOC1_CFG: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
 
@@ -174,9 +174,9 @@ int lut_verify_regs(struct vioc_lut_t *lut)
 	dv = read_reg(&d->uVIOC2_CFG);
 	sv = read_reg(&s->uVIOC2_CFG);
 	if (dv == sv) {
-		printf("%tLUT.uVIOC2_CFG: 0x%08x\n", sv);
+		printf("\tLUT.uVIOC2_CFG: 0x%08x\n", sv);
 	} else {
-		printf("%tLUT.uVIOC2_CFG: 0x%08x != 0x%08x\n", sv, dv);
+		printf("\tLUT.uVIOC2_CFG: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
 
@@ -184,9 +184,9 @@ int lut_verify_regs(struct vioc_lut_t *lut)
 	dv = read_reg(&d->uVIOC3_CFG);
 	sv = read_reg(&s->uVIOC3_CFG);
 	if (dv == sv) {
-		printf("%tLUT.uVIOC3_CFG: 0x%08x\n", sv);
+		printf("\tLUT.uVIOC3_CFG: 0x%08x\n", sv);
 	} else {
-		printf("%tLUT.uVIOC3_CFG: 0x%08x != 0x%08x\n", sv, dv);
+		printf("\tLUT.uVIOC3_CFG: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
 
@@ -194,9 +194,9 @@ int lut_verify_regs(struct vioc_lut_t *lut)
 	dv = read_reg(&d->uTABLE_IND);
 	sv = read_reg(&s->uTABLE_IND);
 	if (dv == sv) {
-		printf("%tLUT.uTABLE_IND: 0x%08x\n", sv);
+		printf("\tLUT.uTABLE_IND: 0x%08x\n", sv);
 	} else {
-		printf("%tLUT.uTABLE_IND: 0x%08x != 0x%08x\n", sv, dv);
+		printf("\tLUT.uTABLE_IND: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
 
@@ -204,9 +204,9 @@ int lut_verify_regs(struct vioc_lut_t *lut)
 	dv = read_reg(&d->uUPDATE_PEND);
 	sv = read_reg(&s->uUPDATE_PEND);
 	if (dv == sv) {
-		printf("%tLUT.uUPDATE_PEND: 0x%08x\n", sv);
+		printf("\tLUT.uUPDATE_PEND: 0x%08x\n", sv);
 	} else {
-		printf("%tLUT.uUPDATE_PEND: 0x%08x != 0x%08x\n", sv, dv);
+		printf("\tLUT.uUPDATE_PEND: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
 
@@ -214,9 +214,9 @@ int lut_verify_regs(struct vioc_lut_t *lut)
 	dv = read_reg(&d->uCSC_COEFF11_12);
 	sv = read_reg(&s->uCSC_COEFF11_12);
 	if (dv == sv) {
-		printf("%tLUT.uCSC_COEFF11_12: 0x%08x\n", sv);
+		printf("\tLUT.uCSC_COEFF11_12: 0x%08x\n", sv);
 	} else {
-		printf("%tLUT.uCSC_COEFF11_12: 0x%08x != 0x%08x\n", sv, dv);
+		printf("\tLUT.uCSC_COEFF11_12: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
 
@@ -224,9 +224,9 @@ int lut_verify_regs(struct vioc_lut_t *lut)
 	dv = read_reg(&d->uCSC_COEFF13_21);
 	sv = read_reg(&s->uCSC_COEFF13_21);
 	if (dv == sv) {
-		printf("%tLUT.uCSC_COEFF13_21: 0x%08x\n", sv);
+		printf("\tLUT.uCSC_COEFF13_21: 0x%08x\n", sv);
 	} else {
-		printf("%tLUT.uCSC_COEFF13_21: 0x%08x != 0x%08x\n", sv, dv);
+		printf("\tLUT.uCSC_COEFF13_21: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
 
@@ -234,9 +234,9 @@ int lut_verify_regs(struct vioc_lut_t *lut)
 	dv = read_reg(&d->uCSC_COEFF22_23);
 	sv = read_reg(&s->uCSC_COEFF22_23);
 	if (dv == sv) {
-		printf("%tLUT.uCSC_COEFF22_23: 0x%08x\n", sv);
+		printf("\tLUT.uCSC_COEFF22_23: 0x%08x\n", sv);
 	} else {
-		printf("%tLUT.uCSC_COEFF22_23: 0x%08x != 0x%08x\n", sv, dv);
+		printf("\tLUT.uCSC_COEFF22_23: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
 
@@ -244,9 +244,9 @@ int lut_verify_regs(struct vioc_lut_t *lut)
 	dv = read_reg(&d->uCSC_COEFF31_32);
 	sv = read_reg(&s->uCSC_COEFF31_32);
 	if (dv == sv) {
-		printf("%tLUT.uCSC_COEFF31_32: 0x%08x\n", sv);
+		printf("\tLUT.uCSC_COEFF31_32: 0x%08x\n", sv);
 	} else {
-		printf("%tLUT.uCSC_COEFF31_32: 0x%08x != 0x%08x\n", sv, dv);
+		printf("\tLUT.uCSC_COEFF31_32: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
 
@@ -254,9 +254,9 @@ int lut_verify_regs(struct vioc_lut_t *lut)
 	dv = read_reg(&d->uCSC_COEFF33);
 	sv = read_reg(&s->uCSC_COEFF33);
 	if (dv == sv) {
-		printf("%tLUT.uCSC_COEFF33: 0x%08x\n", sv);
+		printf("\tLUT.uCSC_COEFF33: 0x%08x\n", sv);
 	} else {
-		printf("%tLUT.uCSC_COEFF33: 0x%08x != 0x%08x\n", sv, dv);
+		printf("\tLUT.uCSC_COEFF33: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
 
@@ -264,9 +264,9 @@ int lut_verify_regs(struct vioc_lut_t *lut)
 	dv = read_reg(&d->uMIX_CFG);
 	sv = read_reg(&s->uMIX_CFG);
 	if (dv == sv) {
-		printf("%tLUT.uMIX_CFG: 0x%08x\n", sv);
+		printf("\tLUT.uMIX_CFG: 0x%08x\n", sv);
 	} else {
-		printf("%tLUT.uMIX_CFG: 0x%08x != 0x%08x\n", sv, dv);
+		printf("\tLUT.uMIX_CFG: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
 

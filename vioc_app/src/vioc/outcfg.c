@@ -50,7 +50,7 @@ int outcfg_verify_regs(struct vioc_outcfg_t *outcfg)
 
 	printf("VERIFY OUTCFG%d", outcfg->info.id);
 	if (outcfg->info.id < 0) {
-		printf("%tN/A\n");
+		printf("\tN/A\n");
 		return ret;
 	}
 
@@ -58,9 +58,9 @@ int outcfg_verify_regs(struct vioc_outcfg_t *outcfg)
 	dv = read_reg(&d->uMISCCFG);
 	sv = read_reg(&s->uMISCCFG);
 	if (dv == sv) {
-		printf("%tOUTCFG.uMISCCFG: 0x%08x\n", sv);
+		printf("\tOUTCFG.uMISCCFG: 0x%08x\n", sv);
 	} else {
-		printf("%tOUTCFG.uMISCCFG: 0x%08x != 0x%08x\n", sv, dv);
+		printf("\tOUTCFG.uMISCCFG: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
 

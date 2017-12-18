@@ -154,7 +154,7 @@ int rdma_verify_regs(struct vioc_rdma_t *rdma)
 
 	printf("VERIFY RDMA%d", rdma->info.id);
 	if (rdma->info.id < 0) {
-		printf("%tN/A\n");
+		printf("\tN/A\n");
 		return ret;
 	}
 
@@ -162,9 +162,9 @@ int rdma_verify_regs(struct vioc_rdma_t *rdma)
 	dv = read_reg(&d->uCTRL);
 	sv = read_reg(&s->uCTRL);
 	if (dv == sv) {
-		printf("%tRDMA.uCTRL: 0x%08x\n", sv);
+		printf("\tRDMA.uCTRL: 0x%08x\n", sv);
 	} else {
-		printf("%tRDMA.uCTRL: 0x%08x != 0x%08x\n", sv, dv);
+		printf("\tRDMA.uCTRL: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
 
@@ -172,9 +172,9 @@ int rdma_verify_regs(struct vioc_rdma_t *rdma)
 	dv = read_reg(&d->uPTS);
 	sv = read_reg(&s->uPTS);
 	if (dv == sv) {
-		printf("%tRDMA.uPTS: 0x%08x\n", sv);
+		printf("\tRDMA.uPTS: 0x%08x\n", sv);
 	} else {
-		printf("%tRDMA.uPTS: 0x%08x != 0x%08x\n", sv, dv);
+		printf("\tRDMA.uPTS: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
 
@@ -182,9 +182,9 @@ int rdma_verify_regs(struct vioc_rdma_t *rdma)
 	dv = read_reg(&d->uSIZE);
 	sv = read_reg(&s->uSIZE);
 	if (dv == sv) {
-		printf("%tRDMA.uSIZE: 0x%08x\n", sv);
+		printf("\tRDMA.uSIZE: 0x%08x\n", sv);
 	} else {
-		printf("%tRDMA.uSIZE: 0x%08x != 0x%08x\n", sv, dv);
+		printf("\tRDMA.uSIZE: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
 
@@ -192,9 +192,9 @@ int rdma_verify_regs(struct vioc_rdma_t *rdma)
 	dv = read_reg(&d->nBASE0);
 	sv = read_reg(&s->nBASE0);
 	if (dv == sv) {
-		printf("%tRDMA.nBASE0: 0x%08x\n", sv);
+		printf("\tRDMA.nBASE0: 0x%08x\n", sv);
 	} else {
-		printf("%tRDMA.nBASE0: 0x%08x != 0x%08x\n", sv, dv);
+		printf("\tRDMA.nBASE0: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
 
@@ -202,9 +202,9 @@ int rdma_verify_regs(struct vioc_rdma_t *rdma)
 	dv = read_reg(&d->nCBASE);
 	sv = read_reg(&s->nCBASE);
 	if (dv == sv) {
-		printf("%tRDMA.nCBASE: 0x%08x\n", sv);
+		printf("\tRDMA.nCBASE: 0x%08x\n", sv);
 	} else {
-		printf("%tRDMA.nCBASE: 0x%08x != 0x%08x\n", sv, dv);
+		printf("\tRDMA.nCBASE: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
 
@@ -212,9 +212,9 @@ int rdma_verify_regs(struct vioc_rdma_t *rdma)
 	dv = read_reg(&d->nBASE1);
 	sv = read_reg(&s->nBASE1);
 	if (dv == sv) {
-		printf("%tRDMA.nBASE1: 0x%08x\n", sv);
+		printf("\tRDMA.nBASE1: 0x%08x\n", sv);
 	} else {
-		printf("%tRDMA.nBASE1: 0x%08x != 0x%08x\n", sv, dv);
+		printf("\tRDMA.nBASE1: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
 
@@ -222,9 +222,9 @@ int rdma_verify_regs(struct vioc_rdma_t *rdma)
 	dv = read_reg(&d->nBASE2);
 	sv = read_reg(&s->nBASE2);
 	if (dv == sv) {
-		printf("%tRDMA.nBASE2: 0x%08x\n", sv);
+		printf("\tRDMA.nBASE2: 0x%08x\n", sv);
 	} else {
-		printf("%tRDMA.nBASE2: 0x%08x != 0x%08x\n", sv, dv);
+		printf("\tRDMA.nBASE2: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
 
@@ -232,9 +232,9 @@ int rdma_verify_regs(struct vioc_rdma_t *rdma)
 	dv = read_reg(&d->uOFFSET);
 	sv = read_reg(&s->uOFFSET);
 	if (dv == sv) {
-		printf("%tRDMA.uOFFSET: 0x%08x\n", sv);
+		printf("\tRDMA.uOFFSET: 0x%08x\n", sv);
 	} else {
-		printf("%tRDMA.uOFFSET: 0x%08x != 0x%08x\n", sv, dv);
+		printf("\tRDMA.uOFFSET: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
 
@@ -242,9 +242,9 @@ int rdma_verify_regs(struct vioc_rdma_t *rdma)
 	dv = read_reg(&d->uMISC);
 	sv = read_reg(&s->uMISC);
 	if (dv == sv) {
-		printf("%tRDMA.uMISC: 0x%08x\n", sv);
+		printf("\tRDMA.uMISC: 0x%08x\n", sv);
 	} else {
-		printf("%tRDMA.uMISC: 0x%08x != 0x%08x\n", sv, dv);
+		printf("\tRDMA.uMISC: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
 
@@ -252,9 +252,9 @@ int rdma_verify_regs(struct vioc_rdma_t *rdma)
 	dv = read_reg(&d->uALPHA);
 	sv = read_reg(&s->uALPHA);
 	if (dv == sv) {
-		printf("%tRDMA.uALPHA: 0x%08x\n", sv);
+		printf("\tRDMA.uALPHA: 0x%08x\n", sv);
 	} else {
-		printf("%tRDMA.uALPHA: 0x%08x != 0x%08x\n", sv, dv);
+		printf("\tRDMA.uALPHA: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
 
@@ -262,9 +262,9 @@ int rdma_verify_regs(struct vioc_rdma_t *rdma)
 	dv = read_reg(&d->uSTATUS);
 	sv = read_reg(&s->uSTATUS);
 	if (dv == sv) {
-		printf("%tRDMA.uSTATUS: 0x%08x\n", sv);
+		printf("\tRDMA.uSTATUS: 0x%08x\n", sv);
 	} else {
-		printf("%tRDMA.uSTATUS: 0x%08x != 0x%08x\n", sv, dv);
+		printf("\tRDMA.uSTATUS: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
 
@@ -272,9 +272,9 @@ int rdma_verify_regs(struct vioc_rdma_t *rdma)
 	dv = read_reg(&d->uIRQMSK);
 	sv = read_reg(&s->uIRQMSK);
 	if (dv == sv) {
-		printf("%tRDMA.uIRQMSK: 0x%08x\n", sv);
+		printf("\tRDMA.uIRQMSK: 0x%08x\n", sv);
 	} else {
-		printf("%tRDMA.uIRQMSK: 0x%08x != 0x%08x\n", sv, dv);
+		printf("\tRDMA.uIRQMSK: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
 
@@ -282,9 +282,9 @@ int rdma_verify_regs(struct vioc_rdma_t *rdma)
 	dv = read_reg(&d->nSBASE0);
 	sv = read_reg(&s->nSBASE0);
 	if (dv == sv) {
-		printf("%tRDMA.nSBASE0: 0x%08x\n", sv);
+		printf("\tRDMA.nSBASE0: 0x%08x\n", sv);
 	} else {
-		printf("%tRDMA.nSBASE0: 0x%08x != 0x%08x\n", sv, dv);
+		printf("\tRDMA.nSBASE0: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
 
@@ -292,9 +292,9 @@ int rdma_verify_regs(struct vioc_rdma_t *rdma)
 	dv = read_reg(&d->nRBASE0);
 	sv = read_reg(&s->nRBASE0);
 	if (dv == sv) {
-		printf("%tRDMA.nRBASE0: 0x%08x\n", sv);
+		printf("\tRDMA.nRBASE0: 0x%08x\n", sv);
 	} else {
-		printf("%tRDMA.nRBASE0: 0x%08x != 0x%08x\n", sv, dv);
+		printf("\tRDMA.nRBASE0: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
 
@@ -302,9 +302,9 @@ int rdma_verify_regs(struct vioc_rdma_t *rdma)
 	dv = read_reg(&d->nRBASE1);
 	sv = read_reg(&s->nRBASE1);
 	if (dv == sv) {
-		printf("%tRDMA.nRBASE1: 0x%08x\n", sv);
+		printf("\tRDMA.nRBASE1: 0x%08x\n", sv);
 	} else {
-		printf("%tRDMA.nRBASE1: 0x%08x != 0x%08x\n", sv, dv);
+		printf("\tRDMA.nRBASE1: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
 
@@ -312,9 +312,9 @@ int rdma_verify_regs(struct vioc_rdma_t *rdma)
 	dv = read_reg(&d->nRBASE2);
 	sv = read_reg(&s->nRBASE2);
 	if (dv == sv) {
-		printf("%tRDMA.nRBASE2: 0x%08x\n", sv);
+		printf("\tRDMA.nRBASE2: 0x%08x\n", sv);
 	} else {
-		printf("%tRDMA.nRBASE2: 0x%08x != 0x%08x\n", sv, dv);
+		printf("\tRDMA.nRBASE2: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
 
@@ -322,9 +322,9 @@ int rdma_verify_regs(struct vioc_rdma_t *rdma)
 	dv = read_reg(&d->uCROPSIZE);
 	sv = read_reg(&s->uCROPSIZE);
 	if (dv == sv) {
-		printf("%tRDMA.uCROPSIZE: 0x%08x\n", sv);
+		printf("\tRDMA.uCROPSIZE: 0x%08x\n", sv);
 	} else {
-		printf("%tRDMA.uCROPSIZE: 0x%08x != 0x%08x\n", sv, dv);
+		printf("\tRDMA.uCROPSIZE: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
 
@@ -332,9 +332,9 @@ int rdma_verify_regs(struct vioc_rdma_t *rdma)
 	dv = read_reg(&d->uCROPPOS);
 	sv = read_reg(&s->uCROPPOS);
 	if (dv == sv) {
-		printf("%tRDMA.uCROPPOS: 0x%08x\n", sv);
+		printf("\tRDMA.uCROPPOS: 0x%08x\n", sv);
 	} else {
-		printf("%tRDMA.uCROPPOS: 0x%08x != 0x%08x\n", sv, dv);
+		printf("\tRDMA.uCROPPOS: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
 
