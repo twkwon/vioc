@@ -260,3 +260,426 @@ int wmix_setup(struct vioc_wmix_t *wmix)
 
 	return ret;
 }
+
+int wmix_verify_regs(struct vioc_wmix_t *wmix)
+{
+	int ret = 0;
+	VIOC_WMIX *s, *d;
+	reg_t sv, dv;
+
+	s = &wmix->reg;
+	d = wmix->addr;
+
+	printf("VERIFY WMIX%d", wmix->info.id);
+	if (wmix->info.id < 0) {
+		printf("%tN/A\n");
+		return ret;
+	}
+
+	/* CTRL */
+	dv = read_reg(&d->uCTRL);
+	sv = read_reg(&s->uCTRL);
+	if (dv == sv) {
+		printf("%tWMIX.uCTRL: 0x%08x\n", sv);
+	} else {
+		printf("%tWMIX.uCTRL: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* MBG0 */
+	dv = read_reg(&d->uBG.nREG[0]);
+	sv = read_reg(&s->uBG.nREG[0]);
+	if (dv == sv) {
+		printf("%tWMIX.uBG.nREG[0]: 0x%08x\n", sv);
+	} else {
+		printf("%tWMIX.uBG.nREG[0]: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* MBG1 */
+	dv = read_reg(&d->uBG.nREG[1]);
+	sv = read_reg(&s->uBG.nREG[1]);
+	if (dv == sv) {
+		printf("%tWMIX.uBG.nREG[1]: 0x%08x\n", sv);
+	} else {
+		printf("%tWMIX.uBG.nREG[1]: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* SIZE */
+	dv = read_reg(&d->uSIZE);
+	sv = read_reg(&s->uSIZE);
+	if (dv == sv) {
+		printf("%tWMIX.uSIZE: 0x%08x\n", sv);
+	} else {
+		printf("%tWMIX.uSIZE: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* POS0 */
+	dv = read_reg(&d->uPOS0);
+	sv = read_reg(&s->uPOS0);
+	if (dv == sv) {
+		printf("%tWMIX.uPOS0: 0x%08x\n", sv);
+	} else {
+		printf("%tWMIX.uPOS0: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* POS1 */
+	dv = read_reg(&d->uPOS1);
+	sv = read_reg(&s->uPOS1);
+	if (dv == sv) {
+		printf("%tWMIX.uPOS1: 0x%08x\n", sv);
+	} else {
+		printf("%tWMIX.uPOS1: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* POS2 */
+	dv = read_reg(&d->uPOS2);
+	sv = read_reg(&s->uPOS2);
+	if (dv == sv) {
+		printf("%tWMIX.uPOS2: 0x%08x\n", sv);
+	} else {
+		printf("%tWMIX.uPOS2: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* POS3 */
+	dv = read_reg(&d->uPOS3);
+	sv = read_reg(&s->uPOS3);
+	if (dv == sv) {
+		printf("%tWMIX.uPOS3: 0x%08x\n", sv);
+	} else {
+		printf("%tWMIX.uPOS3: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/*-----------------------------------------------------*/
+	/* MKEY00 */
+	dv = read_reg(&d->uKEY0.nREG[0]);
+	sv = read_reg(&s->uKEY0.nREG[0]);
+	if (dv == sv) {
+		printf("%tWMIX.uKEY0.nREG[0]: 0x%08x\n", sv);
+	} else {
+		printf("%tWMIX.uKEY0.nREG[0]: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* MKEY01 */
+	dv = read_reg(&d->uKEY0.nREG[1]);
+	sv = read_reg(&s->uKEY0.nREG[1]);
+	if (dv == sv) {
+		printf("%tWMIX.uKEY0.nREG[1]: 0x%08x\n", sv);
+	} else {
+		printf("%tWMIX.uKEY0.nREG[1]: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* MKEY02 */
+	dv = read_reg(&d->uKEY0.nREG[2]);
+	sv = read_reg(&s->uKEY0.nREG[2]);
+	if (dv == sv) {
+		printf("%tWMIX.uKEY0.nREG[2]: 0x%08x\n", sv);
+	} else {
+		printf("%tWMIX.uKEY0.nREG[2]: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* MKEY03 */
+	dv = read_reg(&d->uKEY0.nREG[3]);
+	sv = read_reg(&s->uKEY0.nREG[3]);
+	if (dv == sv) {
+		printf("%tWMIX.uKEY0.nREG[3]: 0x%08x\n", sv);
+	} else {
+		printf("%tWMIX.uKEY0.nREG[3]: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/*-----------------------------------------------------*/
+	/* MKEY10 */
+	dv = read_reg(&d->uKEY1.nREG[0]);
+	sv = read_reg(&s->uKEY1.nREG[0]);
+	if (dv == sv) {
+		printf("%tWMIX.uKEY1.nREG[0]: 0x%08x\n", sv);
+	} else {
+		printf("%tWMIX.uKEY1.nREG[0]: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* MKEY11 */
+	dv = read_reg(&d->uKEY1.nREG[1]);
+	sv = read_reg(&s->uKEY1.nREG[1]);
+	if (dv == sv) {
+		printf("%tWMIX.uKEY1.nREG[1]: 0x%08x\n", sv);
+	} else {
+		printf("%tWMIX.uKEY1.nREG[1]: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* MKEY12 */
+	dv = read_reg(&d->uKEY1.nREG[2]);
+	sv = read_reg(&s->uKEY1.nREG[2]);
+	if (dv == sv) {
+		printf("%tWMIX.uKEY1.nREG[2]: 0x%08x\n", sv);
+	} else {
+		printf("%tWMIX.uKEY1.nREG[2]: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* MKEY13 */
+	dv = read_reg(&d->uKEY1.nREG[3]);
+	sv = read_reg(&s->uKEY1.nREG[3]);
+	if (dv == sv) {
+		printf("%tWMIX.uKEY1.nREG[3]: 0x%08x\n", sv);
+	} else {
+		printf("%tWMIX.uKEY1.nREG[3]: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/*-----------------------------------------------------*/
+	/* MKEY20 */
+	dv = read_reg(&d->uKEY2.nREG[0]);
+	sv = read_reg(&s->uKEY2.nREG[0]);
+	if (dv == sv) {
+		printf("%tWMIX.uKEY2.nREG[0]: 0x%08x\n", sv);
+	} else {
+		printf("%tWMIX.uKEY2.nREG[0]: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* MKEY21 */
+	dv = read_reg(&d->uKEY2.nREG[1]);
+	sv = read_reg(&s->uKEY2.nREG[1]);
+	if (dv == sv) {
+		printf("%tWMIX.uKEY2.nREG[1]: 0x%08x\n", sv);
+	} else {
+		printf("%tWMIX.uKEY2.nREG[1]: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* MKEY22 */
+	dv = read_reg(&d->uKEY2.nREG[2]);
+	sv = read_reg(&s->uKEY2.nREG[2]);
+	if (dv == sv) {
+		printf("%tWMIX.uKEY2.nREG[2]: 0x%08x\n", sv);
+	} else {
+		printf("%tWMIX.uKEY2.nREG[2]: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* MKEY23 */
+	dv = read_reg(&d->uKEY2.nREG[3]);
+	sv = read_reg(&s->uKEY2.nREG[3]);
+	if (dv == sv) {
+		printf("%tWMIX.uKEY2.nREG[3]: 0x%08x\n", sv);
+	} else {
+		printf("%tWMIX.uKEY2.nREG[3]: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* STAT */
+	dv = read_reg(&d->uSTATUS);
+	sv = read_reg(&s->uSTATUS);
+	if (dv == sv) {
+		printf("%tWMIX.uSTATUS: 0x%08x\n", sv);
+	} else {
+		printf("%tWMIX.uSTATUS: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* IRQMSK */
+	dv = read_reg(&d->uIRQMSK);
+	sv = read_reg(&s->uIRQMSK);
+	if (dv == sv) {
+		printf("%tWMIX.uIRQMSK: 0x%08x\n", sv);
+	} else {
+		printf("%tWMIX.uIRQMSK: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/*-----------------------------------------------------*/
+	/* ACON0 */
+	dv = read_reg(&d->uACON0);
+	sv = read_reg(&s->uACON0);
+	if (dv == sv) {
+		printf("%tWMIX.uACON0: 0x%08x\n", sv);
+	} else {
+		printf("%tWMIX.uACON0: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* CCON0 */
+	dv = read_reg(&d->uCCON0);
+	sv = read_reg(&s->uCCON0);
+	if (dv == sv) {
+		printf("%tWMIX.uCCON0: 0x%08x\n", sv);
+	} else {
+		printf("%tWMIX.uCCON0: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* ROPC00 */
+	dv = read_reg(&d->uROPC0.nREG[0]);
+	sv = read_reg(&s->uROPC0.nREG[0]);
+	if (dv == sv) {
+		printf("%tWMIX.uROPC0.nREG[0]: 0x%08x\n", sv);
+	} else {
+		printf("%tWMIX.uROPC0.nREG[0]: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* ROPC01 */
+	dv = read_reg(&d->uROPC0.nREG[1]);
+	sv = read_reg(&s->uROPC0.nREG[1]);
+	if (dv == sv) {
+		printf("%tWMIX.uROPC0.nREG[1]: 0x%08x\n", sv);
+	} else {
+		printf("%tWMIX.uROPC0.nREG[1]: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* MAT01 */
+	dv = read_reg(&d->uPAT0.nREG[0]);
+	sv = read_reg(&s->uPAT0.nREG[0]);
+	if (dv == sv) {
+		printf("%tWMIX.uPAT0.nREG[0]: 0x%08x\n", sv);
+		ret = -1;
+	} else {
+		printf("%tWMIX.uPAT0.nREG[0]: 0x%08x != 0x%08x\n", sv, dv);
+	}
+
+	/* MAT02 */
+	dv = read_reg(&d->uPAT0.nREG[1]);
+	sv = read_reg(&s->uPAT0.nREG[1]);
+	if (dv == sv) {
+		printf("%tWMIX.uPAT0.nREG[1]: 0x%08x\n", sv);
+	} else {
+		printf("%tWMIX.uPAT0.nREG[1]: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/*-----------------------------------------------------*/
+	/* ACON1 */
+	dv = read_reg(&d->uACON1);
+	sv = read_reg(&s->uACON1);
+	if (dv == sv) {
+		printf("%tWMIX.uACON1: 0x%08x\n", sv);
+	} else {
+		printf("%tWMIX.uACON1: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* CCON1 */
+	dv = read_reg(&d->uCCON1);
+	sv = read_reg(&s->uCCON1);
+	if (dv == sv) {
+		printf("%tWMIX.uCCON1: 0x%08x\n", sv);
+	} else {
+		printf("%tWMIX.uCCON1: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* ROPC10 */
+	dv = read_reg(&d->uROPC1.nREG[0]);
+	sv = read_reg(&s->uROPC1.nREG[0]);
+	if (dv == sv) {
+		printf("%tWMIX.uROPC1.nREG[0]: 0x%08x\n", sv);
+	} else {
+		printf("%tWMIX.uROPC1.nREG[0]: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+	/* ROPC11 */
+	dv = read_reg(&d->uROPC1.nREG[1]);
+	sv = read_reg(&s->uROPC1.nREG[1]);
+	if (dv == sv) {
+		printf("%tWMIX.uROPC1.nREG[1]: 0x%08x\n", sv);
+	} else {
+		printf("%tWMIX.uROPC1.nREG[1]: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* MAT10 */
+	dv = read_reg(&d->uPAT1.nREG[0]);
+	sv = read_reg(&s->uPAT1.nREG[0]);
+	if (dv == sv) {
+		printf("%tWMIX.uPAT1.nREG[0]: 0x%08x\n", sv);
+	} else {
+		printf("%tWMIX.uPAT1.nREG[0]: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* MAT11 */
+	dv = read_reg(&d->uPAT1.nREG[1]);
+	sv = read_reg(&s->uPAT1.nREG[1]);
+	if (dv == sv) {
+		printf("%tWMIX.uPAT1.nREG[1]: 0x%08x\n", sv);
+	} else {
+		printf("%tWMIX.uPAT1.nREG[1]: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/*-----------------------------------------------------*/
+	/* ACON2 */
+	dv = read_reg(&d->uACON2);
+	sv = read_reg(&s->uACON2);
+	if (dv == sv) {
+		printf("%tWMIX.uACON2: 0x%08x\n", sv);
+	} else {
+		printf("%tWMIX.uACON2: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* CCON2 */
+	dv = read_reg(&d->uCCON2);
+	sv = read_reg(&s->uCCON2);
+	if (dv == sv) {
+		printf("%tWMIX.uCCON2: 0x%08x\n", sv);
+	} else {
+		printf("%tWMIX.uCCON2: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* ROPC20 */
+	dv = read_reg(&d->uROPC2.nREG[0]);
+	sv = read_reg(&s->uROPC2.nREG[0]);
+	if (dv == sv) {
+		printf("%tWMIX.uROPC2.nREG[0]: 0x%08x\n", sv);
+	} else {
+		printf("%tWMIX.uROPC2.nREG[0]: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* ROPC21 */
+	dv = read_reg(&d->uROPC2.nREG[1]);
+	sv = read_reg(&s->uROPC2.nREG[1]);
+	if (dv == sv) {
+		printf("%tWMIX.uROPC2.nREG[1]: 0x%08x\n", sv);
+	} else {
+		printf("%tWMIX.uROPC2.nREG[1]: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* MAT20 */
+	dv = read_reg(&d->uPAT2.nREG[0]);
+	sv = read_reg(&s->uPAT2.nREG[0]);
+	if (dv == sv) {
+		printf("%tWMIX.uPAT2.nREG[0]: 0x%08x\n", sv);
+	} else {
+		printf("%tWMIX.uPAT2.nREG[0]: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* MAT21 */
+	dv = read_reg(&d->uPAT2.nREG[1]);
+	sv = read_reg(&s->uPAT2.nREG[1]);
+	if (dv == sv) {
+		printf("%tWMIX.uPAT2.nREG[1]: 0x%08x\n", sv);
+	} else {
+		printf("%tWMIX.uPAT2.nREG[1]: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	return ret;
+}

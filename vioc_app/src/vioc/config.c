@@ -49,3 +49,41 @@ int config_setup(struct vioc_config_t *config)
 
 	return ret;
 }
+
+int config_verify_regs(struct vioc_config_t *config)
+{
+	int ret = 0;
+	VIOC_IREQ_CONFIG *s, *d;
+	reg_t sv, dv;
+
+	s = &config->reg;
+	d = config->addr;
+
+	printf("VERIFY CONFIG%d", config->info.id);
+	if (config->info.id < 0) {
+		printf("%tN/A\n");
+		return ret;
+	}
+
+	/* CFG_PATH_EDR */
+	dv = read_reg(&d->uPATH_EDR);
+	sv = read_reg(&s->uPATH_EDR);
+	if (dv == sv) {
+		printf("%tCONFIG.uPATH_EDR: 0x%08x\n", sv);
+	} else {
+		printf("%tCONFIG.uPATH_EDR: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* CFG_MISC0 */
+	dv = read_reg(&d->uMISC0);
+	sv = read_reg(&s->uMISC0);
+	if (dv == sv) {
+		printf("%tCONFIG.uMISC0: 0x%08x\n", sv);
+	} else {
+		printf("%tCONFIG.uMISC0: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	return ret;
+}

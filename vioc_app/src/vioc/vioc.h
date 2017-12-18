@@ -63,7 +63,7 @@ enum vioc_components {
 struct vioc_component_t {
 	int id;						// component id
 	int addr_offset;			// offset from vioc base address
-	unsigned int reset_bit;		// soft-reset bit
+	int nr_regs;				// number of mapped regs
 };
 
 struct vioc_rdma_t {
@@ -92,8 +92,8 @@ struct vioc_sc_t {
 
 struct vioc_lut_t {
 	struct vioc_component_t info;
-	//VIOC_LUT *addr;	//TODO: I don't know how to set the LUT.
-	//VIOC_LUT reg;		//TODO:
+	VIOC_LUT *addr;
+	VIOC_LUT reg;
 };
 
 struct vioc_outcfg_t {
@@ -161,27 +161,35 @@ struct test_data_t {
  *-----------------------------------------------------------------------------
  */
  
-int setup_vioc_path(struct test_case_t *, struct test_data_t *);
+extern int setup_vioc_path(struct test_case_t *, struct test_data_t *);
+extern int shoot_test(struct test_case_t *);
 
 extern int rdma_map_regs(struct vioc_rdma_t *, struct test_data_reg_val_t *);
+extern int rdma_verify_regs(struct vioc_rdma_t *);
 extern int rdma_setup(struct vioc_rdma_t *);
 
 extern int wdma_map_regs(struct vioc_wdma_t *, struct test_data_reg_val_t *);
+extern int wdma_verify_regs(struct vioc_wdma_t *);
 extern int wdma_setup(struct vioc_wdma_t *);
 
 extern int wmix_map_regs(struct vioc_wmix_t *, struct test_data_reg_val_t *);
+extern int wmix_verify_regs(struct vioc_wmix_t *);
 extern int wmix_setup(struct vioc_wmix_t *);
 
 extern int sc_map_regs(struct vioc_sc_t *, struct test_data_reg_val_t *);
+extern int sc_verify_regs(struct vioc_sc_t *);
 extern int sc_setup(struct vioc_sc_t *);
 
 extern int lut_map_regs(struct vioc_lut_t *, struct test_data_reg_val_t *);
+extern int lut_verify_regs(struct vioc_lut_t *);
 extern int lut_setup(struct vioc_lut_t *);
 
 extern int outcfg_map_regs(struct vioc_outcfg_t *, struct test_data_reg_val_t *);
+extern int outcfg_verify_regs(struct vioc_outcfg_t *);
 extern int outcfg_setup(struct vioc_outcfg_t *);
 
 extern int config_map_regs(struct vioc_config_t *, struct test_data_reg_val_t *);
+extern int config_verify_regs(struct vioc_config_t *);
 extern int config_setup(struct vioc_config_t *);
 
 #endif /*__VIOC_H__*/

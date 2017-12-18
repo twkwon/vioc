@@ -145,3 +145,191 @@ int wdma_setup(struct vioc_wdma_t *wdma)
 
 	return ret;
 }
+
+int wdma_verify_regs(struct vioc_wdma_t *wdma)
+{
+	int ret = 0;
+	VIOC_WDMA *s, *d;
+	reg_t sv, dv;
+
+	s = &wdma->reg;
+	d = wdma->addr;
+
+	printf("VERIFY WDMA%d", wdma->info.id);
+	if (wdma->info.id < 0) {
+		printf("%tN/A\n");
+		return ret;
+	}
+
+	/* CTRL */
+	dv = read_reg(&d->uCTRL);
+	sv = read_reg(&s->uCTRL);
+	if (dv == sv) {
+		printf("%tWDMA.uCTRL: 0x%08x\n", sv);
+	} else {
+		printf("%tWDMA.uCTRL: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* RATE */
+	dv = read_reg(&d->uRATE);
+	sv = read_reg(&s->uRATE);
+	if (dv == sv) {
+		printf("%tWDMA.uRATE: 0x%08x\n", sv);
+	} else {
+		printf("%tWDMA.uRATE: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* SIZE */
+	dv = read_reg(&d->uSIZE);
+	sv = read_reg(&s->uSIZE);
+	if (dv == sv) {
+		printf("%tWDMA.uSIZE: 0x%08x\n", sv);
+	} else {
+		printf("%tWDMA.uSIZE: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* BASE0 */
+	dv = read_reg(&d->nBASE0);
+	sv = read_reg(&s->nBASE0);
+	if (dv == sv) {
+		printf("%tWDMA.nBASE0: 0x%08x\n", sv);
+	} else {
+		printf("%tWDMA.nBASE0: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* CADDR (RO) */
+	dv = read_reg(&d->nCBASE);
+	sv = read_reg(&s->nCBASE);
+	if (dv == sv) {
+		printf("%tWDMA.nCBASE: 0x%08x\n", sv);
+	} else {
+		printf("%tWDMA.nCBASE: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* BASE1 */
+	dv = read_reg(&d->nBASE1);
+	sv = read_reg(&s->nBASE1);
+	if (dv == sv) {
+		printf("%tWDMA.nBASE1: 0x%08x\n", sv);
+	} else {
+		printf("%tWDMA.nBASE1: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* BASE2 */
+	dv = read_reg(&d->nBASE2);
+	sv = read_reg(&s->nBASE2);
+	if (dv == sv) {
+		printf("%tWDMA.nBASE2: 0x%08x\n", sv);
+	} else {
+		printf("%tWDMA.nBASE2: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* OFFS */
+	dv = read_reg(&d->uOFFSET);
+	sv = read_reg(&s->uOFFSET);
+	if (dv == sv) {
+		printf("%tWDMA.uOFFSET: 0x%08x\n", sv);
+	} else {
+		printf("%tWDMA.uOFFSET: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* BG0 */
+	dv = read_reg(&d->uBG.nREG[0]);
+	sv = read_reg(&s->uBG.nREG[0]);
+	if (dv == sv) {
+		printf("%tWDMA.uBG[0]: 0x%08x\n", sv);
+	} else {
+		printf("%tWDMA.uBG[0]: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* BG1 */
+	dv = read_reg(&d->uBG.nREG[1]);
+	sv = read_reg(&s->uBG.nREG[1]);
+	if (dv == sv) {
+		printf("%tWDMA.uBG[1]: 0x%08x\n", sv);
+	} else {
+		printf("%tWDMA.uBG[1]: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* PTS */
+	dv = read_reg(&d->uRATE);
+	sv = read_reg(&s->uRATE);
+	if (dv == sv) {
+		printf("%tWDMA.uRATE: 0x%08x\n", sv);
+	} else {
+		printf("%tWDMA.uRATE: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* DMAT0 */
+	dv = read_reg(&d->uDMAT.nREG[0]);
+	sv = read_reg(&s->uDMAT.nREG[0]);
+	if (dv == sv) {
+		printf("%tWDMA.uDMAT[0]: 0x%08x\n", sv);
+	} else {
+		printf("%tWDMA.uDMAT[0]: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* DMAT1 */
+	dv = read_reg(&d->uDMAT.nREG[1]);
+	sv = read_reg(&s->uDMAT.nREG[1]);
+	if (dv == sv) {
+		printf("%tWDMA.uDMAT[1]: 0x%08x\n", sv);
+	} else {
+		printf("%tWDMA.uDMAT[1]: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* ROLL */
+	dv = read_reg(&d->uROLL);
+	sv = read_reg(&s->uROLL);
+	if (dv == sv) {
+		printf("%tWDMA.uRATE: 0x%08x\n", sv);
+		ret = -1;
+	} else {
+		printf("%tWDMA.uRATE: 0x%08x != 0x%08x\n", sv, dv);
+	}
+
+	/* SBASE */
+	dv = read_reg(&d->nSBASE);
+	sv = read_reg(&s->nSBASE);
+	if (dv == sv) {
+		printf("%tWDMA.nSBASE: 0x%08x\n", sv);
+	} else {
+		printf("%tWDMA.nSBASE: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* IRQSTS */
+	dv = read_reg(&d->uIRQSTS);
+	sv = read_reg(&s->uIRQSTS);
+	if (dv == sv) {
+		printf("%tWDMA.uIRQSTS: 0x%08x\n", sv);
+	} else {
+		printf("%tWDMA.uIRQSTS: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* IRQMSK */
+	dv = read_reg(&d->uIRQMSK);
+	sv = read_reg(&s->uIRQMSK);
+	if (dv == sv) {
+		printf("%tWDMA.uIRQMSK: 0x%08x\n", sv);
+	} else {
+		printf("%tWDMA.uIRQMSK: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	return ret;
+}

@@ -3,141 +3,272 @@
 #include <vioc.h>
 
 
-int rdma_map_regs(struct vioc_rdma_t *rdma, struct test_data_reg_val_t *data)
+int lut_map_regs(struct vioc_lut_t *lut, struct test_data_reg_val_t *data)
 {
-	int idx;
+	int idx, reg_start_offset;
 	int *dat;
-	VIOC_RDMA *reg;
+	VIOC_LUT *reg;
 
 	/* read value of physical register */
-	rdma->reg = *rdma->addr;
+	lut->reg = *lut->addr;
 
-	reg = &rdma->reg;
+	reg = &lut->reg;
 	dat = data->reg;
 
-	/* rdma's starting index is 2 (0:id, 1:plugin) */
-	idx = 2;
+	/* lut's starting index is 2 (0:id, 1:plugin) */
+	reg_start_offset = 2;
+	idx = reg_start_offset;
 
 	/* CTRL */
-	map_reg(reg->uCTRL.bREG.INTL,	dat[idx++]);
-	map_reg(reg->uCTRL.bREG.BFMD,	dat[idx++]);
-	map_reg(reg->uCTRL.bREG.BFIELD,	dat[idx++]);
-	map_reg(reg->uCTRL.bREG.IEN,	dat[idx++]);
-	map_reg(reg->uCTRL.bREG.STRM,	dat[idx++]);
-	map_reg(reg->uCTRL.bREG.DM_3D,	dat[idx++]);
-	map_reg(reg->uCTRL.bREG.ASEL,	dat[idx++]);
-	map_reg(reg->uCTRL.bREG.UVI,	dat[idx++]);
-	map_reg(reg->uCTRL.bREG.NUVIH,	dat[idx++]);
-	map_reg(reg->uCTRL.bREG.DIT,	dat[idx++]);
-	map_reg(reg->uCTRL.bREG.DITS,	dat[idx++]);
-	map_reg(reg->uCTRL.bREG.R2YMD,	dat[idx++]);
-	map_reg(reg->uCTRL.bREG.R2Y,	dat[idx++]);
-	map_reg(reg->uCTRL.bREG.UPD,	dat[idx++]);
-	map_reg(reg->uCTRL.bREG.PD,		dat[idx++]);
-	map_reg(reg->uCTRL.bREG.SWAP,	dat[idx++]);
-	map_reg(reg->uCTRL.bREG.AEN,	dat[idx++]);
-	map_reg(reg->uCTRL.bREG.Y2RMD,	dat[idx++]);
-	map_reg(reg->uCTRL.bREG.Y2R,	dat[idx++]);
-	map_reg(reg->uCTRL.bREG.BR,		dat[idx++]);
-	map_reg(reg->uCTRL.bREG.R2YM2,	dat[idx++]);
-	map_reg(reg->uCTRL.bREG.Y2RM2,	dat[idx++]);
-	map_reg(reg->uCTRL.bREG.FMT,	dat[idx++]);
+	map_reg(reg->uCTRL.bREG.EN,	dat[idx++]);
 
-	/* PTS */
-	map_reg(reg->uPTS.bREG.BOT, dat[idx++]);
-	map_reg(reg->uPTS.bREG.TOP, dat[idx++]);
+	/* DEV0_CFG */
+	map_reg(reg->uDEV0_CFG.bREG.EN,		dat[idx++]);
+	map_reg(reg->uDEV0_CFG.bREG.SEL,	dat[idx++]);
 
-	/* SIZE */
-	map_reg(reg->uSIZE.bREG.HEIGHT,	dat[idx++]);
-	map_reg(reg->uSIZE.bREG.WIDTH,	dat[idx++]);
+	/* DEV1_CFG */
+	map_reg(reg->uDEV1_CFG.bREG.EN,		dat[idx++]);
+	map_reg(reg->uDEV1_CFG.bREG.SEL,	dat[idx++]);
 
-	/* BASE0 */
-	map_reg(reg->nBASE0, dat[idx++]);
+	/* DEV2_CFG */
+	map_reg(reg->uDEV2_CFG.bREG.EN,		dat[idx++]);
+	map_reg(reg->uDEV2_CFG.bREG.SEL,	dat[idx++]);
 
-	/* CADDR (RO) */
-	map_reg(reg->nCBASE, dat[idx++]);
+	/* VIOC0_CFG */
+	map_reg(reg->uVIOC0_CFG.bREG.EN,	dat[idx++]);
+	map_reg(reg->uVIOC0_CFG.bREG.SEL,	dat[idx++]);
 
-	/* BASE1 */
-	map_reg(reg->nBASE1, dat[idx++]);
+	/* VIOC1_CFG */
+	map_reg(reg->uVIOC1_CFG.bREG.EN,	dat[idx++]);
+	map_reg(reg->uVIOC1_CFG.bREG.SEL,	dat[idx++]);
 
-	/* BASE2 */
-	map_reg(reg->nBASE2, dat[idx++]);
+	/* VIOC2_CFG */
+	map_reg(reg->uVIOC2_CFG.bREG.EN,	dat[idx++]);
+	map_reg(reg->uVIOC2_CFG.bREG.SEL,	dat[idx++]);
 
-	/* OFFS */
-	map_reg(reg->uOFFSET.bREG.OFFSET1,	dat[idx++]);
-	map_reg(reg->uOFFSET.bREG.OFFSET0,	dat[idx++]);
+	/* VIOC3_CFG */
+	map_reg(reg->uVIOC3_CFG.bREG.EN,	dat[idx++]);
+	map_reg(reg->uVIOC3_CFG.bREG.SEL,	dat[idx++]);
 
-	/* MISC */
-	map_reg(reg->uMISC.bREG.ISSUE,	dat[idx++]);
-	map_reg(reg->uMISC.bREG.LPEN,	dat[idx++]);
-	map_reg(reg->uMISC.bREG.R2YMD,	dat[idx++]);
-	map_reg(reg->uMISC.bREG.Y2RMD,	dat[idx++]);
-	map_reg(reg->uMISC.bREG.FMT10, 	dat[idx++]);
-	map_reg(reg->uMISC.bREG.FMT,	dat[idx++]);
+	/* TABLE_IND */
+	map_reg(reg->uTABLE_IND.bREG.IND,	dat[idx++]);
 
-	/* ALPHA */
-	map_reg(reg->uALPHA.bREG.ALPHA1, dat[idx++]);
-	map_reg(reg->uALPHA.bREG.ALPHA0, dat[idx++]);
+	/* UPDATE_PEND */
+	map_reg(reg->uUPDATE_PEND.bREG.SEL,	dat[idx++]);
 
-	/* STAT */
-	map_reg(reg->uSTATUS.bREG.STS_FDLY,		dat[idx++]);
-	map_reg(reg->uSTATUS.bREG.STS_BFIELD,	dat[idx++]);
-	map_reg(reg->uSTATUS.bREG.STS_DEVEOF,	dat[idx++]);
-	map_reg(reg->uSTATUS.bREG.STS_EOFWAIT,	dat[idx++]);
-	map_reg(reg->uSTATUS.bREG.STS_BOTRDY,	dat[idx++]);
-	map_reg(reg->uSTATUS.bREG.STS_TOPRDY,	dat[idx++]);
-	map_reg(reg->uSTATUS.bREG.BOTRDY,		dat[idx++]);
-	map_reg(reg->uSTATUS.bREG.TOPRDY,		dat[idx++]);
-	map_reg(reg->uSTATUS.bREG.EOFWAITR,		dat[idx++]);
-	map_reg(reg->uSTATUS.bREG.UPDDONE,		dat[idx++]);
-	map_reg(reg->uSTATUS.bREG.EOFFALL,		dat[idx++]);
-	map_reg(reg->uSTATUS.bREG.EOFRISE,		dat[idx++]);
-	map_reg(reg->uSTATUS.bREG.CFGDONE,		dat[idx++]);
+	/* CSC_COEFF11_12 */
+	map_reg(reg->uCSC_COEFF11_12.bREG.COEFF12,	dat[idx++]);
+	map_reg(reg->uCSC_COEFF11_12.bREG.COEFF11,	dat[idx++]);
 
-	/* IRQMSK */
-	map_reg(reg->uIRQMSK.bREG.BOTRDY,	dat[idx++]);
-	map_reg(reg->uIRQMSK.bREG.TOPRDY,	dat[idx++]);
-	map_reg(reg->uIRQMSK.bREG.EOFWAITR,	dat[idx++]);
-	map_reg(reg->uIRQMSK.bREG.UPDDONE,	dat[idx++]);
-	map_reg(reg->uIRQMSK.bREG.DEOFF,	dat[idx++]);
-	map_reg(reg->uIRQMSK.bREG.DEOFR,	dat[idx++]);
-	map_reg(reg->uIRQMSK.bREG.CFGDONE,	dat[idx++]);
+	/* CSC_COEFF13_21 */
+	map_reg(reg->uCSC_COEFF13_21.bREG.COEFF21,	dat[idx++]);
+	map_reg(reg->uCSC_COEFF13_21.bREG.COEFF13,	dat[idx++]);
 
-	/* SBASE0 */
-	map_reg(reg->nSBASE0, dat[idx++]);
+	/* CSC_COEFF22_23 */
+	map_reg(reg->uCSC_COEFF22_23.bREG.COEFF23,	dat[idx++]);
+	map_reg(reg->uCSC_COEFF22_23.bREG.COEFF22,	dat[idx++]);
 
-	/* RBASE0 */
-	map_reg(reg->nRBASE0, dat[idx++]);
+	/* CSC_COEFF31_32 */
+	map_reg(reg->uCSC_COEFF31_32.bREG.COEFF32,	dat[idx++]);
+	map_reg(reg->uCSC_COEFF31_32.bREG.COEFF31,	dat[idx++]);
 
-	/* RBASE1 */
-	map_reg(reg->nRBASE1, dat[idx++]);
+	/* CSC_COEFF33 */
+	map_reg(reg->uCSC_COEFF33.bREG.COEFF33, 	dat[idx++]);
 
-	/* RBASE2 */
-	map_reg(reg->nRBASE2, dat[idx++]);
+	/* MIX_CFG */
+	map_reg(reg->uMIX_CFG.bREG.R2YSEL,	dat[idx++]);
+	map_reg(reg->uMIX_CFG.bREG.BYP,		dat[idx++]);
 
-	/* CROP_SIZE */
-	map_reg(reg->uCROPSIZE.bREG.HEIGHT,	dat[idx++]);
-	map_reg(reg->uCROPSIZE.bREG.WIDTH,	dat[idx++]);
-
-	/* CROP_POS */
-	map_reg(reg->uCROPPOS.bREG.YPOS,	dat[idx++]);
-	map_reg(reg->uCROPPOS.bREG.XPOS,	dat[idx++]);
-
-	return (idx - 1 - 2);
+	return (idx - reg_start_offset - 1);
 }
 
-int rdma_setup(struct vioc_rdma_t *rdma)
+int lut_setup(struct vioc_lut_t *lut)
 {
 	int ret = 0;
 
-	/* check UPD (update-bit) is 0 */
-	if (rdma->reg.uCTRL.bREG.UPD) {
-		rdma->reg.uCTRL.bREG.UPD = 0;
-		printf("RDMA%d UPD was set, so disable it\n", rdma->info.id);
+	/* set physical register */
+	*lut->addr = lut->reg;
+
+	/* set lut table */
+	//TODO: set lut table
+
+	return ret;
+}
+
+int lut_verify_regs(struct vioc_lut_t *lut)
+{
+	int ret = 0;
+	VIOC_LUT *s, *d;
+	reg_t sv, dv;
+
+	s = &lut->reg;
+	d = lut->addr;
+
+	printf("VERIFY LUT%d", lut->info.id);
+	if (lut->info.id < 0) {
+		printf("%tN/A\n");
+		return ret;
 	}
 
-	/* set physical register */
-	*rdma->addr = rdma->reg;
+	/* CTRL */
+	dv = read_reg(&d->uCTRL);
+	sv = read_reg(&s->uCTRL);
+	if (dv == sv) {
+		printf("%tLUT.uCTRL: 0x%08x\n", sv);
+	} else {
+		printf("%tLUT.uCTRL: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* DEV0_CFG */
+	dv = read_reg(&d->uDEV0_CFG);
+	sv = read_reg(&s->uDEV0_CFG);
+	if (dv == sv) {
+		printf("%tLUT.uDEV0_CFG: 0x%08x\n", sv);
+	} else {
+		printf("%tLUT.uDEV0_CFG: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* DEV1_CFG */
+	dv = read_reg(&d->uDEV1_CFG);
+	sv = read_reg(&s->uDEV1_CFG);
+	if (dv == sv) {
+		printf("%tLUT.uDEV1_CFG: 0x%08x\n", sv);
+	} else {
+		printf("%tLUT.uDEV1_CFG: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* DEV2_CFG */
+	dv = read_reg(&d->uDEV2_CFG);
+	sv = read_reg(&s->uDEV2_CFG);
+	if (dv == sv) {
+		printf("%tLUT.uDEV2_CFG: 0x%08x\n", sv);
+	} else {
+		printf("%tLUT.uDEV2_CFG: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* VIOC0_CFG */
+	dv = read_reg(&d->uVIOC0_CFG);
+	sv = read_reg(&s->uVIOC0_CFG);
+	if (dv == sv) {
+		printf("%tLUT.uVIOC0_CFG: 0x%08x\n", sv);
+	} else {
+		printf("%tLUT.uVIOC0_CFG: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* VIOC1_CFG */
+	dv = read_reg(&d->uVIOC1_CFG);
+	sv = read_reg(&s->uVIOC1_CFG);
+	if (dv == sv) {
+		printf("%tLUT.uVIOC1_CFG: 0x%08x\n", sv);
+	} else {
+		printf("%tLUT.uVIOC1_CFG: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* VIOC2_CFG */
+	dv = read_reg(&d->uVIOC2_CFG);
+	sv = read_reg(&s->uVIOC2_CFG);
+	if (dv == sv) {
+		printf("%tLUT.uVIOC2_CFG: 0x%08x\n", sv);
+	} else {
+		printf("%tLUT.uVIOC2_CFG: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* VIOC3_CFG */
+	dv = read_reg(&d->uVIOC3_CFG);
+	sv = read_reg(&s->uVIOC3_CFG);
+	if (dv == sv) {
+		printf("%tLUT.uVIOC3_CFG: 0x%08x\n", sv);
+	} else {
+		printf("%tLUT.uVIOC3_CFG: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* TABLE_IND */
+	dv = read_reg(&d->uTABLE_IND);
+	sv = read_reg(&s->uTABLE_IND);
+	if (dv == sv) {
+		printf("%tLUT.uTABLE_IND: 0x%08x\n", sv);
+	} else {
+		printf("%tLUT.uTABLE_IND: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* UPDATE_PEND */
+	dv = read_reg(&d->uUPDATE_PEND);
+	sv = read_reg(&s->uUPDATE_PEND);
+	if (dv == sv) {
+		printf("%tLUT.uUPDATE_PEND: 0x%08x\n", sv);
+	} else {
+		printf("%tLUT.uUPDATE_PEND: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* CSC_COEFF11_12 */
+	dv = read_reg(&d->uCSC_COEFF11_12);
+	sv = read_reg(&s->uCSC_COEFF11_12);
+	if (dv == sv) {
+		printf("%tLUT.uCSC_COEFF11_12: 0x%08x\n", sv);
+	} else {
+		printf("%tLUT.uCSC_COEFF11_12: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* CSC_COEFF13_21 */
+	dv = read_reg(&d->uCSC_COEFF13_21);
+	sv = read_reg(&s->uCSC_COEFF13_21);
+	if (dv == sv) {
+		printf("%tLUT.uCSC_COEFF13_21: 0x%08x\n", sv);
+	} else {
+		printf("%tLUT.uCSC_COEFF13_21: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* CSC_COEFF22_23 */
+	dv = read_reg(&d->uCSC_COEFF22_23);
+	sv = read_reg(&s->uCSC_COEFF22_23);
+	if (dv == sv) {
+		printf("%tLUT.uCSC_COEFF22_23: 0x%08x\n", sv);
+	} else {
+		printf("%tLUT.uCSC_COEFF22_23: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* CSC_COEFF31_32 */
+	dv = read_reg(&d->uCSC_COEFF31_32);
+	sv = read_reg(&s->uCSC_COEFF31_32);
+	if (dv == sv) {
+		printf("%tLUT.uCSC_COEFF31_32: 0x%08x\n", sv);
+	} else {
+		printf("%tLUT.uCSC_COEFF31_32: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* CSC_COEFF33 */
+	dv = read_reg(&d->uCSC_COEFF33);
+	sv = read_reg(&s->uCSC_COEFF33);
+	if (dv == sv) {
+		printf("%tLUT.uCSC_COEFF33: 0x%08x\n", sv);
+	} else {
+		printf("%tLUT.uCSC_COEFF33: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* MIX_CFG */
+	dv = read_reg(&d->uMIX_CFG);
+	sv = read_reg(&s->uMIX_CFG);
+	if (dv == sv) {
+		printf("%tLUT.uMIX_CFG: 0x%08x\n", sv);
+	} else {
+		printf("%tLUT.uMIX_CFG: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
 
 	return ret;
 }

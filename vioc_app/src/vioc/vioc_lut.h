@@ -35,99 +35,147 @@
 #define LUT_COLOR_DEPTH		10
 #define LUT_TABLE_SIZE		(1 << LUT_COLOR_DEPTH)
 
-#if 0	//TODO
+
 typedef	struct {
-	unsigned		RESERVED0	: 8;
-	unsigned		EDR_S		: 1;
-	unsigned		RESERVED1	: 7;
-	unsigned		RESERVED2	:16;
-} VIOC_CONFIG_PATH_EDR;
+	unsigned	EN			: 4;
+	unsigned	RESERVED0	:28;
+} VIOC_LUT_CTRL;
 
 typedef	union {
 	unsigned long			nREG;
-	VIOC_CONFIG_PATH_EDR	bREG;
-} VIOC_CONFIG_PATH_EDR_u;
+	VIOC_LUT_CTRL			bREG;
+} VIOC_LUT_CTRL_u;
 
-typedef struct {
-	unsigned 			L0_EVS_SEL	:  3;
-	unsigned 						:  1;
-	unsigned 			L1_EVS_SEL	:  3;
-	unsigned 						:  1;
-	unsigned 			L2_EVS_SEL	:  3;
-	unsigned 						:  5;
-	unsigned 			MIX00		:  1;
-	unsigned 			MIX03		:  1;
-	unsigned 			MIX10		:  1;
-	unsigned 			MIX13		:  1;
-	unsigned 						:  2;
-	unsigned 			MIX30		:  1;
-	unsigned 						:  1;
-	unsigned 			MIX40		:  1;
-	unsigned 						:  1;
-	unsigned 			MIX50		:  1;
-	unsigned 						:  1;
-	unsigned 			MIX60		:  1;
-	unsigned 						:  1;
-	unsigned 			RD12		:  1;
-	unsigned 			RD14		:  1;
-} VIOC_CONFIG_MISC0;
+typedef	struct {
+	unsigned	SEL			: 8;
+	unsigned	RESERVED0	:23;
+	unsigned	EN			: 1;
+} VIOC_LUT_DEV_CFG;
 
 typedef	union {
-	unsigned long		nREG;
-	VIOC_CONFIG_MISC0	bREG;
-} VIOC_CONFIG_MISC0_u;
+	unsigned long			nREG;
+	VIOC_LUT_DEV_CFG		bREG;
+} VIOC_LUT_DEV_CFG_u;
 
-typedef	struct	_VIOC_IREQ_CONFIG
+typedef	struct {
+	unsigned	SEL			: 8;
+	unsigned	RESERVED0	:23;
+	unsigned	EN			: 1;
+} VIOC_LUT_VIOC_CFG;
+
+typedef	union {
+	unsigned long			nREG;
+	VIOC_LUT_VIOC_CFG		bREG;
+} VIOC_LUT_VIOC_CFG_u;
+
+typedef	struct {
+	unsigned	IND			: 2;
+	unsigned	RESERVED0	:30;
+} VIOC_LUT_TABLE_IND;
+
+typedef	union {
+	unsigned long			nREG;
+	VIOC_LUT_TABLE_IND		bREG;
+} VIOC_LUT_TABLE_IND_u;
+
+typedef	struct {
+	unsigned	SEL			: 8;
+	unsigned	RESERVED0	:24;
+} VIOC_LUT_UPDATE_PEND;
+
+typedef	union {
+	unsigned long			nREG;
+	VIOC_LUT_UPDATE_PEND	bREG;
+} VIOC_LUT_UPDATE_PEND_u;
+
+typedef	struct {
+	unsigned	COEFF11		:12;
+	unsigned	RESERVED0	: 4;
+	unsigned	COEFF12		:12;
+	unsigned	RESERVED1	: 4;
+} VIOC_LUT_CSC_COEFF11_12;
+
+typedef	union {
+	unsigned long			nREG;
+	VIOC_LUT_CSC_COEFF11_12	bREG;
+} VIOC_LUT_CSC_COEFF11_12_u;
+
+typedef	struct {
+	unsigned	COEFF13		:12;
+	unsigned	RESERVED0	: 4;
+	unsigned	COEFF21		:12;
+	unsigned	RESERVED1	: 4;
+} VIOC_LUT_CSC_COEFF13_21;
+
+typedef	union {
+	unsigned long			nREG;
+	VIOC_LUT_CSC_COEFF13_21	bREG;
+} VIOC_LUT_CSC_COEFF13_21_u;
+
+typedef	struct {
+	unsigned	COEFF22		:12;
+	unsigned	RESERVED0	: 4;
+	unsigned	COEFF23		:12;
+	unsigned	RESERVED1	: 4;
+} VIOC_LUT_CSC_COEFF22_23;
+
+typedef	union {
+	unsigned long			nREG;
+	VIOC_LUT_CSC_COEFF22_23	bREG;
+} VIOC_LUT_CSC_COEFF22_23_u;
+
+typedef	struct {
+	unsigned	COEFF31		:12;
+	unsigned	RESERVED0	: 4;
+	unsigned	COEFF32		:12;
+	unsigned	RESERVED1	: 4;
+} VIOC_LUT_CSC_COEFF31_32;
+
+typedef	union {
+	unsigned long			nREG;
+	VIOC_LUT_CSC_COEFF31_32	bREG;
+} VIOC_LUT_CSC_COEFF31_32_u;
+
+typedef	struct {
+	unsigned	COEFF33		:12;
+	unsigned	RESERVED0	:20;
+} VIOC_LUT_CSC_COEFF33;
+
+typedef	union {
+	unsigned long			nREG;
+	VIOC_LUT_CSC_COEFF33	bREG;
+} VIOC_LUT_CSC_COEFF33_u;
+
+typedef	struct {
+	unsigned	BYP			: 1;
+	unsigned	RESERVED0	: 3;
+	unsigned	R2YSEL		: 3;
+	unsigned	RESERVED1	:25;
+} VIOC_LUT_MIX_CFG;
+
+typedef	union {
+	unsigned long			nREG;
+	VIOC_LUT_MIX_CFG		bREG;
+} VIOC_LUT_MIX_CFG_u;
+
+typedef	struct	_VIOC_LUT
 {
-	volatile VIOC_IREQ_IREQ_u 			uRAWSTATUS;			// 0x00, 0x04
-	volatile VIOC_IREQ_IREQ_u 			uSYNCSTATUS;		// 0x08, 0x0C
-	volatile VIOC_IREQ_IREQ_u 			uIREQSELECT;		// 0x10, 0x14
-	volatile VIOC_IREQ_IREQ_u 			nIRQMASKSET;		// 0x18, 0x1C
-	volatile VIOC_IREQ_IREQ_u 			nIRQMASKCLR;		// 0x20, 0x24
-	volatile VIOC_IREQ_VECTORID_u 		nVECTORID;			// 0x28
-	unsigned int 						reserved0[3];		// 0x2C, 0x30, 0x34
-
-	volatile VIOC_CONFIG_TEST_LOOP_u	TEST_LOOP;			// 0x38
-	volatile VIOC_CONFIG_PATH_EDR_u		uPATH_EDR;			// 0x3C
-	volatile VIOC_CONFIG_MISC0_u 		uMISC0;				// 0x40
-	volatile VIOC_CONFIG_PATH_u 		uSC0;				// 0x44
-	volatile VIOC_CONFIG_PATH_u 		uSC1;				// 0x48
-	volatile VIOC_CONFIG_PATH_u 		uSC2;				// 0x4C
-	volatile VIOC_CONFIG_PATH_u 		uSC3;				// 0x50
-	volatile VIOC_CONFIG_PATH_u 		uVIQE;				// 0x54
-	volatile VIOC_CONFIG_PATH_u 		uDEINTLS;			// 0x58
-	unsigned int 						reserved1;			// 0x5C
-
-	volatile VIOC_CONFIG_PATH_u 		uFCDEC0;			// 0x60
-	volatile VIOC_CONFIG_PATH_u 		uFCDEC1;			// 0x64
-	unsigned int 						reserved2[2];		// 0x68, 0x6C
-	volatile VIOC_CONFIG_PATH_u 		uFCENC0;			// 0x70
-	volatile VIOC_CONFIG_PATH_u 		uFCENC1;			// 0x74
-	volatile VIOC_CONFIG_PATH_u 		uFDELAY0;			// 0x78
-	volatile VIOC_CONFIG_PATH_u 		uFDELAY1;			// 0x7C
-	unsigned int 						reserved3;			// 0x80
-	volatile VIOC_CONFIG_MISC1_u 		uMISC1;				// 0x84
-
-	unsigned int 						reserved4[12];		// 0x88~0xB4
-	volatile VIOC_CONFIG_VIN_SEL_u		VIN_SEL;			// 0xB8
-	volatile VIOC_CONFIG_DEV_SEL_u		DEV_SEL;			// 0xBC
-
-	unsigned int						nARID;				// 0xC0
-	unsigned int						nAWID;				// 0xC4
-	volatile VIOC_POWER_AUTOPD_u 		uAUTOPD;			// 0xC8
-	volatile VIOC_POWER_CLKCTRL_u 		uCLKCTRL;			// 0xCC
-	volatile VIOC_POWER_BLOCKS_u 		uPOWERDOWN;			// 0xD0, 0xD4
-	volatile VIOC_POWER_BLOCKS_u 		uSOFTRESET;			// 0xD8, 0xDC
-
-	unsigned int 						reserved5[6];		// 0xE0~0xF4
-	volatile VIOC_CONFIG_PATH_u 		uSC4;				// 0xF8
-	unsigned int 						reserved6[11];		// 0xFC~0x124
-	volatile VIOC_POWER_BLOCKS2_u 		uPOWERDOWN2;		// 0x128
-	volatile VIOC_POWER_BLOCKS2_u 		uSOFTRESET2;		// 0x12C
-	volatile VIOC_CONFIG_PATH_u 		uVIQE1;				// 0x130
-	unsigned int 						reserved7[3];		// 0x134~13C
-	volatile VIOC_CONFIG_WDMA_MISC_u	uWDMA_MISC;			// 0x140
-}	VIOC_IREQ_CONFIG,*PVIOC_IREQ_CONFIG;
-#endif
+	volatile VIOC_LUT_CTRL_u 			uCTRL;			// 0x00
+	volatile VIOC_LUT_DEV_CFG_u 		uDEV0_CFG;		// 0x04
+	volatile VIOC_LUT_DEV_CFG_u 		uDEV1_CFG;		// 0x08
+	volatile VIOC_LUT_DEV_CFG_u 		uDEV2_CFG;		// 0x0C
+	volatile VIOC_LUT_VIOC_CFG_u 		uVIOC0_CFG;		// 0x10
+	volatile VIOC_LUT_VIOC_CFG_u 		uVIOC1_CFG;		// 0x14
+	volatile VIOC_LUT_VIOC_CFG_u 		uVIOC2_CFG;		// 0x18
+	volatile VIOC_LUT_VIOC_CFG_u 		uVIOC3_CFG;		// 0x1C
+	volatile VIOC_LUT_TABLE_IND_u 		uTABLE_IND;		// 0x20
+	volatile VIOC_LUT_UPDATE_PEND_u 	uUPDATE_PEND;	// 0x24
+	volatile VIOC_LUT_CSC_COEFF11_12_u 	uCSC_COEFF11_12;// 0x28
+	volatile VIOC_LUT_CSC_COEFF13_21_u 	uCSC_COEFF13_21;// 0x2C
+	volatile VIOC_LUT_CSC_COEFF22_23_u 	uCSC_COEFF22_23;// 0x30
+	volatile VIOC_LUT_CSC_COEFF31_32_u 	uCSC_COEFF31_32;// 0x34
+	volatile VIOC_LUT_CSC_COEFF33_u 	uCSC_COEFF33;	// 0x38
+	volatile VIOC_LUT_MIX_CFG_u 		uMIX_CFG;		// 0x3C
+}	VIOC_LUT,*PVIOC_LUT;
 
 #endif

@@ -13,6 +13,7 @@ static int run_test_single(struct test_case_t *, struct test_data_t *);
 
 int test_main(char *file_name, char *pmap_name)
 {
+	char c;
 	int ret = 0;
 	int nr_test;	// number of test cases
 	struct test_case_t *test_case;
@@ -56,11 +57,18 @@ int test_main(char *file_name, char *pmap_name)
 	list_for_each(pos, &test_data->list) {
 		td = list_entry(pos, struct test_data_t, list);
 
+		/* for debugging */
 		print_parsed_data(td);
 
-		run_test_single(test_case, td);
+		/* run single test case */
+		printf("Do you want to run the test%d (%s)? [y/n] ", td->test_no, td->test_name);
+		c = getchar();
+		if (c == 'y' || c == 'Y') {
+			run_test_single(test_case, td);
+		} else {
+			printf("Skip the test%d (%s)\n", td->test_no, td->test_name);
+		}
 	}
-
 
 err3:
 	vioc_munmap(test_case->vioc_base_addr);
@@ -83,12 +91,12 @@ static int run_test_single(struct test_case_t *test_case, struct test_data_t *te
 	/*
 	 * setup vioc components & path
 	 */
-	setup_vioc_path(test_case, test_data);
+	ret = setup_vioc_path(test_case, test_data);
 
 	/*
 	 * run single test case
 	 */
-
+	ret = shoot_test(test_case);
 
 	return ret;
 }
