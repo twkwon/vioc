@@ -16,43 +16,43 @@ int sc_map_regs(struct vioc_sc_t *sc, struct test_data_reg_val_t *data)
 	dat = data->reg;
 
 	/* sc's starting index is 2 (0:id, 1:plugin) */
-	reg_start_offset = 2;
+	reg_start_offset = REG_START_OFFSET_SC;
 	idx = reg_start_offset;
 
 	/* CTRL */
-	map_reg(reg->uCTRL.bREG.MODE_3D,	dat[idx++]);
-	map_reg(reg->uCTRL.bREG.UPD,		dat[idx++]);
-	map_reg(reg->uCTRL.bREG.BP,			dat[idx++]);
+	map_reg(reg->uCTRL.bREG.MODE_3D,	dat[idx]); idx++;
+	map_reg(reg->uCTRL.bREG.UPD,		dat[idx]); idx++;
+	map_reg(reg->uCTRL.bREG.BP,			dat[idx]); idx++;
 
 	/* SSIZE */
-	map_reg(reg->uSRCSIZE.bREG.HEIGHT,	dat[idx++]);
-	map_reg(reg->uSRCSIZE.bREG.WIDTH,	dat[idx++]);
+	map_reg(reg->uSRCSIZE.bREG.HEIGHT,	dat[idx]); idx++;
+	map_reg(reg->uSRCSIZE.bREG.WIDTH,	dat[idx]); idx++;
 
 	/* DSIZE */
-	map_reg(reg->uDSTSIZE.bREG.HEIGHT,	dat[idx++]);
-	map_reg(reg->uDSTSIZE.bREG.WIDTH,	dat[idx++]);
+	map_reg(reg->uDSTSIZE.bREG.HEIGHT,	dat[idx]); idx++;
+	map_reg(reg->uDSTSIZE.bREG.WIDTH,	dat[idx]); idx++;
 
 	/* OPOS */
-	map_reg(reg->uOUTPOS.bREG.YPOS, dat[idx++]);
-	map_reg(reg->uOUTPOS.bREG.XPOS, dat[idx++]);
+	map_reg(reg->uOUTPOS.bREG.YPOS, dat[idx]); idx++;
+	map_reg(reg->uOUTPOS.bREG.XPOS, dat[idx]); idx++;
 
 	/* OSIZE */
-	map_reg(reg->uOUTSIZE.bREG.HEIGHT,	dat[idx++]);
-	map_reg(reg->uOUTSIZE.bREG.WIDTH,	dat[idx++]);
+	map_reg(reg->uOUTSIZE.bREG.HEIGHT,	dat[idx]); idx++;
+	map_reg(reg->uOUTSIZE.bREG.WIDTH,	dat[idx]); idx++;
 
 	/* IRQSTS */
-	map_reg(reg->uSTATUS.bREG.ERR,		dat[idx++]);
-	map_reg(reg->uSTATUS.bREG.EOFFALL,	dat[idx++]);
-	map_reg(reg->uSTATUS.bREG.EOFRISE,	dat[idx++]);
-	map_reg(reg->uSTATUS.bREG.UPDDONE,	dat[idx++]);
+	map_reg(reg->uSTATUS.bREG.ERR,		dat[idx]); idx++;
+	map_reg(reg->uSTATUS.bREG.EOFFALL,	dat[idx]); idx++;
+	map_reg(reg->uSTATUS.bREG.EOFRISE,	dat[idx]); idx++;
+	map_reg(reg->uSTATUS.bREG.UPDDONE,	dat[idx]); idx++;
 
 	/* IRQMSK */
-	map_reg(reg->uIRQMSK.bREG.ERR,		dat[idx++]);
-	map_reg(reg->uIRQMSK.bREG.EOFFALL,	dat[idx++]);
-	map_reg(reg->uIRQMSK.bREG.EOFRISE,	dat[idx++]);
-	map_reg(reg->uIRQMSK.bREG.UPDDONE,	dat[idx++]);
+	map_reg(reg->uIRQMSK.bREG.ERR,		dat[idx]); idx++;
+	map_reg(reg->uIRQMSK.bREG.EOFFALL,	dat[idx]); idx++;
+	map_reg(reg->uIRQMSK.bREG.EOFRISE,	dat[idx]); idx++;
+	map_reg(reg->uIRQMSK.bREG.UPDDONE,	dat[idx]); idx++;
 
-	return (idx - reg_start_offset - 1);
+	return (idx - reg_start_offset);
 }
 
 int sc_setup(struct vioc_sc_t *sc)

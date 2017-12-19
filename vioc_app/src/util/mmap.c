@@ -9,8 +9,6 @@
 #include <mmap.h>
 #include <vioc.h>
 
-#define MMAP_ADDR	(BASE_ADDR_VIOC)	/* VIOC base address */
-#define MMAP_LEN	(0x00100000)		/* 1 MBytea */
 
 addr_t *vioc_mmap(addr_t paddr, unsigned int size)
 {
@@ -24,10 +22,10 @@ addr_t *vioc_mmap(addr_t paddr, unsigned int size)
 	}
 
 	if (0 == paddr) {
-		paddr = MMAP_ADDR;
+		paddr = MMAP_DEFAULT_ADDR;
 	}
 	if (0 == size) {
-		size = MMAP_LEN;
+		size = MMAP_DEFAULT_LEN;
 	}
 
 	vaddr = (addr_t *)mmap(0,
@@ -51,7 +49,7 @@ err_fd:
 
 void vioc_munmap(addr_t *vaddr)
 {
-	munmap(vaddr, MMAP_LEN);
+	munmap(vaddr, MMAP_DEFAULT_LEN);
 }
 
 int test_mmap(void)
@@ -67,7 +65,7 @@ int test_mmap(void)
 		exit(1);
 	}
 
-	paddr = MMAP_ADDR + 0xd000;
+	paddr = MMAP_DEFAULT_ADDR + 0xd000;
 	length = 0x1000;
 
 	vaddr = (unsigned int *)mmap(0,

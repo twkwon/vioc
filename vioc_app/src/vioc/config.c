@@ -15,29 +15,29 @@ int config_map_regs(struct vioc_config_t *config, struct test_data_reg_val_t *da
 	reg = &config->reg;
 	dat = data->reg;
 
-	/* config's starting index is 2 (0:id, 1:plugin) */
-	reg_start_offset = 0;
+	/* config's starting index is 0 */
+	reg_start_offset = REG_START_OFFSET_CONFIG;
 	idx = reg_start_offset;
 
 	/* CFG_PATH_EDR */
-	map_reg(reg->uPATH_EDR.bREG.EDR_S,		dat[idx++]);
+	map_reg(reg->uPATH_EDR.bREG.EDR_S,		dat[idx]); idx++;
 
 	/* CFG_MISC0 */
-	map_reg(reg->uMISC0.bREG.RD14,			dat[idx++]);
-	map_reg(reg->uMISC0.bREG.RD12,			dat[idx++]);
-	map_reg(reg->uMISC0.bREG.MIX60,			dat[idx++]);
-	map_reg(reg->uMISC0.bREG.MIX50,			dat[idx++]);
-	map_reg(reg->uMISC0.bREG.MIX40,			dat[idx++]);
-	map_reg(reg->uMISC0.bREG.MIX30,			dat[idx++]);
-	map_reg(reg->uMISC0.bREG.MIX13,			dat[idx++]);
-	map_reg(reg->uMISC0.bREG.MIX10,			dat[idx++]);
-	map_reg(reg->uMISC0.bREG.MIX03,			dat[idx++]);
-	map_reg(reg->uMISC0.bREG.MIX00,			dat[idx++]);
-	map_reg(reg->uMISC0.bREG.L2_EVS_SEL,	dat[idx++]);
-	map_reg(reg->uMISC0.bREG.L1_EVS_SEL,	dat[idx++]);
-	map_reg(reg->uMISC0.bREG.L0_EVS_SEL,	dat[idx++]);
+	map_reg(reg->uMISC0.bREG.RD14,			dat[idx]); idx++;
+	map_reg(reg->uMISC0.bREG.RD12,			dat[idx]); idx++;
+	map_reg(reg->uMISC0.bREG.MIX60,			dat[idx]); idx++;
+	map_reg(reg->uMISC0.bREG.MIX50,			dat[idx]); idx++;
+	map_reg(reg->uMISC0.bREG.MIX40,			dat[idx]); idx++;
+	map_reg(reg->uMISC0.bREG.MIX30,			dat[idx]); idx++;
+	map_reg(reg->uMISC0.bREG.MIX13,			dat[idx]); idx++;
+	map_reg(reg->uMISC0.bREG.MIX10,			dat[idx]); idx++;
+	map_reg(reg->uMISC0.bREG.MIX03,			dat[idx]); idx++;
+	map_reg(reg->uMISC0.bREG.MIX00,			dat[idx]); idx++;
+	map_reg(reg->uMISC0.bREG.L2_EVS_SEL,	dat[idx]); idx++;
+	map_reg(reg->uMISC0.bREG.L1_EVS_SEL,	dat[idx]); idx++;
+	map_reg(reg->uMISC0.bREG.L0_EVS_SEL,	dat[idx]); idx++;
 
-	return (idx - reg_start_offset - 1);
+	return (idx - reg_start_offset);
 }
 
 int config_setup(struct vioc_config_t *config)

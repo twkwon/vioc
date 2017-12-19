@@ -10,6 +10,8 @@
 #include <vioc_outcfg.h>
 #include <vioc_ireq.h>
 
+#include <test.h>
+
 #define REG_OFFSET(offset)	(offset / sizeof(addr_t))
 
 #define read_reg(reg)		(*(volatile addr_t *)(reg))
@@ -110,7 +112,7 @@ struct vioc_config_t {
 
 struct test_case_t {
 	int test_no;
-	char test_name[64];
+	char test_name[SIZE_OF_TEST_NAME];
 	addr_t *vioc_base_addr;
 	struct vioc_rdma_t rdma1;
 	struct vioc_rdma_t rdma2;
@@ -140,7 +142,7 @@ struct test_data_reg_val_t {
 
 struct test_data_t {
 	int test_no;
-	char test_name[64];
+	char test_name[SIZE_OF_TEST_NAME];
 	struct test_data_reg_val_t rdma1;
 	struct test_data_reg_val_t rdma2;
 	struct test_data_reg_val_t rdma3;

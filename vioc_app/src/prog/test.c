@@ -84,8 +84,8 @@ static int run_test_single(struct test_case_t *test_case, struct test_data_t *te
 {
 	int ret = 0;
 	printf("\n\n==================================\n");
-	printf("     RUN TEST CASE No.%d\n", test_case->test_no);
-	printf("      - %s\n", test_case->test_name);
+	printf("     RUN TEST CASE No.%d\n", test_data->test_no);
+	printf("      - %s\n", test_data->test_name);
 	printf("==================================\n");
 
 	/*

@@ -48,7 +48,7 @@ int parse_test_case(char *file_name, struct test_data_t *test_data)
 		list_add_tail(&tdata->list, &test_data->list);
 	}
 
-	print_all_list(tcase, test_data);
+	//print_all_list(tcase, test_data);
 	delete_all_list(tcase);
 	free(tcase);
 
@@ -75,13 +75,13 @@ int read_data(FILE *fp, struct getbuf_t *tcase)
 		gb = (struct getbuf_t *)malloc(sizeof(struct getbuf_t));
 
 		printf("\nRetrieved line of length %zu (excluding terminate NULL character)\n", read);
-		printf("line: %s", line);
+		printf("getline: %s", line);
 
 		gb->idx = nr_test++;
 		gb->buf_size = read + 1;
 		gb->buf = calloc(gb->buf_size, sizeof(char));
 		memcpy(gb->buf, line, (gb->buf_size * sizeof(char)));
-		printf("gb->buf (size %d): %s", gb->buf_size, gb->buf);
+		printf("\ngb->buf (size %d): %s", gb->buf_size, gb->buf);
 
 		list_add_tail(&gb->list, &tcase->list);
 		//list_add(&gb->list, &tcase->list);
@@ -96,8 +96,8 @@ int parser(struct test_data_t *tdata, struct getbuf_t *tcase, int test_no)
 	struct list_head *pos = NULL;
 	struct getbuf_t *gb = NULL;
 	int i, j, start_pos;
-	int nr_vioc, nr_vioc_start[16] = {0};
-	int nr_regs, nr_regs_end[128] = {0};
+	int nr_vioc, nr_vioc_start[NUMBER_OF_VIOC_COMPONENTS] = {0};
+	int nr_regs, nr_regs_end[NUMBER_OF_REG_DATA] = {0};
 	char c;
 	char *buf = NULL;   // temp buf
 	char *start_addr;	// start address of vioc component
@@ -125,10 +125,10 @@ int parser(struct test_data_t *tdata, struct getbuf_t *tcase, int test_no)
 		sscanf(buf+i, "%c", &c);
 		//printf("%c", c);
 		if (',' == c) {
-			printf("',' is %dth\n", i);
+			//printf("',' is %dth\n", i);
 			nr_regs_end[nr_regs++] = i;
 		} else if (':' == c) {
-			printf("':' is %dth\n", i);
+			//printf("':' is %dth\n", i);
 			nr_vioc_start[nr_vioc++] = i + 1;
 		}
 		i++;
@@ -154,7 +154,7 @@ int parser(struct test_data_t *tdata, struct getbuf_t *tcase, int test_no)
 				count++;
 			}
 		}
-		printf("\ncase(%d): start_pos(%d) count(%d)\n", i, start_pos, count);
+		printf("case(%d): start_pos(%d) count(%d)\n", i, start_pos, count);
 		start_addr = buf + nr_vioc_start[i];
 		offset = 0;
 
@@ -165,13 +165,13 @@ int parser(struct test_data_t *tdata, struct getbuf_t *tcase, int test_no)
 
 			if (j == 0) {
 				diff = nr_regs_end[start_pos] - (nr_vioc_start[i] - 1);
-				printf("%d = %d - %d\n", diff, nr_regs_end[start_pos], (nr_vioc_start[i] - 1));
+				//printf("%d = %d - %d\n", diff, nr_regs_end[start_pos], (nr_vioc_start[i] - 1));
 			} else {
 				diff = nr_regs_end[start_pos + (j - 1) + 1] - nr_regs_end[start_pos + (j - 1)];
-				printf("%d = %d - %d\n", diff, nr_regs_end[start_pos + (j - 1) + 1], nr_regs_end[start_pos + (j - 1)]);
+				//printf("%d = %d - %d\n", diff, nr_regs_end[start_pos + (j - 1) + 1], nr_regs_end[start_pos + (j - 1)]);
 			}
 			offset += diff;
-			printf("offset %d\n", offset);
+			//printf("offset %d\n", offset);
 
 			switch (i) {
 				case VC_RDMA_1st:
@@ -179,16 +179,16 @@ int parser(struct test_data_t *tdata, struct getbuf_t *tcase, int test_no)
 					tdata->rdma1.nr_regs = count;
 					break;
 				case VC_RDMA_2nd:
-					tdata->rdma1.reg[j] = val;
-					tdata->rdma1.nr_regs = count;
+					tdata->rdma2.reg[j] = val;
+					tdata->rdma2.nr_regs = count;
 					break;
 				case VC_RDMA_3rd:
-					tdata->rdma1.reg[j] = val;
-					tdata->rdma1.nr_regs = count;
+					tdata->rdma3.reg[j] = val;
+					tdata->rdma3.nr_regs = count;
 					break;
 				case VC_RDMA_4th:
-					tdata->rdma1.reg[j] = val;
-					tdata->rdma1.nr_regs = count;
+					tdata->rdma4.reg[j] = val;
+					tdata->rdma4.nr_regs = count;
 					break;
 				case VC_WDMA_1st:
 					tdata->wdma1.reg[j] = val;
@@ -224,7 +224,7 @@ int parser(struct test_data_t *tdata, struct getbuf_t *tcase, int test_no)
 		}
 	}
 
-	print_parsed_data(tdata);
+	//print_parsed_data(tdata);
 
 	free(buf);
 

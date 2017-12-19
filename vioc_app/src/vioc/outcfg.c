@@ -15,18 +15,18 @@ int outcfg_map_regs(struct vioc_outcfg_t *outcfg, struct test_data_reg_val_t *da
 	reg = &outcfg->reg;
 	dat = data->reg;
 
-	/* outcfg's starting index is 2 (0:id, 1:plugin) */
-	reg_start_offset = 0;
+	/* outcfg's starting index is 0 */
+	reg_start_offset = REG_START_OFFSET_OUTCFG;
 	idx = reg_start_offset;
 
 	/* MISC */
-	map_reg(reg->uMISCCFG.bREG.MRGBSEL,	dat[idx++]);
-	map_reg(reg->uMISCCFG.bREG.M80SEL,	dat[idx++]);
-	map_reg(reg->uMISCCFG.bREG.HDVESEL,	dat[idx++]);
-	map_reg(reg->uMISCCFG.bREG.SDVESEL,	dat[idx++]);
-	map_reg(reg->uMISCCFG.bREG.HDMISEL,	dat[idx++]);
+	map_reg(reg->uMISCCFG.bREG.MRGBSEL,	dat[idx]); idx++;
+	map_reg(reg->uMISCCFG.bREG.M80SEL,	dat[idx]); idx++;
+	map_reg(reg->uMISCCFG.bREG.HDVESEL,	dat[idx]); idx++;
+	map_reg(reg->uMISCCFG.bREG.SDVESEL,	dat[idx]); idx++;
+	map_reg(reg->uMISCCFG.bREG.HDMISEL,	dat[idx]); idx++;
 
-	return (idx - reg_start_offset - 1);
+	return (idx - reg_start_offset);
 }
 
 int outcfg_setup(struct vioc_outcfg_t *outcfg)

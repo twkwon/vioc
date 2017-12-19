@@ -59,7 +59,7 @@ int setup_vioc_path(struct test_case_t *test_case, struct test_data_t *test_data
 	ret = vioc_map_component_regs(test_case, test_data);
 	if (ret) {
 		printf("[%s] error: vioc_map_component_regs()\n", __func__);
-		//goto exit;
+		goto exit;
 	}
 
 	/*
@@ -82,6 +82,8 @@ exit:
 int shoot_test(struct test_case_t *test_case)
 {
 	int ret = 0;
+
+	printf("\n\nSHOOTING !!!!!\n\n");
 
 	return 0;
 }
@@ -128,7 +130,7 @@ static int vioc_get_component_info(struct test_case_t *tc, struct test_data_t *t
 	/*
 	 * WMIX
 	 */
-	tc->wmix.info.id =td->wmix.reg[0];
+	tc->wmix.info.id = td->wmix.reg[0];
 	tc->wmix.info.addr_offset = OFFSET_WMIX_FROM_VIOC_BASE(tc->wmix.info.id);
 	tc->wmix.addr = (VIOC_WMIX *)(tc->vioc_base_addr + REG_OFFSET(tc->wmix.info.addr_offset));
 
@@ -163,7 +165,8 @@ static int vioc_get_component_info(struct test_case_t *tc, struct test_data_t *t
 
 static int vioc_map_component_regs(struct test_case_t *tc, struct test_data_t *td)
 {
-	int ret = 0, mapped = 0;
+	int ret = 0;
+	int mapped = 0, nr_regs_data = 0;
 	printf("[%s]\n", __func__);
 
 	/*
@@ -171,34 +174,44 @@ static int vioc_map_component_regs(struct test_case_t *tc, struct test_data_t *t
 	 */
 	if (tc->rdma1.info.id != -1) {
 		mapped = rdma_map_regs(&tc->rdma1, &td->rdma1);
+		nr_regs_data = td->rdma1.nr_regs - REG_START_OFFSET_RDMA;
 		tc->rdma1.info.nr_regs = mapped;
-		ret += mapped - td->rdma1.nr_regs;
+
 		printf("mapping: 1st RDMA%d %d register values[%d] %s\n", tc->rdma1.info.id,
-			mapped, td->rdma1.nr_regs, (mapped == td->rdma1.nr_regs) ? "" : "<-- error");
+			mapped, nr_regs_data, (mapped == nr_regs_data) ? "" : "<-- error");
+
+		ret += mapped - nr_regs_data;
 	}
 
 	if (tc->rdma2.info.id != -1) {
 		mapped = rdma_map_regs(&tc->rdma2, &td->rdma2);
+		nr_regs_data = td->rdma2.nr_regs - REG_START_OFFSET_RDMA;
 		tc->rdma2.info.nr_regs = mapped;
-		ret += mapped - td->rdma2.nr_regs;
+
 		printf("mapping: 2nd RDMA%d %d register values[%d] %s\n", tc->rdma2.info.id,
-			mapped, td->rdma2.nr_regs, (mapped == td->rdma2.nr_regs) ? "" : "<-- error");
+			mapped, nr_regs_data, (mapped == nr_regs_data) ? "" : "<-- error");
+
+		ret += mapped - nr_regs_data;
 	}
 
 	if (tc->rdma3.info.id != -1) {
 		mapped = rdma_map_regs(&tc->rdma3, &td->rdma3);
+		nr_regs_data = td->rdma3.nr_regs - REG_START_OFFSET_RDMA;
 		tc->rdma3.info.nr_regs = mapped;
-		ret += mapped - td->rdma3.nr_regs;
+
 		printf("mapping: 3rd RDMA%d %d register values[%d] %s\n", tc->rdma3.info.id,
-			mapped, td->rdma3.nr_regs, (mapped == td->rdma3.nr_regs) ? "" : "<-- error");
+			mapped, nr_regs_data, (mapped == nr_regs_data) ? "" : "<-- error");
+
+		ret += mapped - nr_regs_data;
 	}
 
 	if (tc->rdma4.info.id != -1) {
 		mapped = rdma_map_regs(&tc->rdma4, &td->rdma4);
+		nr_regs_data = td->rdma4.nr_regs - REG_START_OFFSET_RDMA;
 		tc->rdma4.info.nr_regs = mapped;
-		ret += mapped - td->rdma4.nr_regs;
+		ret += mapped - nr_regs_data;
 		printf("mapping: 4th RDMA%d %d register values[%d] %s\n", tc->rdma4.info.id,
-			mapped, td->rdma4.nr_regs, (mapped == td->rdma4.nr_regs) ? "" : "<-- error");
+			mapped, nr_regs_data, (mapped == nr_regs_data) ? "" : "<-- error");
 	}
 
 	/*
@@ -206,18 +219,24 @@ static int vioc_map_component_regs(struct test_case_t *tc, struct test_data_t *t
 	 */
 	if (tc->wdma1.info.id != -1) {
 		mapped = wdma_map_regs(&tc->wdma1, &td->wdma1);
+		nr_regs_data = td->wdma1.nr_regs - REG_START_OFFSET_WDMA;
 		tc->wdma1.info.nr_regs = mapped;
-		ret += mapped - td->wdma1.nr_regs;
+
 		printf("mapping: 1st WDMA%d %d register values[%d] %s\n", tc->wdma1.info.id,
-			mapped, td->wdma1.nr_regs, (mapped == td->wdma1.nr_regs) ? "" : "<-- error");
+			mapped, nr_regs_data, (mapped == nr_regs_data) ? "" : "<-- error");
+
+		ret += mapped - nr_regs_data;
 	}
 
 	if (tc->wdma2.info.id != -1) {
 		mapped = wdma_map_regs(&tc->wdma2, &td->wdma2);
+		nr_regs_data = td->wdma2.nr_regs - REG_START_OFFSET_WDMA;
 		tc->wdma2.info.nr_regs = mapped;
-		ret += mapped - td->wdma2.nr_regs;
+
 		printf("mapping: 2nd WDMA%d %d register values[%d] %s\n", tc->wdma2.info.id,
-			mapped, td->wdma2.nr_regs, (mapped == td->wdma2.nr_regs) ? "" : "<-- error");
+			mapped, nr_regs_data, (mapped == nr_regs_data) ? "" : "<-- error");
+
+		ret += mapped - nr_regs_data;
 	}
 
 	/*
@@ -225,10 +244,13 @@ static int vioc_map_component_regs(struct test_case_t *tc, struct test_data_t *t
 	 */
 	if (tc->wmix.info.id != -1) {
 		mapped = wmix_map_regs(&tc->wmix, &td->wmix);
+		nr_regs_data = td->wmix.nr_regs - REG_START_OFFSET_WMIX;
 		tc->wmix.info.nr_regs = mapped;
-		ret += mapped - td->wmix.nr_regs;
+
 		printf("mapping: WMIX%d %d register values[%d] %s\n", tc->wmix.info.id,
-			mapped, td->wmix.nr_regs, (mapped == td->wmix.nr_regs) ? "" : "<-- error");
+			mapped, nr_regs_data, (mapped == nr_regs_data) ? "" : "<-- error");
+
+		ret += mapped - nr_regs_data;
 	}
 
 	/*
@@ -236,10 +258,13 @@ static int vioc_map_component_regs(struct test_case_t *tc, struct test_data_t *t
 	 */
 	if (tc->sc.info.id != -1) {
 		mapped = sc_map_regs(&tc->sc, &td->sc);
+		nr_regs_data = td->sc.nr_regs - REG_START_OFFSET_SC;
 		tc->sc.info.nr_regs = mapped;
-		ret += mapped - td->sc.nr_regs;
+
 		printf("mapping: SC%d %d register values[%d] %s\n", tc->sc.info.id,
-			mapped, td->sc.nr_regs, (mapped == td->sc.nr_regs) ? "" : "<-- error");
+			mapped, nr_regs_data, (mapped == nr_regs_data) ? "" : "<-- error");
+
+		ret += mapped - nr_regs_data;
 	}
 
 	/*
@@ -247,10 +272,13 @@ static int vioc_map_component_regs(struct test_case_t *tc, struct test_data_t *t
 	 */
 	if (tc->lut.info.id != -1) {
 		mapped = lut_map_regs(&tc->lut, &td->lut);
+		nr_regs_data = td->lut.nr_regs - REG_START_OFFSET_LUT;
 		tc->lut.info.nr_regs = mapped;
-		ret += mapped - td->lut.nr_regs;
+
 		printf("mapping: LUT%d %d register values[%d] %s\n", tc->lut.info.id,
-			mapped, td->lut.nr_regs, (mapped == td->lut.nr_regs) ? "" : "<-- error");
+			mapped, nr_regs_data, (mapped == nr_regs_data) ? "" : "<-- error");
+
+		ret += mapped - nr_regs_data;
 	}
 
 	/*
@@ -258,10 +286,13 @@ static int vioc_map_component_regs(struct test_case_t *tc, struct test_data_t *t
 	 */
 	if (tc->outcfg.info.id != -1) {
 		mapped = outcfg_map_regs(&tc->outcfg, &td->outcfg);
+		nr_regs_data = td->outcfg.nr_regs - REG_START_OFFSET_OUTCFG;
 		tc->outcfg.info.nr_regs = mapped;
-		ret += mapped - td->outcfg.nr_regs;
+
 		printf("mapping: OUTCFG%d %d register values[%d] %s\n", tc->outcfg.info.id,
-			mapped, td->outcfg.nr_regs, (mapped == td->outcfg.nr_regs) ? "" : "<-- error");
+			mapped, nr_regs_data, (mapped == nr_regs_data) ? "" : "<-- error");
+
+		ret += mapped - nr_regs_data;
 	}
 
 	/*
@@ -269,10 +300,13 @@ static int vioc_map_component_regs(struct test_case_t *tc, struct test_data_t *t
 	 */
 	if (tc->config.info.id != -1) {
 		mapped = config_map_regs(&tc->config, &td->config);
+		nr_regs_data = td->config.nr_regs - REG_START_OFFSET_CONFIG;
 		tc->config.info.nr_regs = mapped;
-		ret += mapped - td->config.nr_regs;
+
 		printf("mapping: CONFIG%d %d register values[%d] %s\n", tc->config.info.id,
-			mapped, td->config.nr_regs, (mapped == td->config.nr_regs) ? "" : "<-- error");
+			mapped, nr_regs_data, (mapped == nr_regs_data) ? "" : "<-- error");
+
+		ret += mapped - nr_regs_data;
 	}
 
 exit:
@@ -282,7 +316,7 @@ exit:
 static int vioc_set_component_regs(struct test_case_t *tc)
 {
 	int ret = 0;
-	printf("[%s]", __func__);
+	printf("[%s]\n", __func__);
 
 	/*
 	 * RDMA - max 4 RDMAs
@@ -403,6 +437,7 @@ static int vioc_config_path(struct test_case_t *tc)
 static int vioc_verify_regs(struct test_case_t *tc)
 {
 	int ret = 0;
+	printf("[%s]\n", __func__);
 
 	/*
 	 * RDMA - max 4 RDMAs

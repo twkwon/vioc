@@ -16,233 +16,233 @@ int wmix_map_regs(struct vioc_wmix_t *wmix, struct test_data_reg_val_t *data)
 	dat = data->reg;
 
 	/* wmix's starting index is 2 (0:id, 1:plugin) */
-	reg_start_offset = 2;
+	reg_start_offset = REG_START_OFFSET_WMIX;
 	idx = reg_start_offset;
 
 	/* CTRL */
-	map_reg(reg->uCTRL.bREG.MD3_3D,	dat[idx++]);
-	map_reg(reg->uCTRL.bREG.MD2_3D,	dat[idx++]);
-	map_reg(reg->uCTRL.bREG.MD1_3D,	dat[idx++]);
-	map_reg(reg->uCTRL.bREG.MD0_3D,	dat[idx++]);
-	map_reg(reg->uCTRL.bREG.UPD,	dat[idx++]);
-	map_reg(reg->uCTRL.bREG.EN3_3D,	dat[idx++]);
-	map_reg(reg->uCTRL.bREG.EN2_3D,	dat[idx++]);
-	map_reg(reg->uCTRL.bREG.EN1_3D,	dat[idx++]);
-	map_reg(reg->uCTRL.bREG.EN0_3D,	dat[idx++]);
-	map_reg(reg->uCTRL.bREG.STR,	dat[idx++]);
-	map_reg(reg->uCTRL.bREG.OVP,	dat[idx++]);
+	map_reg(reg->uCTRL.bREG.MD3_3D,	dat[idx]); idx++;
+	map_reg(reg->uCTRL.bREG.MD2_3D,	dat[idx]); idx++;
+	map_reg(reg->uCTRL.bREG.MD1_3D,	dat[idx]); idx++;
+	map_reg(reg->uCTRL.bREG.MD0_3D,	dat[idx]); idx++;
+	map_reg(reg->uCTRL.bREG.UPD,	dat[idx]); idx++;
+	map_reg(reg->uCTRL.bREG.EN3_3D,	dat[idx]); idx++;
+	map_reg(reg->uCTRL.bREG.EN2_3D,	dat[idx]); idx++;
+	map_reg(reg->uCTRL.bREG.EN1_3D,	dat[idx]); idx++;
+	map_reg(reg->uCTRL.bREG.EN0_3D,	dat[idx]); idx++;
+	map_reg(reg->uCTRL.bREG.STR,	dat[idx]); idx++;
+	map_reg(reg->uCTRL.bREG.OVP,	dat[idx]); idx++;
 
 	/* MBG0 */
-	map_reg(reg->uBG.bREG.BG1, dat[idx++]);
-	map_reg(reg->uBG.bREG.BG0, dat[idx++]);
+	map_reg(reg->uBG.bREG.BG1, dat[idx]); idx++;
+	map_reg(reg->uBG.bREG.BG0, dat[idx]); idx++;
 
 	/* MBG1 */
-	map_reg(reg->uBG.bREG.BG3, dat[idx++]);
-	map_reg(reg->uBG.bREG.BG2, dat[idx++]);
+	map_reg(reg->uBG.bREG.BG3, dat[idx]); idx++;
+	map_reg(reg->uBG.bREG.BG2, dat[idx]); idx++;
 
 	/* SIZE */
-	map_reg(reg->uSIZE.bREG.HEIGHT,	dat[idx++]);
-	map_reg(reg->uSIZE.bREG.WIDTH,	dat[idx++]);
+	map_reg(reg->uSIZE.bREG.HEIGHT,	dat[idx]); idx++;
+	map_reg(reg->uSIZE.bREG.WIDTH,	dat[idx]); idx++;
 
 	/* POS0 */
-	map_reg(reg->uPOS0.bREG.SM_3D,	dat[idx++]);
-	map_reg(reg->uPOS0.bREG.YPOS,	dat[idx++]);
-	map_reg(reg->uPOS0.bREG.XPOS,	dat[idx++]);
+	map_reg(reg->uPOS0.bREG.SM_3D,	dat[idx]); idx++;
+	map_reg(reg->uPOS0.bREG.YPOS,	dat[idx]); idx++;
+	map_reg(reg->uPOS0.bREG.XPOS,	dat[idx]); idx++;
 
 	/* POS1 */
-	map_reg(reg->uPOS1.bREG.SM_3D,	dat[idx++]);
-	map_reg(reg->uPOS1.bREG.YPOS,	dat[idx++]);
-	map_reg(reg->uPOS1.bREG.XPOS,	dat[idx++]);
+	map_reg(reg->uPOS1.bREG.SM_3D,	dat[idx]); idx++;
+	map_reg(reg->uPOS1.bREG.YPOS,	dat[idx]); idx++;
+	map_reg(reg->uPOS1.bREG.XPOS,	dat[idx]); idx++;
 
 	/* POS2 */
-	map_reg(reg->uPOS2.bREG.SM_3D,	dat[idx++]);
-	map_reg(reg->uPOS2.bREG.YPOS,	dat[idx++]);
-	map_reg(reg->uPOS2.bREG.XPOS,	dat[idx++]);
+	map_reg(reg->uPOS2.bREG.SM_3D,	dat[idx]); idx++;
+	map_reg(reg->uPOS2.bREG.YPOS,	dat[idx]); idx++;
+	map_reg(reg->uPOS2.bREG.XPOS,	dat[idx]); idx++;
 
 	/* POS3 */
-	map_reg(reg->uPOS3.bREG.SM_3D,	dat[idx++]);
-	map_reg(reg->uPOS3.bREG.YPOS,	dat[idx++]);
-	map_reg(reg->uPOS3.bREG.XPOS,	dat[idx++]);
+	map_reg(reg->uPOS3.bREG.SM_3D,	dat[idx]); idx++;
+	map_reg(reg->uPOS3.bREG.YPOS,	dat[idx]); idx++;
+	map_reg(reg->uPOS3.bREG.XPOS,	dat[idx]); idx++;
 
 	/*-----------------------------------------------------*/
 	/* MKEY00 */
-	map_reg(reg->uKEY0.bREG.KEYEN,	dat[idx++]);
-	map_reg(reg->uKEY0.bREG.KEYR,	dat[idx++]);
+	map_reg(reg->uKEY0.bREG.KEYEN,	dat[idx]); idx++;
+	map_reg(reg->uKEY0.bREG.KEYR,	dat[idx]); idx++;
 
 	/* MKEY01 */
-	map_reg(reg->uKEY0.bREG.KEYG,	dat[idx++]);
-	map_reg(reg->uKEY0.bREG.KEYB,	dat[idx++]);
+	map_reg(reg->uKEY0.bREG.KEYG,	dat[idx]); idx++;
+	map_reg(reg->uKEY0.bREG.KEYB,	dat[idx]); idx++;
 
 	/* MKEY02 */
-	map_reg(reg->uKEY0.bREG.KEYMR,	dat[idx++]);
+	map_reg(reg->uKEY0.bREG.KEYMR,	dat[idx]); idx++;
 
 	/* MKEY03 */
-	map_reg(reg->uKEY1.bREG.KEYMG,	dat[idx++]);
-	map_reg(reg->uKEY1.bREG.KEYMB,	dat[idx++]);
+	map_reg(reg->uKEY1.bREG.KEYMG,	dat[idx]); idx++;
+	map_reg(reg->uKEY1.bREG.KEYMB,	dat[idx]); idx++;
 
 	/*-----------------------------------------------------*/
 	/* MKEY10 */
-	map_reg(reg->uKEY1.bREG.KEYEN,	dat[idx++]);
-	map_reg(reg->uKEY1.bREG.KEYR,	dat[idx++]);
+	map_reg(reg->uKEY1.bREG.KEYEN,	dat[idx]); idx++;
+	map_reg(reg->uKEY1.bREG.KEYR,	dat[idx]); idx++;
 
 	/* MKEY11 */
-	map_reg(reg->uKEY1.bREG.KEYG,	dat[idx++]);
-	map_reg(reg->uKEY1.bREG.KEYB,	dat[idx++]);
+	map_reg(reg->uKEY1.bREG.KEYG,	dat[idx]); idx++;
+	map_reg(reg->uKEY1.bREG.KEYB,	dat[idx]); idx++;
 
 	/* MKEY12 */
-	map_reg(reg->uKEY1.bREG.KEYMR,	dat[idx++]);
+	map_reg(reg->uKEY1.bREG.KEYMR,	dat[idx]); idx++;
 
 	/* MKEY13 */
-	map_reg(reg->uKEY1.bREG.KEYMG,	dat[idx++]);
-	map_reg(reg->uKEY1.bREG.KEYMB,	dat[idx++]);
+	map_reg(reg->uKEY1.bREG.KEYMG,	dat[idx]); idx++;
+	map_reg(reg->uKEY1.bREG.KEYMB,	dat[idx]); idx++;
 
 	/*-----------------------------------------------------*/
 	/* MKEY20 */
-	map_reg(reg->uKEY2.bREG.KEYEN,	dat[idx++]);
-	map_reg(reg->uKEY2.bREG.KEYR,	dat[idx++]);
+	map_reg(reg->uKEY2.bREG.KEYEN,	dat[idx]); idx++;
+	map_reg(reg->uKEY2.bREG.KEYR,	dat[idx]); idx++;
 
 	/* MKEY21 */
-	map_reg(reg->uKEY2.bREG.KEYG,	dat[idx++]);
-	map_reg(reg->uKEY2.bREG.KEYB,	dat[idx++]);
+	map_reg(reg->uKEY2.bREG.KEYG,	dat[idx]); idx++;
+	map_reg(reg->uKEY2.bREG.KEYB,	dat[idx]); idx++;
 
 	/* MKEY22 */
-	map_reg(reg->uKEY2.bREG.KEYMR,	dat[idx++]);
+	map_reg(reg->uKEY2.bREG.KEYMR,	dat[idx]); idx++;
 
 	/* MKEY23 */
-	map_reg(reg->uKEY2.bREG.KEYMG,	dat[idx++]);
-	map_reg(reg->uKEY2.bREG.KEYMB,	dat[idx++]);
+	map_reg(reg->uKEY2.bREG.KEYMG,	dat[idx]); idx++;
+	map_reg(reg->uKEY2.bREG.KEYMB,	dat[idx]); idx++;
 
 	/* STAT */
-	map_reg(reg->uSTATUS.bREG.DN_INTL,		dat[idx++]);
-	map_reg(reg->uSTATUS.bREG.DN_BFIELD,	dat[idx++]);
-	map_reg(reg->uSTATUS.bREG.DN_ENABLE,	dat[idx++]);
-	map_reg(reg->uSTATUS.bREG.DN_EOFWAIT,	dat[idx++]);
-	map_reg(reg->uSTATUS.bREG.UP_INTL,		dat[idx++]);
-	map_reg(reg->uSTATUS.bREG.UP_UPDATE,	dat[idx++]);
-	map_reg(reg->uSTATUS.bREG.UP_ENABLE,	dat[idx++]);
-	map_reg(reg->uSTATUS.bREG.UP_EOF,		dat[idx++]);
-	map_reg(reg->uSTATUS.bREG.EOFFALL,		dat[idx++]);
-	map_reg(reg->uSTATUS.bREG.EOFRISE,		dat[idx++]);
-	map_reg(reg->uSTATUS.bREG.EOFWAITRISE,	dat[idx++]);
-	map_reg(reg->uSTATUS.bREG.EOFWAITFALL,	dat[idx++]);
-	map_reg(reg->uSTATUS.bREG.UPDDONE,		dat[idx++]);
+	map_reg(reg->uSTATUS.bREG.DN_INTL,		dat[idx]); idx++;
+	map_reg(reg->uSTATUS.bREG.DN_BFIELD,	dat[idx]); idx++;
+	map_reg(reg->uSTATUS.bREG.DN_ENABLE,	dat[idx]); idx++;
+	map_reg(reg->uSTATUS.bREG.DN_EOFWAIT,	dat[idx]); idx++;
+	map_reg(reg->uSTATUS.bREG.UP_INTL,		dat[idx]); idx++;
+	map_reg(reg->uSTATUS.bREG.UP_UPDATE,	dat[idx]); idx++;
+	map_reg(reg->uSTATUS.bREG.UP_ENABLE,	dat[idx]); idx++;
+	map_reg(reg->uSTATUS.bREG.UP_EOF,		dat[idx]); idx++;
+	map_reg(reg->uSTATUS.bREG.EOFFALL,		dat[idx]); idx++;
+	map_reg(reg->uSTATUS.bREG.EOFRISE,		dat[idx]); idx++;
+	map_reg(reg->uSTATUS.bREG.EOFWAITRISE,	dat[idx]); idx++;
+	map_reg(reg->uSTATUS.bREG.EOFWAITFALL,	dat[idx]); idx++;
+	map_reg(reg->uSTATUS.bREG.UPDDONE,		dat[idx]); idx++;
 
 	/* IRQMSK */
-	map_reg(reg->uIRQMSK.bREG.EOFFALL,		dat[idx++]);
-	map_reg(reg->uIRQMSK.bREG.EOFRISE,		dat[idx++]);
-	map_reg(reg->uIRQMSK.bREG.EOFWAITRISE,	dat[idx++]);
-	map_reg(reg->uIRQMSK.bREG.EOFWAITFALL,	dat[idx++]);
-	map_reg(reg->uIRQMSK.bREG.UPDDONE,		dat[idx++]);
+	map_reg(reg->uIRQMSK.bREG.EOFFALL,		dat[idx]); idx++;
+	map_reg(reg->uIRQMSK.bREG.EOFRISE,		dat[idx]); idx++;
+	map_reg(reg->uIRQMSK.bREG.EOFWAITRISE,	dat[idx]); idx++;
+	map_reg(reg->uIRQMSK.bREG.EOFWAITFALL,	dat[idx]); idx++;
+	map_reg(reg->uIRQMSK.bREG.UPDDONE,		dat[idx]); idx++;
 
 	/*-----------------------------------------------------*/
 	/* ACON0 */
-	map_reg(reg->uACON0.bREG.ACON1_11,	dat[idx++]);
-	map_reg(reg->uACON0.bREG.ACON0_11,	dat[idx++]);
-	map_reg(reg->uACON0.bREG.ACON1_10,	dat[idx++]);
-	map_reg(reg->uACON0.bREG.ACON0_10,	dat[idx++]);
-	map_reg(reg->uACON0.bREG.ACON1_01,	dat[idx++]);
-	map_reg(reg->uACON0.bREG.ACON0_01,	dat[idx++]);
-	map_reg(reg->uACON0.bREG.ACON1_00,	dat[idx++]);
-	map_reg(reg->uACON0.bREG.ACON0_00,	dat[idx++]);
+	map_reg(reg->uACON0.bREG.ACON1_11,	dat[idx]); idx++;
+	map_reg(reg->uACON0.bREG.ACON0_11,	dat[idx]); idx++;
+	map_reg(reg->uACON0.bREG.ACON1_10,	dat[idx]); idx++;
+	map_reg(reg->uACON0.bREG.ACON0_10,	dat[idx]); idx++;
+	map_reg(reg->uACON0.bREG.ACON1_01,	dat[idx]); idx++;
+	map_reg(reg->uACON0.bREG.ACON0_01,	dat[idx]); idx++;
+	map_reg(reg->uACON0.bREG.ACON1_00,	dat[idx]); idx++;
+	map_reg(reg->uACON0.bREG.ACON0_00,	dat[idx]); idx++;
 
 	/* CCON0 */
-	map_reg(reg->uCCON0.bREG.CCON1_11,	dat[idx++]);
-	map_reg(reg->uCCON0.bREG.CCON0_11,	dat[idx++]);
-	map_reg(reg->uCCON0.bREG.CCON1_10,	dat[idx++]);
-	map_reg(reg->uCCON0.bREG.CCON0_10,	dat[idx++]);
-	map_reg(reg->uCCON0.bREG.CCON1_01,	dat[idx++]);
-	map_reg(reg->uCCON0.bREG.CCON0_01,	dat[idx++]);
-	map_reg(reg->uCCON0.bREG.CCON1_00,	dat[idx++]);
-	map_reg(reg->uCCON0.bREG.CCON0_00,	dat[idx++]);
+	map_reg(reg->uCCON0.bREG.CCON1_11,	dat[idx]); idx++;
+	map_reg(reg->uCCON0.bREG.CCON0_11,	dat[idx]); idx++;
+	map_reg(reg->uCCON0.bREG.CCON1_10,	dat[idx]); idx++;
+	map_reg(reg->uCCON0.bREG.CCON0_10,	dat[idx]); idx++;
+	map_reg(reg->uCCON0.bREG.CCON1_01,	dat[idx]); idx++;
+	map_reg(reg->uCCON0.bREG.CCON0_01,	dat[idx]); idx++;
+	map_reg(reg->uCCON0.bREG.CCON1_00,	dat[idx]); idx++;
+	map_reg(reg->uCCON0.bREG.CCON0_00,	dat[idx]); idx++;
 
 	/* ROPC00 */
-	map_reg(reg->uROPC0.bREG.ASEL,		dat[idx++]);
-	map_reg(reg->uROPC0.bREG.ROPMODE,	dat[idx++]);
+	map_reg(reg->uROPC0.bREG.ASEL,		dat[idx]); idx++;
+	map_reg(reg->uROPC0.bREG.ROPMODE,	dat[idx]); idx++;
 
 	/* ROPC01 */
-	map_reg(reg->uROPC0.bREG.ALPHA1,	dat[idx++]);
-	map_reg(reg->uROPC0.bREG.ALPHA0,	dat[idx++]);
+	map_reg(reg->uROPC0.bREG.ALPHA1,	dat[idx]); idx++;
+	map_reg(reg->uROPC0.bREG.ALPHA0,	dat[idx]); idx++;
 
 	/* MAT01 */
-	map_reg(reg->uPAT0.bREG.BLUE,		dat[idx++]);
-	map_reg(reg->uPAT0.bREG.RED,		dat[idx++]);
+	map_reg(reg->uPAT0.bREG.BLUE,		dat[idx]); idx++;
+	map_reg(reg->uPAT0.bREG.RED,		dat[idx]); idx++;
 
 	/* MAT02 */
-	map_reg(reg->uPAT0.bREG.GREEN,		dat[idx++]);
+	map_reg(reg->uPAT0.bREG.GREEN,		dat[idx]); idx++;
 
 	/*-----------------------------------------------------*/
 	/* ACON1 */
-	map_reg(reg->uACON1.bREG.ACON1_11,	dat[idx++]);
-	map_reg(reg->uACON1.bREG.ACON0_11,	dat[idx++]);
-	map_reg(reg->uACON1.bREG.ACON1_10,	dat[idx++]);
-	map_reg(reg->uACON1.bREG.ACON0_10,	dat[idx++]);
-	map_reg(reg->uACON1.bREG.ACON1_01,	dat[idx++]);
-	map_reg(reg->uACON1.bREG.ACON0_01,	dat[idx++]);
-	map_reg(reg->uACON1.bREG.ACON1_00,	dat[idx++]);
-	map_reg(reg->uACON1.bREG.ACON0_00,	dat[idx++]);
+	map_reg(reg->uACON1.bREG.ACON1_11,	dat[idx]); idx++;
+	map_reg(reg->uACON1.bREG.ACON0_11,	dat[idx]); idx++;
+	map_reg(reg->uACON1.bREG.ACON1_10,	dat[idx]); idx++;
+	map_reg(reg->uACON1.bREG.ACON0_10,	dat[idx]); idx++;
+	map_reg(reg->uACON1.bREG.ACON1_01,	dat[idx]); idx++;
+	map_reg(reg->uACON1.bREG.ACON0_01,	dat[idx]); idx++;
+	map_reg(reg->uACON1.bREG.ACON1_00,	dat[idx]); idx++;
+	map_reg(reg->uACON1.bREG.ACON0_00,	dat[idx]); idx++;
 
 	/* CCON1 */
-	map_reg(reg->uCCON1.bREG.CCON1_11,	dat[idx++]);
-	map_reg(reg->uCCON1.bREG.CCON0_11,	dat[idx++]);
-	map_reg(reg->uCCON1.bREG.CCON1_10,	dat[idx++]);
-	map_reg(reg->uCCON1.bREG.CCON0_10,	dat[idx++]);
-	map_reg(reg->uCCON1.bREG.CCON1_01,	dat[idx++]);
-	map_reg(reg->uCCON1.bREG.CCON0_01,	dat[idx++]);
-	map_reg(reg->uCCON1.bREG.CCON1_00,	dat[idx++]);
-	map_reg(reg->uCCON1.bREG.CCON0_00,	dat[idx++]);
+	map_reg(reg->uCCON1.bREG.CCON1_11,	dat[idx]); idx++;
+	map_reg(reg->uCCON1.bREG.CCON0_11,	dat[idx]); idx++;
+	map_reg(reg->uCCON1.bREG.CCON1_10,	dat[idx]); idx++;
+	map_reg(reg->uCCON1.bREG.CCON0_10,	dat[idx]); idx++;
+	map_reg(reg->uCCON1.bREG.CCON1_01,	dat[idx]); idx++;
+	map_reg(reg->uCCON1.bREG.CCON0_01,	dat[idx]); idx++;
+	map_reg(reg->uCCON1.bREG.CCON1_00,	dat[idx]); idx++;
+	map_reg(reg->uCCON1.bREG.CCON0_00,	dat[idx]); idx++;
 
 	/* ROPC10 */
-	map_reg(reg->uROPC1.bREG.ASEL,		dat[idx++]);
-	map_reg(reg->uROPC1.bREG.ROPMODE,	dat[idx++]);
+	map_reg(reg->uROPC1.bREG.ASEL,		dat[idx]); idx++;
+	map_reg(reg->uROPC1.bREG.ROPMODE,	dat[idx]); idx++;
 
 	/* ROPC11 */
-	map_reg(reg->uROPC1.bREG.ALPHA1,	dat[idx++]);
-	map_reg(reg->uROPC1.bREG.ALPHA0,	dat[idx++]);
+	map_reg(reg->uROPC1.bREG.ALPHA1,	dat[idx]); idx++;
+	map_reg(reg->uROPC1.bREG.ALPHA0,	dat[idx]); idx++;
 
 	/* MAT10 */
-	map_reg(reg->uPAT1.bREG.BLUE,		dat[idx++]);
-	map_reg(reg->uPAT1.bREG.RED,		dat[idx++]);
+	map_reg(reg->uPAT1.bREG.BLUE,		dat[idx]); idx++;
+	map_reg(reg->uPAT1.bREG.RED,		dat[idx]); idx++;
 
 	/* MAT11 */
-	map_reg(reg->uPAT1.bREG.GREEN,		dat[idx++]);
+	map_reg(reg->uPAT1.bREG.GREEN,		dat[idx]); idx++;
 
 	/*-----------------------------------------------------*/
 	/* ACON2 */
-	map_reg(reg->uACON2.bREG.ACON1_11,	dat[idx++]);
-	map_reg(reg->uACON2.bREG.ACON0_11,	dat[idx++]);
-	map_reg(reg->uACON2.bREG.ACON1_10,	dat[idx++]);
-	map_reg(reg->uACON2.bREG.ACON0_10,	dat[idx++]);
-	map_reg(reg->uACON2.bREG.ACON1_01,	dat[idx++]);
-	map_reg(reg->uACON2.bREG.ACON0_01,	dat[idx++]);
-	map_reg(reg->uACON2.bREG.ACON1_00,	dat[idx++]);
-	map_reg(reg->uACON2.bREG.ACON0_00,	dat[idx++]);
+	map_reg(reg->uACON2.bREG.ACON1_11,	dat[idx]); idx++;
+	map_reg(reg->uACON2.bREG.ACON0_11,	dat[idx]); idx++;
+	map_reg(reg->uACON2.bREG.ACON1_10,	dat[idx]); idx++;
+	map_reg(reg->uACON2.bREG.ACON0_10,	dat[idx]); idx++;
+	map_reg(reg->uACON2.bREG.ACON1_01,	dat[idx]); idx++;
+	map_reg(reg->uACON2.bREG.ACON0_01,	dat[idx]); idx++;
+	map_reg(reg->uACON2.bREG.ACON1_00,	dat[idx]); idx++;
+	map_reg(reg->uACON2.bREG.ACON0_00,	dat[idx]); idx++;
 
 	/* CCON2 */
-	map_reg(reg->uCCON2.bREG.CCON1_11,	dat[idx++]);
-	map_reg(reg->uCCON2.bREG.CCON0_11,	dat[idx++]);
-	map_reg(reg->uCCON2.bREG.CCON1_10,	dat[idx++]);
-	map_reg(reg->uCCON2.bREG.CCON0_10,	dat[idx++]);
-	map_reg(reg->uCCON2.bREG.CCON1_01,	dat[idx++]);
-	map_reg(reg->uCCON2.bREG.CCON0_01,	dat[idx++]);
-	map_reg(reg->uCCON2.bREG.CCON1_00,	dat[idx++]);
-	map_reg(reg->uCCON2.bREG.CCON0_00,	dat[idx++]);
+	map_reg(reg->uCCON2.bREG.CCON1_11,	dat[idx]); idx++;
+	map_reg(reg->uCCON2.bREG.CCON0_11,	dat[idx]); idx++;
+	map_reg(reg->uCCON2.bREG.CCON1_10,	dat[idx]); idx++;
+	map_reg(reg->uCCON2.bREG.CCON0_10,	dat[idx]); idx++;
+	map_reg(reg->uCCON2.bREG.CCON1_01,	dat[idx]); idx++;
+	map_reg(reg->uCCON2.bREG.CCON0_01,	dat[idx]); idx++;
+	map_reg(reg->uCCON2.bREG.CCON1_00,	dat[idx]); idx++;
+	map_reg(reg->uCCON2.bREG.CCON0_00,	dat[idx]); idx++;
 
 	/* ROPC20 */
-	map_reg(reg->uROPC2.bREG.ASEL,		dat[idx++]);
-	map_reg(reg->uROPC2.bREG.ROPMODE,	dat[idx++]);
+	map_reg(reg->uROPC2.bREG.ASEL,		dat[idx]); idx++;
+	map_reg(reg->uROPC2.bREG.ROPMODE,	dat[idx]); idx++;
 
 	/* ROPC21 */
-	map_reg(reg->uROPC2.bREG.ALPHA1,	dat[idx++]);
-	map_reg(reg->uROPC2.bREG.ALPHA0,	dat[idx++]);
+	map_reg(reg->uROPC2.bREG.ALPHA1,	dat[idx]); idx++;
+	map_reg(reg->uROPC2.bREG.ALPHA0,	dat[idx]); idx++;
 
 	/* MAT20 */
-	map_reg(reg->uPAT2.bREG.BLUE,		dat[idx++]);
-	map_reg(reg->uPAT2.bREG.RED,		dat[idx++]);
+	map_reg(reg->uPAT2.bREG.BLUE,		dat[idx]); idx++;
+	map_reg(reg->uPAT2.bREG.RED,		dat[idx]); idx++;
 
 	/* MAT21 */
-	map_reg(reg->uPAT2.bREG.GREEN,		dat[idx++]);
+	map_reg(reg->uPAT2.bREG.GREEN,		dat[idx]); idx++;
 
-	return (idx - reg_start_offset - 1);
+	return (idx - reg_start_offset);
 }
 
 int wmix_setup(struct vioc_wmix_t *wmix)
