@@ -68,7 +68,10 @@ int test_main(char *file_name, char *pmap_name)
 		} else {
 			printf("Skip the test%d (%s)\n", td->test_no, td->test_name);
 		}
+		getchar();
 	}
+
+	printf("\n<----------- END OF TEST ----------->\n");
 
 err3:
 	vioc_munmap(test_case->vioc_base_addr);

@@ -134,7 +134,7 @@ int rdma_setup(struct vioc_rdma_t *rdma)
 	/* check UPD (update-bit) is 0 */
 	if (rdma->reg.uCTRL.bREG.UPD) {
 		rdma->reg.uCTRL.bREG.UPD = 0;
-		printf("RDMA%d UPD was set, so disable it\n", rdma->info.id);
+		printf("rdma%d UPD was set, so disable it\n", rdma->info.id);
 	}
 
 	/* set physical register */

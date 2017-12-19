@@ -85,6 +85,9 @@ int shoot_test(struct test_case_t *test_case)
 
 	printf("\n\nSHOOTING !!!!!\n\n");
 
+	//1st update bit
+	//2nd enable bit
+
 	return 0;
 }
 
@@ -151,12 +154,14 @@ static int vioc_get_component_info(struct test_case_t *tc, struct test_data_t *t
 	/*
 	 * OUTCFG
 	 */
+	tc->outcfg.info.id = td->outcfg.reg[0];
 	tc->outcfg.info.addr_offset = OFFSET_OUTCFG_FROM_VIOC_BASE;
 	tc->outcfg.addr = (VIOC_OUTCFG *)(tc->vioc_base_addr + REG_OFFSET(tc->outcfg.info.addr_offset));
 
 	/*
 	 * CONFIG
 	 */
+	tc->config.info.id = td->config.reg[0];
 	tc->config.info.addr_offset = OFFSET_CONFIG_FROM_VIOC_BASE;
 	tc->config.addr = (VIOC_IREQ_CONFIG *)(tc->vioc_base_addr + REG_OFFSET(tc->config.info.addr_offset));
 
@@ -430,6 +435,11 @@ exit:
 static int vioc_config_path(struct test_case_t *tc)
 {
 	int ret = 0;
+
+	//rdma plugin hard fix
+	//sc plugin
+	//lut plugin
+	//wmix mix or bypass
 
 	return ret;
 }
