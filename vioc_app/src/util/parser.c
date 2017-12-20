@@ -96,8 +96,8 @@ int parser(struct test_data_t *tdata, struct getbuf_t *tcase, int test_no)
 	struct list_head *pos = NULL;
 	struct getbuf_t *gb = NULL;
 	int i, j, start_pos;
-	int nr_vioc, nr_vioc_start[NUMBER_OF_VIOC_COMPONENTS] = {0};
-	int nr_regs, nr_regs_end[NUMBER_OF_REG_DATA] = {0};
+	int nr_vioc, nr_vioc_start[MAX_NUM_OF_VIOC_COMPONENTS] = {0};
+	int nr_regs, nr_regs_end[MAX_NUM_OF_REG_DATA_TEST] = {0};
 	char c;
 	char *buf = NULL;   // temp buf
 	char *start_addr;	// start address of vioc component

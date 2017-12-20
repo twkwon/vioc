@@ -66,6 +66,7 @@ struct vioc_component_t {
 	int id;						// component id
 	int addr_offset;			// offset from vioc base address
 	int nr_regs;				// number of mapped regs
+	int plugin;					// SELECT bits of plug-in register in the Configuration & Interrupt part
 };
 
 struct vioc_rdma_t {
@@ -136,8 +137,8 @@ struct test_case_t {
  */
 
 struct test_data_reg_val_t {
-	int reg[160];				// get register's value from data(.txt);
-	int nr_regs;				// number of parsed regs
+	int reg[MAX_NUM_OF_REG_DATA_COMPONENT];	// get register's value from data(.txt);
+	int nr_regs;							// number of parsed regs
 };
 
 struct test_data_t {
@@ -189,9 +190,12 @@ extern int lut_setup(struct vioc_lut_t *);
 extern int outcfg_map_regs(struct vioc_outcfg_t *, struct test_data_reg_val_t *);
 extern int outcfg_verify_regs(struct vioc_outcfg_t *);
 extern int outcfg_setup(struct vioc_outcfg_t *);
+extern int outcfg_config(struct test_case_t *);
 
 extern int config_map_regs(struct vioc_config_t *, struct test_data_reg_val_t *);
 extern int config_verify_regs(struct vioc_config_t *);
 extern int config_setup(struct vioc_config_t *);
+extern int config_plugin(struct test_case_t *, enum vioc_components);
+extern int config_config(struct test_case_t *);
 
 #endif /*__VIOC_H__*/

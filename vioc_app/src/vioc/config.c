@@ -2,6 +2,42 @@
 
 #include <vioc.h>
 
+// CFG_PATH_EDR
+#define V_CONFIG_PATH_EDR_SHIFT	(8)
+#define V_CONFIG_PATH_EDR_MASK	(0x1 << V_CONFIG_PATH_EDR_SHIFT)
+
+// MISC0
+#define V_CONFIG_MISC0_MIX50_SHIFT	(26)
+#define V_CONFIG_MISC0_MIX30_SHIFT	(22)
+#define V_CONFIG_MISC0_MIX13_SHIFT	(19)
+#define V_CONFIG_MISC0_MIX10_SHIFT	(18)
+#define V_CONFIG_MISC0_MIX03_SHIFT	(17)
+#define V_CONFIG_MISC0_MIX00_SHIFT	(16)
+
+/* enable bit */
+#define V_CONFIG_EN_SHIFT	(31)
+#define V_CONFIG_EN_MASK	(0x1 << V_CONFIG_EN_SHIFT)
+
+/* status */
+#define V_CONFIG_STS_SHIFT	(16)
+#define V_CONFIG_STS_MASK	(0x3 << V_CONFIG_STS_SHIFT)
+
+/* path select */
+#define V_CONFIG_PATH_SHIFT	(0)
+#define V_CONFIG_PATH_MASK	(0xFF << V_CONFIG_PATH_SHIFT)
+
+#define VIOC_CFG_MISC1		(0x0084)
+
+/* VIOC PATH STATUS TYPE */
+#define VIOC_PATH_DISCONNECTED	(0)
+#define VIOC_PATH_CONNECTING  	(1)
+#define VIOC_PATH_CONNECTED   	(2)
+#define VIOC_PATH_DISCONNECTING	(3)
+
+static int plugin_rdma(struct test_case_t *tc, enum vioc_components);
+static int plugin_sc(struct test_case_t *, enum vioc_components);
+static int plugin_lut(struct test_case_t *, enum vioc_components);
+
 
 int config_map_regs(struct vioc_config_t *config, struct test_data_reg_val_t *data)
 {
@@ -59,7 +95,7 @@ int config_verify_regs(struct vioc_config_t *config)
 	s = &config->reg;
 	d = config->addr;
 
-	printf("VERIFY CONFIG%d", config->info.id);
+	printf("VERIFY CONFIG%d\n", config->info.id);
 	if (config->info.id < 0) {
 		printf("\tN/A\n");
 		return ret;
@@ -84,6 +120,211 @@ int config_verify_regs(struct vioc_config_t *config)
 		printf("\tCONFIG.uMISC0: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
+
+	return ret;
+}
+
+int config_config(struct test_case_t *tc)
+{
+	int ret = 0;
+	reg_t val, reg;
+	VIOC_IREQ_CONFIG *config_reg;	// physical register
+	VIOC_IREQ_CONFIG *config_val;	// test data
+
+	config_reg = tc->config.addr;
+	config_val = &tc->config.reg;
+
+	/* CFG_PATH_EDR */
+	val = read_reg(&config_reg->uPATH_EDR);
+	BITCSET(val, V_CONFIG_PATH_EDR_MASK, config_val->uPATH_EDR.bREG.EDR_S << V_CONFIG_PATH_EDR_SHIFT);
+	write_reg(&config_reg->uMISC0, val);
+
+	reg = read_reg(&config_reg->uPATH_EDR);
+	if (val != reg) {
+		printf("[%s] error: CFG_PATH_EDR(0x08x) != val(0x%08x)\n", reg, val);
+		ret = -1;
+		goto exit;
+	}
+
+	/* CFG_MISC0 */
+	val = read_reg(&config_reg->uMISC0);
+	BITCSET(val, 0x1 << V_CONFIG_MISC0_MIX50_SHIFT, config_val->uMISC0.bREG.MIX50 << V_CONFIG_MISC0_MIX50_SHIFT);
+	BITCSET(val, 0x1 << V_CONFIG_MISC0_MIX30_SHIFT, config_val->uMISC0.bREG.MIX30 << V_CONFIG_MISC0_MIX30_SHIFT);
+	BITCSET(val, 0x1 << V_CONFIG_MISC0_MIX13_SHIFT, config_val->uMISC0.bREG.MIX13 << V_CONFIG_MISC0_MIX13_SHIFT);
+	BITCSET(val, 0x1 << V_CONFIG_MISC0_MIX10_SHIFT, config_val->uMISC0.bREG.MIX10 << V_CONFIG_MISC0_MIX10_SHIFT);
+	BITCSET(val, 0x1 << V_CONFIG_MISC0_MIX03_SHIFT, config_val->uMISC0.bREG.MIX03 << V_CONFIG_MISC0_MIX03_SHIFT);
+	BITCSET(val, 0x1 << V_CONFIG_MISC0_MIX00_SHIFT, config_val->uMISC0.bREG.MIX00 << V_CONFIG_MISC0_MIX00_SHIFT);
+	write_reg(&config_reg->uMISC0, val);
+
+	reg = read_reg(&config_reg->uMISC0);
+	if (val != reg) {
+		printf("[%s] error: CFG_MISC0(0x08x) != val(0x%08x)\n", reg, val);
+		ret = -1;
+		goto exit;
+	}
+
+exit:
+	return ret;
+}
+
+int config_plugin(struct test_case_t *tc, enum vioc_components comp)
+{
+	int ret = 0;
+
+	switch (comp) {
+	case VC_RDMA_1st:
+	case VC_RDMA_2nd:
+	case VC_RDMA_3rd:
+	case VC_RDMA_4th:
+		ret = plugin_rdma(tc, comp);
+		if (ret) {goto err;}
+		break;
+	case VC_SC:
+		ret = plugin_sc(tc, comp);
+		if (ret) {goto err;}
+		break;
+	case VC_LUT:
+		ret = plugin_lut(tc, comp);
+		if (ret) {goto err;}
+		break;
+	default:
+		ret = -1;
+		goto err;
+	}
+
+err:
+	return ret;
+}
+
+static int plugin_rdma(struct test_case_t *tc, enum vioc_components comp)
+{
+	int ret = 0;
+	unsigned int loop;
+	volatile VIOC_CONFIG_PATH_u *cfg_path_rdma;
+	struct vioc_rdma_t *rdma;
+
+	switch (comp) {
+	case VC_RDMA_1st:
+		rdma = &tc->rdma1;
+		break;
+	case VC_RDMA_2nd:
+		rdma = &tc->rdma2;
+		break;
+	case VC_RDMA_3rd:
+		rdma = &tc->rdma3;
+		break;
+	case VC_RDMA_4th:
+		rdma = &tc->rdma4;
+		break;
+	default:
+		ret = -1;
+		goto err;
+	}
+
+	switch (rdma->info.id) {
+	case 2:
+		cfg_path_rdma = &tc->config.addr->uRDMA02;
+		break;
+	case 3:
+		cfg_path_rdma = &tc->config.addr->uRDMA03;
+		break;
+	case 6:
+		cfg_path_rdma = &tc->config.addr->uRDMA06;
+		break;
+	case 7:
+		cfg_path_rdma = &tc->config.addr->uRDMA07;
+		break;
+	case 11:
+		cfg_path_rdma = &tc->config.addr->uRDMA11;
+		break;
+	case 12:
+		cfg_path_rdma = &tc->config.addr->uRDMA12;
+		break;
+	case 13:
+		cfg_path_rdma = &tc->config.addr->uRDMA13;
+		break;
+	case 14:
+		cfg_path_rdma = &tc->config.addr->uRDMA14;
+		break;
+	case 16:
+		cfg_path_rdma = &tc->config.addr->uRDMA16;
+		break;
+	case 17:
+		cfg_path_rdma = &tc->config.addr->uRDMA17;
+		break;
+	default:
+		ret = -1;
+		goto err;
+	}
+
+	BITCSET(cfg_path_rdma->nREG, V_CONFIG_PATH_MASK, rdma->info.plugin << V_CONFIG_PATH_SHIFT);
+	BITCSET(cfg_path_rdma->nREG, V_CONFIG_EN_MASK, 1 << V_CONFIG_EN_SHIFT);
+
+	loop = 0xf000;
+	while(loop--) {
+		if((read_reg(cfg_path_rdma) & V_CONFIG_STS_MASK) != VIOC_PATH_DISCONNECTED)
+			break;
+	}
+
+	printf("[%s] plug-in RDMA%d -> SEL(0x%x)\n", rdma->info.id, rdma->info.plugin);
+	return ret;
+err:
+	printf("[%s] error: plug-in RDMA%d\n", rdma->info.id);
+	return ret;
+}
+
+static int plugin_sc(struct test_case_t *tc, enum vioc_components comp)
+{
+	int ret = 0;
+	unsigned int loop;
+	volatile VIOC_CONFIG_PATH_u *cfg_path_sc;
+	struct vioc_sc_t *sc;
+
+	sc = &tc->sc;
+
+	switch (tc->sc.info.id) {
+	case 0:
+		cfg_path_sc = &tc->config.addr->uSC0;
+		break;
+	case 1:
+		cfg_path_sc = &tc->config.addr->uSC1;
+		break;
+	case 2:
+		cfg_path_sc = &tc->config.addr->uSC2;
+		break;
+	case 3:
+		cfg_path_sc = &tc->config.addr->uSC3;
+		break;
+	case 4:
+		cfg_path_sc = &tc->config.addr->uSC4;
+		break;
+	default:
+		ret = -1;
+		goto err;
+	}
+
+	BITCSET(cfg_path_sc->nREG, V_CONFIG_PATH_MASK, sc->info.plugin << V_CONFIG_PATH_SHIFT);
+	BITCSET(cfg_path_sc->nREG, V_CONFIG_EN_MASK, 1 << V_CONFIG_EN_SHIFT);
+
+	loop = 0xf000;
+	while(loop--) {
+		if((read_reg(cfg_path_sc) & V_CONFIG_STS_MASK) != VIOC_PATH_DISCONNECTED)
+			break;
+	}
+
+	printf("[%s] plug-in SC%d -> SEL(0x%x)\n", sc->info.id, sc->info.plugin);
+	return ret;
+err:
+	printf("[%s] error: plug-in SC%d\n", sc->info.id);
+	return ret;
+}
+
+static int plugin_lut(struct test_case_t *tc, enum vioc_components comp)
+{
+	int ret = 0;
+
+	//TODO:
+	printf("[%s] TODO: this is empty funtion!!!\n");
 
 	return ret;
 }

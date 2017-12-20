@@ -86,6 +86,9 @@ int lut_setup(struct vioc_lut_t *lut)
 {
 	int ret = 0;
 
+	/* check EN and UPD regs that is enabled */
+	//TODO: disable these bits
+
 	/* set physical register */
 	*lut->addr = lut->reg;
 
@@ -104,7 +107,7 @@ int lut_verify_regs(struct vioc_lut_t *lut)
 	s = &lut->reg;
 	d = lut->addr;
 
-	printf("VERIFY LUT%d", lut->info.id);
+	printf("VERIFY LUT%d\n", lut->info.id);
 	if (lut->info.id < 0) {
 		printf("\tN/A\n");
 		return ret;

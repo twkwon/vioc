@@ -66,27 +66,98 @@ int setup_vioc_path(struct test_case_t *test_case, struct test_data_t *test_data
 	 * set vioc registers
 	 */
 	ret = vioc_set_component_regs(test_case);
-
-	/* for debugging */
-	ret = vioc_verify_regs(test_case);
+	if (ret) {
+		printf("[%s] error: vioc_set_component_regs()\n", __func__);
+		goto exit;
+	}
 
 	/*
 	 * config vioc path
 	 */
 	ret = vioc_config_path(test_case);
+	if (ret) {
+		printf("[%s] error: vioc_config_path()\n", __func__);
+		goto exit;
+	}
+
+	/* for debugging */
+	ret = vioc_verify_regs(test_case);
 
 exit:
 	return ret;
 }
 
-int shoot_test(struct test_case_t *test_case)
+int shoot_test(struct test_case_t *tc)
 {
 	int ret = 0;
 
 	printf("\n\nSHOOTING !!!!!\n\n");
 
-	//1st update bit
-	//2nd enable bit
+	/*
+	 * bit order
+	 *  1: set enable bit
+	 *  2: set update bit
+	 * component order (M2M path)
+	 *  RDMA -> [SC] -> [LUT] -> WMIX -> [SC] -> [LUT]  -> WDMA
+	 */
+	if (tc->rdma1.info.id != -1) {
+		BITCSET(tc->rdma1.addr->uCTRL.nREG, 1 << 28, 1 << 28);
+		BITCSET(tc->rdma1.addr->uCTRL.nREG, 1 << 16, 1 << 16);
+	}
+	if (tc->rdma2.info.id != -1) {
+		BITCSET(tc->rdma2.addr->uCTRL.nREG, 1 << 28, 1 << 28);
+		BITCSET(tc->rdma2.addr->uCTRL.nREG, 1 << 16, 1 << 16);
+	}
+	if (tc->rdma3.info.id != -1) {
+		BITCSET(tc->rdma3.addr->uCTRL.nREG, 1 << 28, 1 << 28);
+		BITCSET(tc->rdma3.addr->uCTRL.nREG, 1 << 16, 1 << 16);
+	}
+	if (tc->rdma4.info.id != -1) {
+		BITCSET(tc->rdma4.addr->uCTRL.nREG, 1 << 28, 1 << 28);
+		BITCSET(tc->rdma4.addr->uCTRL.nREG, 1 << 16, 1 << 16);
+	}
+
+	if (tc->sc.info.id != -1) {
+		if (tc->sc.info.plugin >= 0 && tc->sc.info.plugin <= 0x13) {
+			//BITCSET(tc->sc.addr->uCTRL.nREG, 1 << 28, 1 << 28);
+			BITCSET(tc->sc.addr->uCTRL.nREG, 1 << 16, 1 << 16);
+		}
+	}
+
+	if (tc->lut.info.id != -1) {
+		//if (tc->lut.info.plugin >= 0 && tc->lut.info.plugin <= 0x13) {
+		//	BITCSET(tc->lut.addr->uCTRL.nREG, 1 << 28, 1 << 28);
+		//	BITCSET(tc->lut.addr->uCTRL.nREG, 1 << 16, 1 << 16);
+		//}
+	}
+
+	if (tc->wmix.info.id != -1) {
+		//BITCSET(tc->wmix.addr->uCTRL.nREG, 1 << 28, 1 << 28);
+		BITCSET(tc->wmix.addr->uCTRL.nREG, 1 << 16, 1 << 16);
+	}
+
+	if (tc->sc.info.id != -1) {
+		if (tc->sc.info.plugin >= 0x14 && tc->sc.info.plugin <= 0x1C) {
+			//BITCSET(tc->sc.addr->uCTRL.nREG, 1 << 28, 1 << 28);
+			BITCSET(tc->sc.addr->uCTRL.nREG, 1 << 16, 1 << 16);
+		}
+	}
+
+	if (tc->lut.info.id != -1) {
+		//if (tc->lut.info.plugin >= 0 && tc->lut.info.plugin <= 0x13) {
+		//	BITCSET(tc->lut.addr->uCTRL.nREG, 1 << 28, 1 << 28);
+		//	BITCSET(tc->lut.addr->uCTRL.nREG, 1 << 16, 1 << 16);
+		//}
+	}
+
+	if (tc->wdma1.info.id != -1) {
+		BITCSET(tc->wdma1.addr->uCTRL.nREG, 1 << 28, 1 << 28);
+		BITCSET(tc->wdma1.addr->uCTRL.nREG, 1 << 16, 1 << 16);
+	}
+	if (tc->wdma2.info.id != -1) {
+		BITCSET(tc->wdma2.addr->uCTRL.nREG, 1 << 28, 1 << 28);
+		BITCSET(tc->wdma2.addr->uCTRL.nREG, 1 << 16, 1 << 16);
+	}
 
 	return 0;
 }
@@ -104,18 +175,22 @@ static int vioc_get_component_info(struct test_case_t *tc, struct test_data_t *t
 	 * RDMA - max 4 RDMAs
 	 */
 	tc->rdma1.info.id = td->rdma1.reg[0];
+	tc->rdma1.info.plugin = td->rdma1.reg[1];
 	tc->rdma1.info.addr_offset = OFFSET_RDMA_FROM_VIOC_BASE(tc->rdma1.info.id);
 	tc->rdma1.addr = (VIOC_RDMA *)(tc->vioc_base_addr + REG_OFFSET(tc->rdma1.info.addr_offset));
 
 	tc->rdma2.info.id = td->rdma2.reg[0];
+	tc->rdma2.info.plugin = td->rdma2.reg[1];
 	tc->rdma2.info.addr_offset = OFFSET_RDMA_FROM_VIOC_BASE(tc->rdma2.info.id);
 	tc->rdma2.addr = (VIOC_RDMA *)(tc->vioc_base_addr + REG_OFFSET(tc->rdma2.info.addr_offset));
 
 	tc->rdma3.info.id = td->rdma3.reg[0];
+	tc->rdma3.info.plugin = td->rdma3.reg[1];
 	tc->rdma3.info.addr_offset = OFFSET_RDMA_FROM_VIOC_BASE(tc->rdma3.info.id);
 	tc->rdma3.addr = (VIOC_RDMA *)(tc->vioc_base_addr + REG_OFFSET(tc->rdma3.info.addr_offset));
 
 	tc->rdma4.info.id = td->rdma4.reg[0];
+	tc->rdma4.info.plugin = td->rdma4.reg[1];
 	tc->rdma4.info.addr_offset = OFFSET_RDMA_FROM_VIOC_BASE(tc->rdma4.info.id);
 	tc->rdma4.addr = (VIOC_RDMA *)(tc->vioc_base_addr + REG_OFFSET(tc->rdma4.info.addr_offset));
 
@@ -123,10 +198,12 @@ static int vioc_get_component_info(struct test_case_t *tc, struct test_data_t *t
 	 * WDMA - max 2 RDMAs
 	 */
 	tc->wdma1.info.id = td->wdma1.reg[0];
+	tc->wdma1.info.plugin = td->wdma1.reg[1];
 	tc->wdma1.info.addr_offset = OFFSET_WDMA_FROM_VIOC_BASE(tc->wdma1.info.id);
 	tc->wdma1.addr = (VIOC_WDMA *)(tc->vioc_base_addr + REG_OFFSET(tc->wdma1.info.addr_offset));
 
 	tc->wdma2.info.id = td->wdma2.reg[0];
+	tc->wdma2.info.plugin = td->wdma2.reg[1];
 	tc->wdma2.info.addr_offset = OFFSET_WDMA_FROM_VIOC_BASE(tc->wdma2.info.id);
 	tc->wdma2.addr = (VIOC_WDMA *)(tc->vioc_base_addr + REG_OFFSET(tc->wdma2.info.addr_offset));
 
@@ -134,6 +211,7 @@ static int vioc_get_component_info(struct test_case_t *tc, struct test_data_t *t
 	 * WMIX
 	 */
 	tc->wmix.info.id = td->wmix.reg[0];
+	tc->wmix.info.plugin = td->wmix.reg[1];
 	tc->wmix.info.addr_offset = OFFSET_WMIX_FROM_VIOC_BASE(tc->wmix.info.id);
 	tc->wmix.addr = (VIOC_WMIX *)(tc->vioc_base_addr + REG_OFFSET(tc->wmix.info.addr_offset));
 
@@ -141,6 +219,7 @@ static int vioc_get_component_info(struct test_case_t *tc, struct test_data_t *t
 	 * SC
 	 */
 	tc->sc.info.id = td->sc.reg[0];
+	tc->sc.info.plugin = td->sc.reg[1];
 	tc->sc.info.addr_offset = OFFSET_SC_FROM_VIOC_BASE(tc->sc.info.id);
 	tc->sc.addr = (VIOC_SC *)(tc->vioc_base_addr + REG_OFFSET(tc->sc.info.addr_offset));
 
@@ -148,6 +227,7 @@ static int vioc_get_component_info(struct test_case_t *tc, struct test_data_t *t
 	 * LUT
 	 */
 	tc->lut.info.id = td->lut.reg[0];
+	tc->lut.info.plugin = td->lut.reg[1];
 	tc->lut.info.addr_offset = OFFSET_LUT_FROM_VIOC_BASE;
 	tc->lut.addr = (VIOC_LUT *)(tc->vioc_base_addr + REG_OFFSET(tc->lut.info.addr_offset));
 
@@ -155,6 +235,7 @@ static int vioc_get_component_info(struct test_case_t *tc, struct test_data_t *t
 	 * OUTCFG
 	 */
 	tc->outcfg.info.id = td->outcfg.reg[0];
+	tc->outcfg.info.plugin = td->outcfg.reg[1];
 	tc->outcfg.info.addr_offset = OFFSET_OUTCFG_FROM_VIOC_BASE;
 	tc->outcfg.addr = (VIOC_OUTCFG *)(tc->vioc_base_addr + REG_OFFSET(tc->outcfg.info.addr_offset));
 
@@ -162,6 +243,7 @@ static int vioc_get_component_info(struct test_case_t *tc, struct test_data_t *t
 	 * CONFIG
 	 */
 	tc->config.info.id = td->config.reg[0];
+	tc->config.info.plugin = td->config.reg[1];
 	tc->config.info.addr_offset = OFFSET_CONFIG_FROM_VIOC_BASE;
 	tc->config.addr = (VIOC_IREQ_CONFIG *)(tc->vioc_base_addr + REG_OFFSET(tc->config.info.addr_offset));
 
@@ -407,9 +489,9 @@ static int vioc_set_component_regs(struct test_case_t *tc)
 	}
 
 	/*
-	 * OUTCFG
+	 * OUTCFG - WARNING: do not set whole registers
 	 */
-	if (tc->outcfg.info.id != -1) {
+	if (tc->outcfg.info.id != -1 && 0) {
 		ret = outcfg_setup(&tc->outcfg);
 		if (ret) {
 			printf("[%s] error: %s", __func__, name_vioc_compoent[VC_OUTCFG]);
@@ -418,9 +500,9 @@ static int vioc_set_component_regs(struct test_case_t *tc)
 	}
 
 	/*
-	 * CONFIG
+	 * CONFIG - WARNING: do not set whole registers
 	 */
-	if (tc->config.info.id != -1) {
+	if (tc->config.info.id != -1 && 0) {
 		ret = config_setup(&tc->config);
 		if (ret) {
 			printf("[%s] error: %s", __func__, name_vioc_compoent[VC_CONFIG]);
@@ -436,11 +518,79 @@ static int vioc_config_path(struct test_case_t *tc)
 {
 	int ret = 0;
 
-	//rdma plugin hard fix
-	//sc plugin
-	//lut plugin
-	//wmix mix or bypass
+	/*
+	 * RDMA - max 4 RDMAs
+	 */
+	if (tc->rdma1.info.id != -1 && tc->rdma1.info.plugin != -1) {
+		ret = config_plugin(tc, VC_RDMA_1st);
+		if (ret) {
+			printf("[%s] error: plug-in %s", __func__, name_vioc_compoent[VC_RDMA_1st]);
+			goto exit;
+		}
+	}
+	if (tc->rdma2.info.id != -1 && tc->rdma2.info.plugin != -1) {
+		ret = config_plugin(tc, VC_RDMA_2nd);
+		if (ret) {
+			printf("[%s] error: plug-in %s", __func__, name_vioc_compoent[VC_RDMA_2nd]);
+			goto exit;
+		}
+	}
+	if (tc->rdma3.info.id != -1 && tc->rdma3.info.plugin != -1) {
+		ret = config_plugin(tc, VC_RDMA_3rd);
+		if (ret) {
+			printf("[%s] error: plug-in %s", __func__, name_vioc_compoent[VC_RDMA_3rd]);
+			goto exit;
+		}
+	}
+	if (tc->rdma4.info.id != -1 && tc->rdma4.info.plugin != -1) {
+		ret = config_plugin(tc, VC_RDMA_4th);
+		if (ret) {
+			printf("[%s] error: plug-in %s", __func__, name_vioc_compoent[VC_RDMA_4th]);
+			goto exit;
+		}
+	}
 
+	/*
+	 * SC
+	 */
+	if (tc->sc.info.id != -1 && tc->sc.info.plugin != -1) {
+		ret = config_plugin(tc, VC_SC);
+		if (ret) {
+			printf("[%s] error: plug-in %s", __func__, name_vioc_compoent[VC_SC]);
+			goto exit;
+		}
+	}
+
+	/*
+	 * LUT
+	 */
+	if (tc->lut.info.id != -1 && tc->lut.info.plugin != -1) {
+		ret = config_plugin(tc, VC_LUT);
+		if (ret) {
+			printf("[%s] error: plug-in %s", __func__, name_vioc_compoent[VC_LUT]);
+			goto exit;
+		}
+	}
+
+	/*
+	 * OUTCFG - ONLY set the specified registers
+	 */
+	ret = outcfg_config(tc);
+	if (ret) {
+		printf("[%s] error: %s", __func__, name_vioc_compoent[VC_LUT]);
+		goto exit;
+	}
+
+	/*
+	 * CONFIG - ONLY set the specified registers
+	 */
+	ret = config_config(tc);
+	if (ret) {
+		printf("[%s] error: %s", __func__, name_vioc_compoent[VC_LUT]);
+		goto exit;
+	}
+
+exit:
 	return ret;
 }
 

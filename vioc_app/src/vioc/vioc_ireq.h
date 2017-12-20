@@ -591,6 +591,29 @@ typedef	struct	_VIOC_IREQ_CONFIG
 	volatile VIOC_CONFIG_PATH_u 		uVIQE1;				// 0x130
 	unsigned int 						reserved7[3];		// 0x134~13C
 	volatile VIOC_CONFIG_WDMA_MISC_u	uWDMA_MISC;			// 0x140
+
+	unsigned int						reserved8[4];		// 0x144, 0x148, 0x14C, ox150
+	unsigned int						reserved9[45];		// 0x154 ~ 0x204
+
+	volatile VIOC_CONFIG_PATH_u 		uRDMA02;			// 0x208
+	volatile VIOC_CONFIG_PATH_u 		uRDMA03;			// 0x20C
+	unsigned int						reserved10[2];		// 0x210, 0x214
+	volatile VIOC_CONFIG_PATH_u 		uRDMA06;			// 0x218
+	volatile VIOC_CONFIG_PATH_u 		uRDMA07;			// 0x21C
+	unsigned int						reserved11[3];		// 0x220, 0x224, 0x228
+	volatile VIOC_CONFIG_PATH_u 		uRDMA11;			// 0x22C
+	volatile VIOC_CONFIG_PATH_u 		uRDMA12;			// 0x230
+	volatile VIOC_CONFIG_PATH_u 		uRDMA13;			// 0x234
+	volatile VIOC_CONFIG_PATH_u 		uRDMA14;			// 0x238
+	unsigned int						reserved12[1];		// 0x23C
+	volatile VIOC_CONFIG_PATH_u 		uRDMA16;			// 0x240
+	volatile VIOC_CONFIG_PATH_u 		uRDMA17;			// 0x244
+	unsigned int						reserved13[14];		// 0x248 ~ 0x27C
+	volatile VIOC_CONFIG_PATH_u 		uMC0;				// 0x280
+	volatile VIOC_CONFIG_PATH_u 		uMC1;				// 0x284
+	unsigned int						reserved14[30];		// 0x288 ~ 0x2FC
+	volatile VIOC_CONFIG_PATH_u 		uDTRC0;				// 0x300
+	volatile VIOC_CONFIG_PATH_u 		uDTRC1;				// 0x304
 }	VIOC_IREQ_CONFIG,*PVIOC_IREQ_CONFIG;
 
 #endif	//__VIOC_IREQ_H__

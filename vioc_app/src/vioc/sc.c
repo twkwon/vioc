@@ -79,7 +79,7 @@ int sc_verify_regs(struct vioc_sc_t *sc)
 	s = &sc->reg;
 	d = sc->addr;
 
-	printf("VERIFY SC%d", sc->info.id);
+	printf("VERIFY SC%d\n", sc->info.id);
 	if (sc->info.id < 0) {
 		printf("\tN/A\n");
 		return ret;

@@ -64,9 +64,17 @@ int test_main(char *file_name, char *pmap_name)
 		printf("Do you want to run the test%d (%s)? [y/n] ", td->test_no, td->test_name);
 		c = getchar();
 		if (c == 'y' || c == 'Y') {
-			run_test_single(test_case, td);
+			printf("\n\n==================================\n");
+			printf("     RUN TEST CASE No.%d\n", td->test_no);
+			printf("      - %s\n", td->test_name);
+			printf("==================================\n");
+
+			ret = run_test_single(test_case, td);
+			if (ret) {
+				printf("---> TEST FAILED\n");
+			}
 		} else {
-			printf("Skip the test%d (%s)\n", td->test_no, td->test_name);
+			printf("---> SKIP TEST%d:%s\n", td->test_no, td->test_name);
 		}
 		getchar();
 	}
@@ -86,21 +94,22 @@ err1:
 static int run_test_single(struct test_case_t *test_case, struct test_data_t *test_data)
 {
 	int ret = 0;
-	printf("\n\n==================================\n");
-	printf("     RUN TEST CASE No.%d\n", test_data->test_no);
-	printf("      - %s\n", test_data->test_name);
-	printf("==================================\n");
 
 	/*
 	 * setup vioc components & path
 	 */
 	ret = setup_vioc_path(test_case, test_data);
+	if (ret) {
+		printf("[%s] error: setup_vioc_path()\n", __func__);
+		goto exit;
+	}
 
 	/*
 	 * run single test case
 	 */
 	ret = shoot_test(test_case);
 
+exit:
 	return ret;
 }
 

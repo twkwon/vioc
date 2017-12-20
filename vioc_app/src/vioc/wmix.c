@@ -270,7 +270,7 @@ int wmix_verify_regs(struct vioc_wmix_t *wmix)
 	s = &wmix->reg;
 	d = wmix->addr;
 
-	printf("VERIFY WMIX%d", wmix->info.id);
+	printf("VERIFY WMIX%d\n", wmix->info.id);
 	if (wmix->info.id < 0) {
 		printf("\tN/A\n");
 		return ret;

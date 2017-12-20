@@ -2,6 +2,20 @@
 
 #include <vioc.h>
 
+#define V_OUTCFG_MRGBSEL_SHIFT	(16)
+#define V_OUTCFG_MRGBSEL_MASK	(0x3 << V_OUTCFG_MRGBSEL_SHIFT)
+
+#define V_OUTCFG_M80SEL_SHIFT	(12)
+#define V_OUTCFG_M80SEL_MASK	(0x3 << V_OUTCFG_M80SEL_SHIFT)
+
+#define V_OUTCFG_HDVESEL_SHIFT	(8)
+#define V_OUTCFG_HDVESEL_MASK	(0x3 << V_OUTCFG_HDVESEL_SHIFT)
+
+#define V_OUTCFG_SDVESEL_SHIFT	(4)
+#define V_OUTCFG_SDVESEL_MASK	(0x3 << V_OUTCFG_SDVESEL_SHIFT)
+
+#define V_OUTCFG_HDMISEL_SHIFT	(0)
+#define V_OUTCFG_HDMISEL_MASK	(0x3 << V_OUTCFG_HDMISEL_SHIFT)
 
 int outcfg_map_regs(struct vioc_outcfg_t *outcfg, struct test_data_reg_val_t *data)
 {
@@ -48,7 +62,7 @@ int outcfg_verify_regs(struct vioc_outcfg_t *outcfg)
 	s = &outcfg->reg;
 	d = outcfg->addr;
 
-	printf("VERIFY OUTCFG%d", outcfg->info.id);
+	printf("VERIFY OUTCFG%d\n", outcfg->info.id);
 	if (outcfg->info.id < 0) {
 		printf("\tN/A\n");
 		return ret;
@@ -64,5 +78,35 @@ int outcfg_verify_regs(struct vioc_outcfg_t *outcfg)
 		ret = -1;
 	}
 
+	return ret;
+}
+
+int outcfg_config(struct test_case_t *tc)
+{
+	int ret = 0;
+	reg_t val, reg;
+	VIOC_OUTCFG *outcfg_reg;	// physical register
+	VIOC_OUTCFG *outcfg_val;	// test data
+
+	outcfg_reg = tc->outcfg.addr;
+	outcfg_val = &tc->outcfg.reg;
+
+	/* MISC */
+	val = read_reg(&outcfg_reg->uMISCCFG);
+	BITCSET(val, V_OUTCFG_MRGBSEL_MASK, outcfg_val->uMISCCFG.bREG.MRGBSEL << V_OUTCFG_MRGBSEL_SHIFT);
+	BITCSET(val, V_OUTCFG_M80SEL_MASK, outcfg_val->uMISCCFG.bREG.M80SEL << V_OUTCFG_M80SEL_SHIFT);
+	BITCSET(val, V_OUTCFG_HDVESEL_MASK, outcfg_val->uMISCCFG.bREG.HDVESEL << V_OUTCFG_HDVESEL_SHIFT);
+	BITCSET(val, V_OUTCFG_SDVESEL_MASK, outcfg_val->uMISCCFG.bREG.SDVESEL << V_OUTCFG_SDVESEL_SHIFT);
+	BITCSET(val, V_OUTCFG_HDMISEL_SHIFT, outcfg_val->uMISCCFG.bREG.HDMISEL << V_OUTCFG_HDMISEL_SHIFT);
+	write_reg(&outcfg_reg->uMISCCFG, val);
+
+	reg = read_reg(&outcfg_reg->uMISCCFG);
+	if (val != reg) {
+		printf("[%s] error: MISC(0x08x) != val(0x%08x)\n", reg, val);
+		ret = -1;
+		goto exit;
+	}
+
+exit:
 	return ret;
 }
