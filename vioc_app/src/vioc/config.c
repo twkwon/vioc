@@ -141,7 +141,7 @@ int config_config(struct test_case_t *tc)
 
 	reg = read_reg(&config_reg->uPATH_EDR);
 	if (val != reg) {
-		printf("[%s] error: CFG_PATH_EDR(0x08x) != val(0x%08x)\n", reg, val);
+		printf("[%s] error: CFG_PATH_EDR(0x%08x) != val(0x%08x)\n", __func__, reg, val);
 		ret = -1;
 		goto exit;
 	}
@@ -158,7 +158,7 @@ int config_config(struct test_case_t *tc)
 
 	reg = read_reg(&config_reg->uMISC0);
 	if (val != reg) {
-		printf("[%s] error: CFG_MISC0(0x08x) != val(0x%08x)\n", reg, val);
+		printf("[%s] error: CFG_MISC0(0x%08x) != val(0x%08x)\n", __func__, reg, val);
 		ret = -1;
 		goto exit;
 	}
@@ -266,10 +266,10 @@ static int plugin_rdma(struct test_case_t *tc, enum vioc_components comp)
 			break;
 	}
 
-	printf("[%s] plug-in RDMA%d -> SEL(0x%x)\n", rdma->info.id, rdma->info.plugin);
+	printf("[%s] plug-in RDMA%d -> SEL(0x%x)\n", __func__, rdma->info.id, rdma->info.plugin);
 	return ret;
 err:
-	printf("[%s] error: plug-in RDMA%d\n", rdma->info.id);
+	printf("[%s] error: plug-in RDMA%d\n", __func__, rdma->info.id);
 	return ret;
 }
 
@@ -312,10 +312,10 @@ static int plugin_sc(struct test_case_t *tc, enum vioc_components comp)
 			break;
 	}
 
-	printf("[%s] plug-in SC%d -> SEL(0x%x)\n", sc->info.id, sc->info.plugin);
+	printf("[%s] plug-in SC%d -> SEL(0x%x)\n", __func__, sc->info.id, sc->info.plugin);
 	return ret;
 err:
-	printf("[%s] error: plug-in SC%d\n", sc->info.id);
+	printf("[%s] error: plug-in SC%d\n", __func__, sc->info.id);
 	return ret;
 }
 
@@ -324,7 +324,7 @@ static int plugin_lut(struct test_case_t *tc, enum vioc_components comp)
 	int ret = 0;
 
 	//TODO:
-	printf("[%s] TODO: this is empty funtion!!!\n");
+	printf("[%s] TODO: this is empty funtion!!!\n", __func__);
 
 	return ret;
 }

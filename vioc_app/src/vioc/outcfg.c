@@ -102,7 +102,7 @@ int outcfg_config(struct test_case_t *tc)
 
 	reg = read_reg(&outcfg_reg->uMISCCFG);
 	if (val != reg) {
-		printf("[%s] error: MISC(0x08x) != val(0x%08x)\n", reg, val);
+		printf("[%s] error: MISC(0x%08x) != val(0x%08x)\n", __func__, reg, val);
 		ret = -1;
 		goto exit;
 	}
