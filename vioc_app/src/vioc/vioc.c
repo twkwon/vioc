@@ -90,7 +90,6 @@ exit:
 int shoot_test(struct test_case_t *tc)
 {
 	int ret = 0;
-
 	printf("\n\nSHOOTING !!!!!\n\n");
 
 	/*
@@ -517,6 +516,7 @@ exit:
 static int vioc_config_path(struct test_case_t *tc)
 {
 	int ret = 0;
+	printf("[%s]\n", __func__);
 
 	/*
 	 * RDMA - max 4 RDMAs

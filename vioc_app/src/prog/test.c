@@ -94,6 +94,7 @@ err1:
 static int run_test_single(struct test_case_t *test_case, struct test_data_t *test_data)
 {
 	int ret = 0;
+	printf("[%s]\n", __func__);
 
 	/*
 	 * setup vioc components & path
@@ -108,6 +109,10 @@ static int run_test_single(struct test_case_t *test_case, struct test_data_t *te
 	 * run single test case
 	 */
 	ret = shoot_test(test_case);
+	if (ret) {
+		printf("[%s] error: shoot_test()\n", __func__);
+		goto exit;
+	}
 
 exit:
 	return ret;
