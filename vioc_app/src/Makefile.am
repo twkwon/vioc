@@ -1,3 +1,3 @@
-AM_CFLAGS = -Werror -static
+AM_CFLAGS = -Werror
 
 SUBDIRS = util vioc prog

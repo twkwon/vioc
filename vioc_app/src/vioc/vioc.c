@@ -167,12 +167,12 @@ int shoot_test(struct test_case_t *tc)
 		BITCSET(tc->wdma2.addr->uCTRL.nREG, 1 << 16, 1 << 16);
 	}
 
-	return 0;
+	return ret;
 }
 
 static int vioc_get_component_info(struct test_case_t *tc, struct test_data_t *td)
 {
-	int i, ret = 0;
+	int ret = 0;
 	printf("[%s]\n", __func__);
 
 	/* get infos (test no, test name, input/output files) */
@@ -406,7 +406,6 @@ static int vioc_map_component_regs(struct test_case_t *tc, struct test_data_t *t
 		ret += mapped - nr_regs_data;
 	}
 
-exit:
 	return ret;
 }
 

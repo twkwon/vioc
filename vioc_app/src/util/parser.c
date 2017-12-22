@@ -66,7 +66,6 @@ int read_data(FILE *fp, struct getbuf_t *tcase)
 	char *line = NULL;
 	size_t len = 0;
 	ssize_t read;
-	char *buf = NULL;
 
 	printf("[%s]\n", __func__);
 

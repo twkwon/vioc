@@ -15,7 +15,7 @@ echo " configure       "
 echo "-----------------"
 ./configure \
 		CC=$CROSS_COMPILE \
-		CFLAGS="-O2 -s" \
+		CFLAGS="-s -Wall -Werror -static" \
 		--host=arm-linux \
 		--target=arm-linux \
 		--prefix=$PREFIX

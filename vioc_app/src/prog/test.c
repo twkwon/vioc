@@ -103,7 +103,6 @@ int test_main(char *file_name, char *pmap_name)
 
 	printf("\n<----------- END OF TEST ----------->\n");
 
-err3:
 	vioc_munmap(test_case->vioc_base_addr);
 err2:
 	free(test_case);
@@ -278,6 +277,6 @@ static int verify_image_buf(struct test_case_t *tc)
 		}
 	}
 
-	printf("===================================================================\n\n", __func__);
+	printf("===================================================================\n\n");
 	return ret;
 }

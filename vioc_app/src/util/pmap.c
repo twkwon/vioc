@@ -40,6 +40,11 @@ int pmap_get_info(const char *name, struct pmap_t *mem)
 		return -1;
 
 	nbytes = read(fd, buf, sizeof(buf));
+	if (nbytes < 0) {
+		close(fd);
+		perror("[pmap_get_info] error: open /proc/pmap");
+		return -1;
+	}
 	close(fd);
 
 	p = buf;
