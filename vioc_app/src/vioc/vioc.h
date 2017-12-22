@@ -12,7 +12,7 @@
 
 #include <test.h>
 
-#define REG_OFFSET(offset)	(offset / sizeof(addr_t))
+#define INT32_OFFSET(offset)	(offset / sizeof(addr_t))
 
 #define read_reg(reg)		(*(volatile addr_t *)(reg))
 #define write_reg(reg, val)	(*(volatile addr_t *)(reg) = (val))
@@ -53,6 +53,24 @@ enum vioc_components {
 	VC_OUTCFG,
 	VC_CONFIG,
 	VC_END = VC_CONFIG,
+};
+
+struct image_buf_info_t {
+	int id;							// -1 is no file
+	char name[SIZE_OF_TEST_NAME];
+	addr_t paddr;					// pmap physical address to set into RDMA
+	addr_t *vaddr;					// mapped virtual buffer of pmap through mmap()
+	unsigned int len;				// image file lenth
+	int width;						// image width
+	int height;						// image height
+	int fmt;						// image format //TODO: create enum imag_fmt
+};
+
+struct image_file_t {
+	addr_t base_paddr;
+	addr_t *base_vaddr;
+	struct image_buf_info_t input[MAX_NUM_OF_RDMA];
+	struct image_buf_info_t output[MAX_NUM_OF_WDMA];
 };
 
 /*
@@ -114,6 +132,10 @@ struct vioc_config_t {
 struct test_case_t {
 	int test_no;
 	char test_name[SIZE_OF_TEST_NAME];
+
+	struct image_buf_info_t input_file[MAX_NUM_OF_RDMA];
+	struct image_buf_info_t output_file[MAX_NUM_OF_WDMA];
+
 	addr_t *vioc_base_addr;
 	struct vioc_rdma_t rdma1;
 	struct vioc_rdma_t rdma2;
@@ -144,10 +166,16 @@ struct test_data_reg_val_t {
 struct test_data_t {
 	int test_no;
 	char test_name[SIZE_OF_TEST_NAME];
+
+	struct image_buf_info_t input_file[MAX_NUM_OF_RDMA];
+	struct image_buf_info_t output_file[MAX_NUM_OF_WDMA];
+
+	//struct test_data_reg_val_t rdma[MAX_NUM_OF_RDMA];
 	struct test_data_reg_val_t rdma1;
 	struct test_data_reg_val_t rdma2;
 	struct test_data_reg_val_t rdma3;
 	struct test_data_reg_val_t rdma4;
+	//struct test_data_reg_val_t wdma[MAX_NUM_OF_WDMA];
 	struct test_data_reg_val_t wdma1;
 	struct test_data_reg_val_t wdma2;
 	struct test_data_reg_val_t wmix;
@@ -155,6 +183,7 @@ struct test_data_t {
 	struct test_data_reg_val_t lut;
 	struct test_data_reg_val_t outcfg;
 	struct test_data_reg_val_t config;
+
 	struct list_head list;
 };
 
@@ -163,8 +192,8 @@ struct test_data_t {
  * extern functions
  *-----------------------------------------------------------------------------
  */
- 
-extern int setup_vioc_path(struct test_case_t *, struct test_data_t *);
+extern int setup_test_case(struct test_case_t *, struct test_data_t *);
+extern int setup_vioc_path(struct test_case_t *);
 extern int shoot_test(struct test_case_t *);
 
 extern int rdma_map_regs(struct vioc_rdma_t *, struct test_data_reg_val_t *);

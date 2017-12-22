@@ -27,6 +27,7 @@ int parse_test_case(char *file_name, struct test_data_t *test_data)
 	fp = fopen(file_name, "r");
 	if (fp == NULL) {
 		printf("error: file open %s\n", file_name);
+		perror("fopen() failed");
 		return -1;
 	}
 
@@ -137,7 +138,14 @@ int parser(struct test_data_t *tdata, struct getbuf_t *tcase, int test_no)
 	nr_vioc = nr_vioc - 1;
 	printf("nr_vioc(%d) nr_regs(%d)\n", nr_vioc, nr_regs);
 
-	sscanf(buf, "%[^',']", tdata->test_name);
+	/* get test name */
+	sscanf(buf, "%[^','],%[^','],%d,%d,%d,%[^','],%d,%d,%d,%[^','],%d,%d,%d,%[^','],%d,%d,%d,%[^','],%[^',']",
+			tdata->test_name,
+			tdata->input_file[0].name, &tdata->input_file[0].width, &tdata->input_file[0].height, &tdata->input_file[0].fmt,
+			tdata->input_file[1].name, &tdata->input_file[1].width, &tdata->input_file[1].height, &tdata->input_file[1].fmt,
+			tdata->input_file[2].name, &tdata->input_file[2].width, &tdata->input_file[2].height, &tdata->input_file[2].fmt,
+			tdata->input_file[3].name, &tdata->input_file[3].width, &tdata->input_file[3].height, &tdata->input_file[3].fmt,
+			tdata->output_file[0].name, tdata->output_file[1].name);
 
 	start_pos = 0;
 	for (i = 0; i < nr_vioc; i++) {
@@ -276,7 +284,15 @@ void print_parsed_data(struct test_data_t *t)
 	printf("\n=======================================\n");
 	printf(" PARSED DATA\n");
 	printf(" test_no(%d) test_name(%s)\n", t->test_no, t->test_name);
-	printf("=========================================");
+	printf("=========================================\n");
+
+	for (i = 0; i < MAX_NUM_OF_RDMA; i++) {
+		printf("   %d RDMA input: %s, size(%dx%d), fmt(%d)\n", i, t->input_file[i].name,
+			t->input_file[i].width, t->input_file[i].height, t->input_file[i].fmt);
+	}
+	for (i = 0; i < MAX_NUM_OF_WDMA; i++) {
+		printf("  %d WDMA output: %s\n", i, t->output_file[i].name);
+	}
 
 	printf("\n  1st RDMA:");
 	for (i = 0; i < t->rdma1.nr_regs; i++) {

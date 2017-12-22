@@ -39,7 +39,7 @@ const char *name_vioc_compoent[] = {
  *    - ......
  */
 
-int setup_vioc_path(struct test_case_t *test_case, struct test_data_t *test_data)
+int setup_test_case(struct test_case_t *test_case, struct test_data_t *test_data)
 {
 	int ret = 0;
 	printf("[%s]\n", __func__);
@@ -61,6 +61,15 @@ int setup_vioc_path(struct test_case_t *test_case, struct test_data_t *test_data
 		printf("[%s] error: vioc_map_component_regs()\n", __func__);
 		goto exit;
 	}
+
+exit:
+	return ret;
+}
+
+int setup_vioc_path(struct test_case_t *test_case)
+{
+	int ret = 0;
+	printf("[%s]\n", __func__);
 
 	/*
 	 * set vioc registers
@@ -163,12 +172,14 @@ int shoot_test(struct test_case_t *tc)
 
 static int vioc_get_component_info(struct test_case_t *tc, struct test_data_t *td)
 {
-	int ret = 0;
+	int i, ret = 0;
 	printf("[%s]\n", __func__);
 
-	/* test name & index */
+	/* get infos (test no, test name, input/output files) */
 	tc->test_no = td->test_no;
 	memcpy(tc->test_name, td->test_name, sizeof(tc->test_name));
+	memcpy(tc->input_file, td->input_file, sizeof(tc->input_file));
+	memcpy(tc->output_file, td->output_file, sizeof(tc->output_file));
 
 	/*
 	 * RDMA - max 4 RDMAs
@@ -176,22 +187,22 @@ static int vioc_get_component_info(struct test_case_t *tc, struct test_data_t *t
 	tc->rdma1.info.id = td->rdma1.reg[0];
 	tc->rdma1.info.plugin = td->rdma1.reg[1];
 	tc->rdma1.info.addr_offset = OFFSET_RDMA_FROM_VIOC_BASE(tc->rdma1.info.id);
-	tc->rdma1.addr = (VIOC_RDMA *)(tc->vioc_base_addr + REG_OFFSET(tc->rdma1.info.addr_offset));
+	tc->rdma1.addr = (VIOC_RDMA *)(tc->vioc_base_addr + INT32_OFFSET(tc->rdma1.info.addr_offset));
 
 	tc->rdma2.info.id = td->rdma2.reg[0];
 	tc->rdma2.info.plugin = td->rdma2.reg[1];
 	tc->rdma2.info.addr_offset = OFFSET_RDMA_FROM_VIOC_BASE(tc->rdma2.info.id);
-	tc->rdma2.addr = (VIOC_RDMA *)(tc->vioc_base_addr + REG_OFFSET(tc->rdma2.info.addr_offset));
+	tc->rdma2.addr = (VIOC_RDMA *)(tc->vioc_base_addr + INT32_OFFSET(tc->rdma2.info.addr_offset));
 
 	tc->rdma3.info.id = td->rdma3.reg[0];
 	tc->rdma3.info.plugin = td->rdma3.reg[1];
 	tc->rdma3.info.addr_offset = OFFSET_RDMA_FROM_VIOC_BASE(tc->rdma3.info.id);
-	tc->rdma3.addr = (VIOC_RDMA *)(tc->vioc_base_addr + REG_OFFSET(tc->rdma3.info.addr_offset));
+	tc->rdma3.addr = (VIOC_RDMA *)(tc->vioc_base_addr + INT32_OFFSET(tc->rdma3.info.addr_offset));
 
 	tc->rdma4.info.id = td->rdma4.reg[0];
 	tc->rdma4.info.plugin = td->rdma4.reg[1];
 	tc->rdma4.info.addr_offset = OFFSET_RDMA_FROM_VIOC_BASE(tc->rdma4.info.id);
-	tc->rdma4.addr = (VIOC_RDMA *)(tc->vioc_base_addr + REG_OFFSET(tc->rdma4.info.addr_offset));
+	tc->rdma4.addr = (VIOC_RDMA *)(tc->vioc_base_addr + INT32_OFFSET(tc->rdma4.info.addr_offset));
 
 	/*
 	 * WDMA - max 2 RDMAs
@@ -199,12 +210,12 @@ static int vioc_get_component_info(struct test_case_t *tc, struct test_data_t *t
 	tc->wdma1.info.id = td->wdma1.reg[0];
 	tc->wdma1.info.plugin = td->wdma1.reg[1];
 	tc->wdma1.info.addr_offset = OFFSET_WDMA_FROM_VIOC_BASE(tc->wdma1.info.id);
-	tc->wdma1.addr = (VIOC_WDMA *)(tc->vioc_base_addr + REG_OFFSET(tc->wdma1.info.addr_offset));
+	tc->wdma1.addr = (VIOC_WDMA *)(tc->vioc_base_addr + INT32_OFFSET(tc->wdma1.info.addr_offset));
 
 	tc->wdma2.info.id = td->wdma2.reg[0];
 	tc->wdma2.info.plugin = td->wdma2.reg[1];
 	tc->wdma2.info.addr_offset = OFFSET_WDMA_FROM_VIOC_BASE(tc->wdma2.info.id);
-	tc->wdma2.addr = (VIOC_WDMA *)(tc->vioc_base_addr + REG_OFFSET(tc->wdma2.info.addr_offset));
+	tc->wdma2.addr = (VIOC_WDMA *)(tc->vioc_base_addr + INT32_OFFSET(tc->wdma2.info.addr_offset));
 
 	/*
 	 * WMIX
@@ -212,7 +223,7 @@ static int vioc_get_component_info(struct test_case_t *tc, struct test_data_t *t
 	tc->wmix.info.id = td->wmix.reg[0];
 	tc->wmix.info.plugin = td->wmix.reg[1];
 	tc->wmix.info.addr_offset = OFFSET_WMIX_FROM_VIOC_BASE(tc->wmix.info.id);
-	tc->wmix.addr = (VIOC_WMIX *)(tc->vioc_base_addr + REG_OFFSET(tc->wmix.info.addr_offset));
+	tc->wmix.addr = (VIOC_WMIX *)(tc->vioc_base_addr + INT32_OFFSET(tc->wmix.info.addr_offset));
 
 	/*
 	 * SC
@@ -220,7 +231,7 @@ static int vioc_get_component_info(struct test_case_t *tc, struct test_data_t *t
 	tc->sc.info.id = td->sc.reg[0];
 	tc->sc.info.plugin = td->sc.reg[1];
 	tc->sc.info.addr_offset = OFFSET_SC_FROM_VIOC_BASE(tc->sc.info.id);
-	tc->sc.addr = (VIOC_SC *)(tc->vioc_base_addr + REG_OFFSET(tc->sc.info.addr_offset));
+	tc->sc.addr = (VIOC_SC *)(tc->vioc_base_addr + INT32_OFFSET(tc->sc.info.addr_offset));
 
 	/*
 	 * LUT
@@ -228,7 +239,7 @@ static int vioc_get_component_info(struct test_case_t *tc, struct test_data_t *t
 	tc->lut.info.id = td->lut.reg[0];
 	tc->lut.info.plugin = td->lut.reg[1];
 	tc->lut.info.addr_offset = OFFSET_LUT_FROM_VIOC_BASE;
-	tc->lut.addr = (VIOC_LUT *)(tc->vioc_base_addr + REG_OFFSET(tc->lut.info.addr_offset));
+	tc->lut.addr = (VIOC_LUT *)(tc->vioc_base_addr + INT32_OFFSET(tc->lut.info.addr_offset));
 
 	/*
 	 * OUTCFG
@@ -236,7 +247,7 @@ static int vioc_get_component_info(struct test_case_t *tc, struct test_data_t *t
 	tc->outcfg.info.id = td->outcfg.reg[0];
 	tc->outcfg.info.plugin = td->outcfg.reg[1];
 	tc->outcfg.info.addr_offset = OFFSET_OUTCFG_FROM_VIOC_BASE;
-	tc->outcfg.addr = (VIOC_OUTCFG *)(tc->vioc_base_addr + REG_OFFSET(tc->outcfg.info.addr_offset));
+	tc->outcfg.addr = (VIOC_OUTCFG *)(tc->vioc_base_addr + INT32_OFFSET(tc->outcfg.info.addr_offset));
 
 	/*
 	 * CONFIG
@@ -244,7 +255,7 @@ static int vioc_get_component_info(struct test_case_t *tc, struct test_data_t *t
 	tc->config.info.id = td->config.reg[0];
 	tc->config.info.plugin = td->config.reg[1];
 	tc->config.info.addr_offset = OFFSET_CONFIG_FROM_VIOC_BASE;
-	tc->config.addr = (VIOC_IREQ_CONFIG *)(tc->vioc_base_addr + REG_OFFSET(tc->config.info.addr_offset));
+	tc->config.addr = (VIOC_IREQ_CONFIG *)(tc->vioc_base_addr + INT32_OFFSET(tc->config.info.addr_offset));
 
 	return ret;
 }
@@ -640,89 +651,3 @@ static int vioc_verify_regs(struct test_case_t *tc)
 
 	return ret;
 }
-
-
-
-
-
-
-
-#ifdef __ALAN__
-int test_parse_rdma(struct vioc_rdma_t *rdma, addr_t *base_addr)
-{
-	int ret = 0;
-
-	//test
-	rdma->info.id = VC_RDMA;
-	rdma->info.addr_offset = OFFSET_RDMA_FROM_VIOC_BASE;
-	rdma->addr = (VIOC_RDMA *)(base_addr + REG_OFFSET(rdma->info.addr_offset));
-
-	rdma->reg.uCTRL.bREG.R2Y = 1;
-
-err:
-	return ret;
-}
-
-int test_setup_vioc_path(struct test_case_t *test_case)
-{
-	printf("\n\n-------------------------------------\n");
-	printf("parse vioc components\n");
-	test_parse_rdma(&(test_case->rdma), test_case->vioc_base_addr);
-	printf("test_case->rdma.info.id(%d)\n", test_case->rdma.info.id);
-	printf("test_case->rdma.info.addr_offset(0x%x)\n", test_case->rdma.info.addr_offset);
-	printf("test_case->rdma.reg.uCTRL.bREG.R2Y(%d)\n", test_case->rdma.reg.uCTRL.bREG.R2Y);
-	printf("test_case->rdma.reg.uCTRL.nREG.R2Y(0x%08x)\n", test_case->rdma.reg.uCTRL.nREG);
-	printf("test_case->rdma.addr(0x%p)\n", test_case->rdma.addr);
-
-
-	printf("\nsetup vioc components\n");
-	printf("0x%08x\n", *(addr_t *)(test_case->vioc_base_addr + REG_OFFSET(0x400)));
-	printf("0x%08x\n", *(addr_t *)(test_case->vioc_base_addr + REG_OFFSET(0x408)));
-	rdma_setup(&(test_case->rdma));
-}
-
-void test_reg_rw(struct vioc_rdma_t *rdma, struct test_data_reg_val_t *data)
-{
-	rdma->reg.uCROPSIZE.nREG = read_reg(&rdma->addr->uCROPSIZE.nREG);
-	printf("uCROPSIZE.nREG 0x%08x\n", rdma->reg.uCROPSIZE.nREG);
-
-	rdma->reg.uCTRL.nREG = read_reg(rdma->addr);
-	printf("uCTRL.nREG 0x%08x\n", rdma->reg.uCTRL.nREG);
-
-	rdma->reg.uMISC.nREG = read_reg(&rdma->addr->uMISC);
-	printf("uMISC.nREG 0x%08x\n", rdma->reg.uMISC.nREG);
-
-	rdma->reg = *rdma->addr;
-	printf("uCTRL   0x%08x\n", rdma->reg.uCTRL.nREG);
-	printf("uSIZE   0x%08x\n", rdma->reg.uSIZE.nREG);
-	printf("uOFFSET 0x%08x\n", rdma->reg.uOFFSET.nREG);
-	printf("nBASE0  0x%08x\n", rdma->reg.nBASE0);
-	printf("nBASE1  0x%08x\n", rdma->reg.nBASE1);
-	printf("nBASE2  0x%08x\n", rdma->reg.nBASE2);
-	printf("uSTATUS 0x%08x\n", rdma->reg.uSTATUS.nREG);
-	printf("uALPHA  0x%08x\n", rdma->reg.uALPHA.nREG);
-
-	reg_t val0, val1;
-
-	//test1 --> OK
-	printf("%s: 0x%08x\n", __func__, *(addr_t *)(rdma->addr));
-
-	val0 = read_reg(rdma->addr);
-	printf("before: 0x%08x\n", val0);
-
-	BITCSET(val0, 1<<17, rdma->reg.uCTRL.bREG.R2Y<<17);
-	printf(" after: 0x%08x\n", val0);
-
-	write_reg(rdma->addr, val0);
-	printf("write: 0x%08x\n", rdma->reg.uCTRL.nREG);
-
-	val1 = read_reg(rdma->addr);
-
-	printf("\n\n=============== TEST ======================\n");
-	printf(" read: 0x%08x\n", val0);
-	printf("write: 0x%08x\n", rdma->reg.uCTRL.nREG);
-	printf(" read: 0x%08x\n", val1);
-	printf("=============== TEST ======================\n\n");
-
-}
-#endif

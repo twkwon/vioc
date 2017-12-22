@@ -18,9 +18,8 @@ int get_pmap(char *pname, struct pmap_t *pmap)
 	if (ret < 0)
 		printf("error get pmap\n");
 
-	printf("pmap->video.name = %s\n", pname);
-	printf("pmap->video.base = 0x%08x\n", pmap->base);
-	printf("pmap->video.size = 0x%08x\n", pmap->size);
+	printf("pmap->%s.base = 0x%08x\n", pname, pmap->base);
+	printf("pmap->%s.size = 0x%08x\n", pname, pmap->size);
 
 	return ret;
 }
