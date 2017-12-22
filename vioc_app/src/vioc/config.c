@@ -218,7 +218,8 @@ static int plugin_rdma(struct test_case_t *tc, enum vioc_components comp)
 		break;
 	default:
 		ret = -1;
-		goto err;
+		printf("[%s] component id(%d) is not RDMA\n", __func__, comp);
+		goto err_comp;
 	}
 
 	switch (rdma->info.id) {
@@ -254,7 +255,7 @@ static int plugin_rdma(struct test_case_t *tc, enum vioc_components comp)
 		break;
 	default:
 		ret = -1;
-		goto err;
+		goto err_rdma_id;
 	}
 
 	BITCSET(cfg_path_rdma->nREG, V_CONFIG_PATH_MASK, rdma->info.plugin << V_CONFIG_PATH_SHIFT);
@@ -268,8 +269,10 @@ static int plugin_rdma(struct test_case_t *tc, enum vioc_components comp)
 
 	printf("[%s] plug-in RDMA%d -> SEL(0x%x)\n", __func__, rdma->info.id, rdma->info.plugin);
 	return ret;
-err:
+
+err_rdma_id:
 	printf("[%s] error: plug-in RDMA%d\n", __func__, rdma->info.id);
+err_comp:
 	return ret;
 }
 
