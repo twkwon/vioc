@@ -9,6 +9,13 @@ static int vioc_map_component_regs(struct test_case_t *, struct test_data_t *);
 static int vioc_set_component_regs(struct test_case_t *);
 static int vioc_config_path(struct test_case_t *);
 static int vioc_verify_regs(struct test_case_t *);
+static int vioc_set_dma_address(struct test_case_t *);
+static void vioc_get_dma_address(unsigned char, unsigned int,
+										unsigned int, unsigned int,
+										unsigned int, unsigned int,
+										unsigned int *, unsigned int *, unsigned int *);
+static void vioc_get_dma_offset(unsigned int, unsigned int,
+									unsigned int *, unsigned int *);
 
 
 const char *name_vioc_compoent[] = {
@@ -86,6 +93,15 @@ int setup_vioc_path(struct test_case_t *test_case)
 	ret = vioc_config_path(test_case);
 	if (ret) {
 		printf("[%s] error: vioc_config_path()\n", __func__);
+		goto exit;
+	}
+
+	/*
+	 * setup RDMA/WDMA address and offset
+	 */
+	ret = vioc_set_dma_address(test_case);
+	if (ret) {
+		printf("[%s] error: vioc_set_address()\n", __func__);
 		goto exit;
 	}
 
@@ -649,4 +665,164 @@ static int vioc_verify_regs(struct test_case_t *tc)
 	ret = config_verify_regs(&tc->config);
 
 	return ret;
+}
+
+/** @brief Setup RDMA/WDMA address and offset.
+ *  It depends on the input image (size, format) and SC.
+ *  @param struct test_case_t
+ *  @return returns 0 if successful
+ */
+static int vioc_set_dma_address(struct test_case_t *tc)
+{
+	int i, ret = 0;
+	addr_t offset0, offset1;
+	addr_t base0, base1, base2;
+	unsigned int width, height;
+	unsigned int start_x, start_y;
+
+	/* not supported crop */
+	start_x = 0;
+	start_y = 0;
+
+	for (i = 0; i < MAX_NUM_OF_RDMA; i++) {
+		if (tc->input_file[i].id != -1) {
+			base0 = tc->input_file[i].paddr;
+			width = tc->input_file[i].width;
+			height = tc->input_file[i].height;
+			vioc_get_dma_offset(tc->input_file[i].fmt, base0, &offset0, &offset1);
+			vioc_get_dma_address(tc->input_file[i].fmt, base0, width, height, start_x, start_y, &base0, &base1, &base2);
+
+			rdma_set_base_addr();
+			rdma_set_offset();
+		}
+	}
+}
+
+static void vioc_get_dma_address(unsigned char format, addr_t base_Yaddr,
+										unsigned int src_imgx, unsigned int src_imgy,
+										unsigned int start_x, unsigned int start_y,
+										addr_t *Y, addr_t *U, addr_t *V)
+{
+	int bpp;
+	unsigned int Uaddr, Vaddr, Yoffset, UVoffset, start_yPos, start_xPos;
+
+	start_yPos = (start_y >> 1) << 1;
+	start_xPos = (start_x >> 1) << 1;
+	Yoffset = (src_imgx * start_yPos) + start_xPos;
+
+	if((format >= TCC_LCDC_IMG_FMT_RGB332) && (format <= TCC_LCDC_IMG_FMT_ARGB6666_3)) {
+		if(format == TCC_LCDC_IMG_FMT_RGB332)
+			bpp = 1;
+		else if((format >= TCC_LCDC_IMG_FMT_RGB444) && (format <= TCC_LCDC_IMG_FMT_RGB555))
+			bpp = 2;
+		else if((format >= TCC_LCDC_IMG_FMT_RGB888) && (format <= TCC_LCDC_IMG_FMT_ARGB6666_3))
+			bpp = 4;
+		else 
+			bpp = 2;
+
+		*Y = base_Yaddr + Yoffset * bpp;
+	}
+
+	if ((format == TCC_LCDC_IMG_FMT_UYVY) || (format == TCC_LCDC_IMG_FMT_VYUY)
+		|| (format == TCC_LCDC_IMG_FMT_YUYV) || (format == TCC_LCDC_IMG_FMT_YVYU)) {
+		Yoffset = 2 * Yoffset;
+	}
+
+	*Y = base_Yaddr + Yoffset;
+
+	if (*U == 0 && *V == 0) {
+		Uaddr = GET_ADDR_YUV42X_spU(base_Yaddr, src_imgx, src_imgy);
+		if(format == TCC_LCDC_IMG_FMT_YUV420SP)
+			Vaddr = GET_ADDR_YUV420_spV(Uaddr, src_imgx, src_imgy);
+		else
+			Vaddr = GET_ADDR_YUV422_spV(Uaddr, src_imgx, src_imgy);
+	} else {
+		Uaddr = *U;
+		Vaddr = *V;
+	}
+
+	if ((format == TCC_LCDC_IMG_FMT_YUV420SP) || (format == TCC_LCDC_IMG_FMT_YUV420ITL0) || (format == TCC_LCDC_IMG_FMT_YUV420ITL1)) {
+		if(format == TCC_LCDC_IMG_FMT_YUV420SP)
+			UVoffset = ((src_imgx * start_yPos) / 4 + start_xPos / 2);
+		else
+			UVoffset = ((src_imgx * start_yPos) / 2 + start_xPos);
+	} else {
+		if(format == TCC_LCDC_IMG_FMT_YUV422ITL1)
+			UVoffset = ((src_imgx * start_yPos) + start_xPos);
+		else
+			UVoffset = ((src_imgx * start_yPos) / 2 + start_xPos / 2);
+	}
+
+	*U = Uaddr + UVoffset;
+	*V = Vaddr + UVoffset;
+}
+
+static void vioc_get_dma_offset(unsigned int format, unsigned int width,
+									unsigned int *offset0, unsigned int *offset1)
+{
+	*offset0 = 0;
+	*offset1 = 0;
+
+	switch (format) {
+		case TCC_LCDC_IMG_FMT_1BPP:	// 1bpp indexed color
+			*offset0 = (1 * width) / 8;
+			break;
+		case TCC_LCDC_IMG_FMT_2BPP:	// 2bpp indexed color
+			*offset0 = (1 * width) / 4;
+			break;
+		case TCC_LCDC_IMG_FMT_4BPP:	// 4bpp indexed color
+			*offset0 = (1 * width) / 2;
+			break;
+		case TCC_LCDC_IMG_FMT_8BPP:	// 8bpp indexed color
+			*offset0 = 1 * width;
+			break;
+		case TCC_LCDC_IMG_FMT_RGB332:	// RGB332 - 1bytes aligned - R[7:5],G[4:2],B[1:0]
+			*offset0 = 1 * width;
+			break;
+		case TCC_LCDC_IMG_FMT_RGB444:	// RGB444 - 2bytes aligned - A[15:12],R[11:8],G[7:3],B[3:0]
+		case TCC_LCDC_IMG_FMT_RGB565:	// RGB565 - 2bytes aligned - R[15:11],G[10:5],B[4:0]
+		case TCC_LCDC_IMG_FMT_RGB555:	// RGB555 - 2bytes aligned - A[15],R[14:10],G[9:5],B[4:0]
+			*offset0 = 2 * width;
+			break;
+		case TCC_LCDC_IMG_FMT_RGB888:	// RGB888 - 4bytes aligned - A[31:24],R[23:16],G[15:8],B[7:0]
+		case TCC_LCDC_IMG_FMT_RGB666:	// RGB666 - 4bytes aligned - A[23:18],R[17:12],G[11:6],B[5:0]
+			*offset0 = 4 * width;
+			break;
+		case TCC_LCDC_IMG_FMT_RGB888_3: //RGB888 - 3 bytes aligned : B1[31:24],R0[23:16],G0[15:8],B0[7:0]
+		case TCC_LCDC_IMG_FMT_ARGB6666_3: //ARGB6666 - 3 bytes aligned : A[23:18],R[17:12],G[11:6],B[5:0]
+			*offset0 = 3 * width;
+			break;
+		case TCC_LCDC_IMG_FMT_444SEP:	/* YUV444 or RGB444 Format */
+			*offset0 = width;
+			*offset1 = width;
+			break;
+		case TCC_LCDC_IMG_FMT_YUV420SP:	// YCbCr 4:2:0 Separated format - Not Supported for Image 1 and 2
+			*offset0 = width;
+			*offset1 = width / 2;
+			break;
+		case TCC_LCDC_IMG_FMT_YUV422SP:		// YCbCr 4:2:2 Separated format - Not Supported for Image 1 and 2
+			*offset0 = width;
+			*offset1 = width / 2;
+			break;
+		case TCC_LCDC_IMG_FMT_UYVY:	// YCbCr 4:2:2 Sequential format
+		case TCC_LCDC_IMG_FMT_VYUY:	// YCbCr 4:2:2 Sequential format
+		case TCC_LCDC_IMG_FMT_YUYV:	// YCbCr 4:2:2 Sequential format
+		case TCC_LCDC_IMG_FMT_YVYU:	// YCbCr 4:2:2 Sequential format
+			*offset0 = 2 * width;
+			break;
+		case TCC_LCDC_IMG_FMT_YUV420ITL0:	// YCbCr 4:2:0 interleved type 0 format - Not Supported for Image 1 and 2
+		case TCC_LCDC_IMG_FMT_YUV420ITL1:	// YCbCr 4:2:0 interleved type 1 format - Not Supported for Image 1 and 2
+			*offset0 = width;
+			*offset1 = width;
+			break;
+		case TCC_LCDC_IMG_FMT_YUV422ITL0:	// YCbCr 4:2:2 interleved type 0 format - Not Supported for Image 1 and 2
+		case TCC_LCDC_IMG_FMT_YUV422ITL1:	// YCbCr 4:2:2 interleved type 1 format - Not Supported for Image 1 and 2
+			*offset0 = width;
+			*offset1 = width;
+			break;
+		default:
+			*offset0 = width;
+			*offset1 = width;
+			break;
+	}
 }

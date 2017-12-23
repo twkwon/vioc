@@ -93,15 +93,34 @@ int test_main(char *file_name, char *pmap_name)
 
 			ret = run_test_single(test_case, td, &image);
 			if (ret) {
+				td->test_status = -1;
 				printf("---> TEST FAILED\n");
 			}
+			td->test_status = 0;
 		} else {
+			td->test_status = 1;
 			printf("---> SKIP TEST%d:%s\n", td->test_no, td->test_name);
 		}
 		getchar();
 	}
 
 	printf("\n<----------- END OF TEST ----------->\n");
+
+	printf("\n<----------- TEST STATUS  ----------->\n");
+	list_for_each(pos, &test_data->list) {
+		td = list_entry(pos, struct test_data_t, list);
+		switch (td->test_status) {
+		case -1:
+			printf("%s: error\n", td->test_name);
+			break;
+		case 0:
+			printf("%s: done\n", td->test_name);
+			break;
+		case 1:
+			printf("%s: skip\n", td->test_name);
+			break;
+		}
+	}
 
 	vioc_munmap(test_case->vioc_base_addr);
 err2:
