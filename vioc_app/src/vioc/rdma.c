@@ -3,6 +3,18 @@
 #include <vioc.h>
 
 
+void rdma_set_offset(struct vioc_rdma_t *rdma, addr_t offset0, addr_t offset1)
+{
+	BITCSET(rdma->addr->uOFFSET.nREG, 0xffffffff, (offset1 << 16) | offset0);
+}
+
+void rdma_set_address(struct vioc_rdma_t *rdma, addr_t base0, addr_t base1, addr_t base2)
+{
+	BITCSET(rdma->addr->nBASE0, 0xffffffff, base0);
+	BITCSET(rdma->addr->nBASE1, 0xffffffff, base1);
+	BITCSET(rdma->addr->nBASE2, 0xffffffff, base2);
+}
+
 int rdma_map_regs(struct vioc_rdma_t *rdma, struct test_data_reg_val_t *data)
 {
 	int idx, reg_start_offset;

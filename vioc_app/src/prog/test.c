@@ -11,6 +11,10 @@ static void delete_test_data_list(struct test_data_t *);
 static int run_test_single(struct test_case_t *, struct test_data_t *, struct image_file_t *);
 static int setup_image_file(struct test_case_t *, struct image_file_t *);
 static int verify_image_buf(struct test_case_t *);
+static int write_output_image(struct test_case_t *);
+static unsigned int tcc_get_image_size(unsigned int, unsigned int, unsigned int);
+static int tcc_get_pfmt(unsigned int);
+static int tcc_get_bpp(unsigned int);
 
 
 int test_main(char *file_name, char *pmap_name)
@@ -172,6 +176,15 @@ static int run_test_single(struct test_case_t *test_case, struct test_data_t *te
 		goto exit;
 	}
 
+	/*
+	 * write output iamge through wdma
+	 */
+	ret = write_output_image(test_case);
+	if (ret) {
+		printf("[%s] error: write_output_image()\n", __func__);
+		goto exit;
+	}
+
 exit:
 	return ret;
 }
@@ -200,6 +213,7 @@ static int setup_image_file(struct test_case_t *tc, struct image_file_t *img)
 	/*
 	 * open input files if test_cast has file_name
 	 */
+	printf("[%s] Input Files\n", __func__);
 	for (i = 0; i < MAX_NUM_OF_RDMA; i++) {
 		/*
 		 * open files if test_cast has file_name
@@ -261,7 +275,31 @@ static int setup_image_file(struct test_case_t *tc, struct image_file_t *img)
 		fclose(fp);
 	}
 
-	/* for debugging */
+	printf("[%s] Output Files\n", __func__);
+	for (i = 0; i < MAX_NUM_OF_WDMA; i++) {
+		fname_to_int = atoi(tc->output_file[i].name);
+		printf("  str(%s) to int(%d)\n", tc->output_file[i].name, fname_to_int);
+		if (fname_to_int == -1) {
+			tc->output_file[i].id = -1;
+			continue;
+		} else {
+			tc->output_file[i].id = i;
+		}
+
+		tc->output_file[i].fmt = tc->wdma1.reg.uCTRL.bREG.FMT;
+		tc->output_file[i].width = tc->wdma1.reg.uSIZE.bREG.WIDTH;
+		tc->output_file[i].height = tc->wdma1.reg.uSIZE.bREG.HEIGHT;
+
+		/* store image info */
+		img->output[i].id = tc->output_file[i].id;
+		img->output[i].fmt = tc->output_file[i].fmt;
+		img->output[i].width = tc->output_file[i].width;
+		img->output[i].height = tc->output_file[i].height;
+	}
+
+	/*
+	 * for debugging - verify input_files
+	 */
 	verify_image_buf(tc);
 
 	return ret;
@@ -298,4 +336,175 @@ static int verify_image_buf(struct test_case_t *tc)
 
 	printf("===================================================================\n\n");
 	return ret;
+}
+
+static int write_output_image(struct test_case_t *tc)
+{
+	int i, ret = 0;
+	unsigned int written_len, output_len;
+	FILE *fp = NULL;
+
+	for (i = 0; i < MAX_NUM_OF_WDMA; i++) {
+		if (tc->output_file[i].id != -1) {
+			printf("[%s] %s writting...\n", __func__, tc->output_file[i].name);
+
+			output_len = tcc_get_image_size(tc->output_file[i].fmt,
+						tc->output_file[i].width, tc->output_file[i].height);
+
+			fp = fopen(tc->output_file[i].name, "wb");
+			if (fp == NULL) {
+				perror("  fopen() failed");
+				continue;
+			}
+
+			written_len = fwrite(tc->output_file[i].vaddr, 1, output_len, fp);
+			if (written_len != output_len) {
+				printf("  error: wrote %d bytes != %d\n", written_len, output_len);
+			} else {
+				printf("  wrote(%d)\n", written_len);
+			}
+			fclose(fp);
+		}
+	}
+
+	return ret;
+}
+
+static unsigned int tcc_get_image_size(unsigned int format, unsigned int width, unsigned int height)
+{
+	int bpp, pfmt;
+	unsigned int imagesize;
+	unsigned int bytesperline;
+
+	bpp = tcc_get_bpp(format);
+	pfmt = tcc_get_pfmt(format);
+	bytesperline = width * bpp;
+
+	switch (pfmt) {
+		case TCC_PFMT_YUV422:
+			imagesize = width * height * 2;
+			break;
+		case TCC_PFMT_YUV420:
+			imagesize = width * height * 3 / 2;
+			break;
+		case TCC_PFMT_RGB:
+		default:
+			imagesize = bytesperline * height;
+			break;
+	}
+
+	//imagesize = PAGE_ALIGN(imagesize);
+
+	return imagesize;
+}
+
+int tcc_get_bpp(unsigned int format)
+{
+	int bpp;
+
+	switch (format) {
+
+		/* What is these ? */
+		case VIOC_IMG_FMT_BPP1:
+		case VIOC_IMG_FMT_BPP2:
+		case VIOC_IMG_FMT_BPP4:
+			//bpp = ????;
+			//break;
+
+			/* RGB formats */
+		case VIOC_IMG_FMT_BPP8:
+		case VIOC_IMG_FMT_RGB332:
+			bpp = 1;
+			break;
+		case VIOC_IMG_FMT_ARGB4444:
+		case VIOC_IMG_FMT_RGB565:
+		case VIOC_IMG_FMT_ARGB1555:
+			bpp = 2;
+			break;
+		case VIOC_IMG_FMT_RGB888:
+		case VIOC_IMG_FMT_ARGB6666_3:
+		case VIOC_IMG_FMT_444SEP:		//TODO: is it 3bytes ?
+			bpp = 3;
+			break;
+		case VIOC_IMG_FMT_ARGB8888:
+		case VIOC_IMG_FMT_ARGB6666_4:
+			bpp = 4;
+			break;
+
+			/* YUV formats */
+		case VIOC_IMG_FMT_YUV420SEP:
+		case VIOC_IMG_FMT_YUV420IL0:
+		case VIOC_IMG_FMT_YUV420IL1:
+		case VIOC_IMG_FMT_YUV422SEP:
+		case VIOC_IMG_FMT_YUV422IL0:
+		case VIOC_IMG_FMT_YUV422IL1:
+			bpp = 1;
+			break;
+
+			/* YUV422 Sequential formats */
+		case VIOC_IMG_FMT_YUYV:
+		case VIOC_IMG_FMT_YVYU:
+		case VIOC_IMG_FMT_UYVY:
+		case VIOC_IMG_FMT_VYUY:
+			bpp = 2;
+			break;
+
+		default:
+			printf("[%s] Not supported format(%d)\n", __func__, format);
+			bpp = -1;
+			break;
+	}
+
+	return bpp;
+}
+
+static int tcc_get_pfmt(unsigned int format)
+{
+	enum tcc_pix_fmt pfmt;
+
+	switch (format) {
+		/* YUV420 formats */
+		case VIOC_IMG_FMT_YUV420SEP:
+		case VIOC_IMG_FMT_YUV420IL0:
+		case VIOC_IMG_FMT_YUV420IL1:
+			pfmt = TCC_PFMT_YUV420;
+			break;
+			/* YUV422 formats */
+		case VIOC_IMG_FMT_YUYV:
+		case VIOC_IMG_FMT_YVYU:
+		case VIOC_IMG_FMT_UYVY:
+		case VIOC_IMG_FMT_VYUY:
+		case VIOC_IMG_FMT_YUV422SEP:
+		case VIOC_IMG_FMT_YUV422IL0:
+		case VIOC_IMG_FMT_YUV422IL1:
+			pfmt = TCC_PFMT_YUV422;
+			break;
+			/* RGB formats */
+		case VIOC_IMG_FMT_RGB332:
+		case VIOC_IMG_FMT_ARGB4444:
+		case VIOC_IMG_FMT_ARGB1555:
+		case VIOC_IMG_FMT_RGB565:
+		case VIOC_IMG_FMT_RGB888:
+		case VIOC_IMG_FMT_ARGB6666_3:
+		case VIOC_IMG_FMT_ARGB8888:
+		case VIOC_IMG_FMT_ARGB6666_4:
+			pfmt = TCC_PFMT_RGB;
+			break;
+
+			//TODO: what is these?
+		case VIOC_IMG_FMT_BPP1:
+		case VIOC_IMG_FMT_BPP2:
+		case VIOC_IMG_FMT_BPP4:
+		case VIOC_IMG_FMT_BPP8:
+		case VIOC_IMG_FMT_444SEP:
+			//pfmt = ????;
+			//break;
+
+		default:
+			printf("[%s] Not supported foramt(%d)\n", __func__, format);
+			pfmt = -1;
+			break;
+	}
+
+	return pfmt;
 }

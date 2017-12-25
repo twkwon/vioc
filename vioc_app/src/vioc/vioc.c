@@ -686,16 +686,79 @@ static int vioc_set_dma_address(struct test_case_t *tc)
 
 	for (i = 0; i < MAX_NUM_OF_RDMA; i++) {
 		if (tc->input_file[i].id != -1) {
+			struct vioc_rdma_t *rdma;
+
+			switch (i) {
+			case 0:
+				rdma = &tc->rdma1;
+				break;
+			case 1:
+				rdma = &tc->rdma2;
+				break;
+			case 2:
+				rdma = &tc->rdma3;
+				break;
+			case 3:
+				rdma = &tc->rdma4;
+				break;
+			}
+
 			base0 = tc->input_file[i].paddr;
 			width = tc->input_file[i].width;
 			height = tc->input_file[i].height;
+
 			vioc_get_dma_offset(tc->input_file[i].fmt, base0, &offset0, &offset1);
 			vioc_get_dma_address(tc->input_file[i].fmt, base0, width, height, start_x, start_y, &base0, &base1, &base2);
 
-			rdma_set_base_addr();
-			rdma_set_offset();
+			rdma->reg.nBASE0 = base0;
+			rdma->reg.nBASE1 = base1;
+			rdma->reg.nBASE2 = base2;
+			rdma->reg.uOFFSET.bREG.OFFSET0 = offset0;
+			rdma->reg.uOFFSET.bREG.OFFSET1 = offset1;
+
+			rdma_set_offset(rdma, offset0, offset1);
+			rdma_set_address(rdma, base0, base1, base2);
 		}
 	}
+
+	/* not supported crop */
+	start_x = 0;
+	start_y = 0;
+
+	for (i = 0; i < MAX_NUM_OF_WDMA; i++) {
+		if (tc->output_file[i].id != -1) {
+			int format;
+			struct vioc_wdma_t *wdma;
+
+			switch (i) {
+			case 0:
+				wdma = &tc->wdma1;
+				break;
+			case 1:
+				wdma = &tc->wdma2;
+				break;
+			}
+
+			base0 = tc->output_file[i].paddr;
+			width = wdma->reg.uSIZE.bREG.WIDTH;
+			height = wdma->reg.uSIZE.bREG.HEIGHT;
+			format = wdma->reg.uCTRL.bREG.FMT;
+
+			vioc_get_dma_offset(format, base0, &offset0, &offset1);
+			vioc_get_dma_address(format, base0, width, height, start_x, start_y, &base0, &base1, &base2);
+
+			wdma->reg.nBASE0 = base0;
+			wdma->reg.nBASE1 = base1;
+			wdma->reg.nBASE2 = base2;
+			wdma->reg.uOFFSET.bREG.OFFSET0 = offset0;
+			wdma->reg.uOFFSET.bREG.OFFSET1 = offset1;
+
+			wdma_set_offset(wdma, offset0, offset1);
+			wdma_set_address(wdma, base0, base1, base2);
+		}
+	}
+
+	return ret;
 }
 
 static void vioc_get_dma_address(unsigned char format, addr_t base_Yaddr,

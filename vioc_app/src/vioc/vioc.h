@@ -76,6 +76,38 @@ enum vioc_components {
 	VC_END = VC_CONFIG,
 };
 
+enum tcc_pix_fmt {
+    TCC_PFMT_YUV420,
+    TCC_PFMT_YUV422,
+    TCC_PFMT_RGB,
+};
+
+#define VIOC_IMG_FMT_BPP1           0       // 1bit
+#define VIOC_IMG_FMT_BPP2           1       // 2bits
+#define VIOC_IMG_FMT_BPP4           2       // 4bits
+#define VIOC_IMG_FMT_BPP8           3       // 1byte
+#define VIOC_IMG_FMT_RGB332         8       // 1byte
+#define VIOC_IMG_FMT_ARGB4444       9       // 2bytes
+#define VIOC_IMG_FMT_RGB565         10      // 2bytes
+#define VIOC_IMG_FMT_ARGB1555       11      // 2bytes
+#define VIOC_IMG_FMT_ARGB8888       12      // 4bytes
+#define VIOC_IMG_FMT_ARGB6666_4     13      // 4bytes
+#define VIOC_IMG_FMT_RGB888         14      // 3bytes   : newly supported : 3 bytes format
+#define VIOC_IMG_FMT_ARGB6666_3     15      // 3bytes   : newly supported : 3 bytes format
+#define VIOC_IMG_FMT_COMP           16      // 4bytes
+#define VIOC_IMG_FMT_DECOMP         (VIOC_IMG_FMT_COMP)
+#define VIOC_IMG_FMT_444SEP         21      // 3bytes
+#define VIOC_IMG_FMT_UYVY           22      // 2bytes   : LSB [Y/U/Y/V] MSB : newly supported : 2 bytes format
+#define VIOC_IMG_FMT_VYUY           23      // 2bytes   : LSB [Y/V/Y/U] MSB : newly supported : 2 bytes format
+#define VIOC_IMG_FMT_YUV420SEP      24      // 1,1byte
+#define VIOC_IMG_FMT_YUV422SEP      25      // 1,1byte
+#define VIOC_IMG_FMT_YUYV           26      // 2bytes   : LSB [Y/U/Y/V] MSB : previous SEQ
+#define VIOC_IMG_FMT_YVYU           27      // 2bytes   : LSB [Y/V/Y/U] MSB : newly supported : 2 bytes format
+#define VIOC_IMG_FMT_YUV420IL0      28      // 1,2byte
+#define VIOC_IMG_FMT_YUV420IL1      29      // 1,2byte
+#define VIOC_IMG_FMT_YUV422IL0      30      // 1,2bytes
+#define VIOC_IMG_FMT_YUV422IL1      31      // 1,2bytes
+
 enum vioc_img_fmt {
 	TCC_LCDC_IMG_FMT_1BPP,
 	TCC_LCDC_IMG_FMT_2BPP,
@@ -250,10 +282,14 @@ extern int shoot_test(struct test_case_t *);
 extern int rdma_map_regs(struct vioc_rdma_t *, struct test_data_reg_val_t *);
 extern int rdma_verify_regs(struct vioc_rdma_t *);
 extern int rdma_setup(struct vioc_rdma_t *);
+extern void rdma_set_offset(struct vioc_rdma_t *, addr_t, addr_t);
+extern void rdma_set_address(struct vioc_rdma_t *, addr_t, addr_t, addr_t);
 
 extern int wdma_map_regs(struct vioc_wdma_t *, struct test_data_reg_val_t *);
 extern int wdma_verify_regs(struct vioc_wdma_t *);
 extern int wdma_setup(struct vioc_wdma_t *);
+extern void wdma_set_offset(struct vioc_wdma_t *, addr_t, addr_t);
+extern void wdma_set_address(struct vioc_wdma_t *, addr_t, addr_t, addr_t);
 
 extern int wmix_map_regs(struct vioc_wmix_t *, struct test_data_reg_val_t *);
 extern int wmix_verify_regs(struct vioc_wmix_t *);

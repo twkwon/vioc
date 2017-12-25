@@ -3,6 +3,18 @@
 #include <vioc.h>
 
 
+void wdma_set_offset(struct vioc_wdma_t *wdma, addr_t offset0, addr_t offset1)
+{
+	BITCSET(wdma->addr->uOFFSET.nREG, 0xffffffff, (offset1 << 16) | offset0);
+}
+
+void wdma_set_address(struct vioc_wdma_t *wdma, addr_t base0, addr_t base1, addr_t base2)
+{
+	BITCSET(wdma->addr->nBASE0, 0xffffffff, base0);
+	BITCSET(wdma->addr->nBASE1, 0xffffffff, base1);
+	BITCSET(wdma->addr->nBASE2, 0xffffffff, base2);
+}
+
 int wdma_map_regs(struct vioc_wdma_t *wdma, struct test_data_reg_val_t *data)
 {
 	int idx, reg_start_offset;
