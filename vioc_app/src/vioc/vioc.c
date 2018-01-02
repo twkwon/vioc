@@ -680,10 +680,6 @@ static int vioc_set_dma_address(struct test_case_t *tc)
 	unsigned int width, height;
 	unsigned int start_x, start_y;
 
-	/* not supported crop */
-	start_x = 0;
-	start_y = 0;
-
 	for (i = 0; i < MAX_NUM_OF_RDMA; i++) {
 		if (tc->input_file[i].id != -1) {
 			struct vioc_rdma_t *rdma;
@@ -703,11 +699,17 @@ static int vioc_set_dma_address(struct test_case_t *tc)
 				break;
 			}
 
+			/* not supported crop */
+			start_x = 0;
+			start_y = 0;
+			base1 = 0;
+			base2 = 0;
+
 			base0 = tc->input_file[i].paddr;
 			width = tc->input_file[i].width;
 			height = tc->input_file[i].height;
 
-			vioc_get_dma_offset(tc->input_file[i].fmt, base0, &offset0, &offset1);
+			vioc_get_dma_offset(tc->input_file[i].fmt, width, &offset0, &offset1);
 			vioc_get_dma_address(tc->input_file[i].fmt, base0, width, height, start_x, start_y, &base0, &base1, &base2);
 
 			rdma->reg.nBASE0 = base0;
@@ -716,14 +718,15 @@ static int vioc_set_dma_address(struct test_case_t *tc)
 			rdma->reg.uOFFSET.bREG.OFFSET0 = offset0;
 			rdma->reg.uOFFSET.bREG.OFFSET1 = offset1;
 
+			printf("rdma[%d] base0: 0x%08x = 0x%08x\n", i, rdma->reg.nBASE0, base0);
+			printf("rdma[%d] base1: 0x%08x = 0x%08x\n", i, rdma->reg.nBASE1, base1);
+			printf("rdma[%d] base2: 0x%08x = 0x%08x\n", i, rdma->reg.nBASE2, base2);
+			printf("rdma[%d]offset: 0x%08lx (0x%x, 0x%x)\n", i, rdma->reg.uOFFSET.nREG, offset1, offset0);
+
 			rdma_set_offset(rdma, offset0, offset1);
 			rdma_set_address(rdma, base0, base1, base2);
 		}
 	}
-
-	/* not supported crop */
-	start_x = 0;
-	start_y = 0;
 
 	for (i = 0; i < MAX_NUM_OF_WDMA; i++) {
 		if (tc->output_file[i].id != -1) {
@@ -739,12 +742,18 @@ static int vioc_set_dma_address(struct test_case_t *tc)
 				break;
 			}
 
+			/* not supported crop */
+			start_x = 0;
+			start_y = 0;
+			base1 = 0;
+			base2 = 0;
+
 			base0 = tc->output_file[i].paddr;
 			width = wdma->reg.uSIZE.bREG.WIDTH;
 			height = wdma->reg.uSIZE.bREG.HEIGHT;
 			format = wdma->reg.uCTRL.bREG.FMT;
 
-			vioc_get_dma_offset(format, base0, &offset0, &offset1);
+			vioc_get_dma_offset(format, width, &offset0, &offset1);
 			vioc_get_dma_address(format, base0, width, height, start_x, start_y, &base0, &base1, &base2);
 
 			wdma->reg.nBASE0 = base0;
@@ -752,6 +761,11 @@ static int vioc_set_dma_address(struct test_case_t *tc)
 			wdma->reg.nBASE2 = base2;
 			wdma->reg.uOFFSET.bREG.OFFSET0 = offset0;
 			wdma->reg.uOFFSET.bREG.OFFSET1 = offset1;
+
+			printf("wdma[%d] base0: 0x%08x = 0x%08x\n", i, wdma->reg.nBASE0, base0);
+			printf("wdma[%d] base1: 0x%08x = 0x%08x\n", i, wdma->reg.nBASE1, base1);
+			printf("wdma[%d] base2: 0x%08x = 0x%08x\n", i, wdma->reg.nBASE2, base2);
+			printf("wdma[%d]offset: 0x%08lx (0x%x, 0x%x)\n", i, wdma->reg.uOFFSET.nREG, offset1, offset0);
 
 			wdma_set_offset(wdma, offset0, offset1);
 			wdma_set_address(wdma, base0, base1, base2);

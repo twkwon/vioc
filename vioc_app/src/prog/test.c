@@ -66,6 +66,7 @@ int test_main(char *file_name, char *pmap_name)
 	memset(image.base_vaddr, 0, sizeof(IMAGE_NUM * IMAGE_SIZE));
 	printf("Image base: paddr(0x%08x) -> vaddr(%p)\n", image.base_paddr, image.base_vaddr);
 
+#if 0
 	for (i = 0; i < MAX_NUM_OF_RDMA; i++) {
 		image.input[i].vaddr = image.base_vaddr + INT32_OFFSET(IMAGE_SIZE * i);
 		image.input[i].paddr = image.base_paddr + (IMAGE_SIZE * i);
@@ -76,6 +77,22 @@ int test_main(char *file_name, char *pmap_name)
 		image.output[i].paddr = image.input[MAX_NUM_OF_RDMA - 1].paddr + IMAGE_SIZE + (IMAGE_SIZE * i);
 		printf(" output%d: paddr(0x%08x) -> vaddr(%p)\n", i, image.output[i].paddr, image.output[i].vaddr);
 	}
+#else
+	for (i = 0; i < MAX_NUM_OF_RDMA + MAX_NUM_OF_WDMA; i++) {
+		unsigned int offs;
+		offs = IMAGE_SIZE * i;
+
+		if (i < MAX_NUM_OF_RDMA) {
+			image.input[i].vaddr = image.base_vaddr + INT32_OFFSET(offs);
+			image.input[i].paddr = image.base_paddr + offs;
+			printf("  input%d: paddr(0x%08x) -> vaddr(%p)\n", i, image.input[i].paddr, image.input[i].vaddr);
+		} else {
+			image.output[i - MAX_NUM_OF_RDMA].vaddr = image.base_vaddr + INT32_OFFSET(offs);
+			image.output[i - MAX_NUM_OF_RDMA].paddr = image.base_paddr + offs;
+			printf(" output%d: paddr(0x%08x) -> vaddr(%p)\n", i - MAX_NUM_OF_RDMA, image.output[i - MAX_NUM_OF_RDMA].paddr, image.output[i - MAX_NUM_OF_RDMA].vaddr);
+		}
+	}
+#endif
 
 	/*
 	 * RUN the test case on the list of test_data one by one
@@ -289,6 +306,12 @@ static int setup_image_file(struct test_case_t *tc, struct image_file_t *img)
 		tc->output_file[i].fmt = tc->wdma1.reg.uCTRL.bREG.FMT;
 		tc->output_file[i].width = tc->wdma1.reg.uSIZE.bREG.WIDTH;
 		tc->output_file[i].height = tc->wdma1.reg.uSIZE.bREG.HEIGHT;
+
+		/*
+		 * Now we only use 'test_case_t' after copy v/paddr.
+		 */
+		tc->output_file[i].vaddr = img->output[i].vaddr;
+		tc->output_file[i].paddr = img->output[i].paddr;
 
 		/* store image info */
 		img->output[i].id = tc->output_file[i].id;
