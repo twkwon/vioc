@@ -9,6 +9,7 @@
 
 static void delete_test_data_list(struct test_data_t *);
 static int run_test_single(struct test_case_t *, struct test_data_t *, struct image_file_t *);
+static int verify_test_single(struct test_case_t *, struct test_data_t *);
 static int setup_image_file(struct test_case_t *, struct image_file_t *);
 static int verify_image_buf(struct test_case_t *);
 static int write_output_image(struct test_case_t *);
@@ -114,12 +115,16 @@ int test_main(char *file_name, char *pmap_name)
 
 			ret = run_test_single(test_case, td, &image);
 			if (ret) {
-				td->test_status = -1;
-				printf("---> TEST FAILED\n");
+				td->test_status = TEST_STATUS_ERR_RUN;
+				printf("---> ERROR: run test\n");
+			} else {
+				/*
+				 * If run_test_single is succeeded, compare output and reference image.
+				 */
+				ret = verify_test_single(test_case, td);
 			}
-			td->test_status = 0;
 		} else {
-			td->test_status = 1;
+			td->test_status = TEST_STATUS_RUN_SKIP;
 			printf("---> SKIP TEST%d:%s\n", td->test_no, td->test_name);
 		}
 		getchar();
@@ -130,16 +135,34 @@ int test_main(char *file_name, char *pmap_name)
 	printf("\n<----------- TEST STATUS  ----------->\n");
 	list_for_each(pos, &test_data->list) {
 		td = list_entry(pos, struct test_data_t, list);
-		switch (td->test_status) {
-		case -1:
-			printf("%s: error\n", td->test_name);
-			break;
-		case 0:
-			printf("%s: done\n", td->test_name);
-			break;
-		case 1:
-			printf("%s: skip\n", td->test_name);
-			break;
+
+		if (td->test_status == TEST_STATUS_PASS) {
+			printf("[%s] PASS\n", td->test_name);
+		} else if (td->test_status == TEST_STATUS_RUN_SKIP) {
+			printf("[%s] SKIP run test\n", td->test_name);
+		} else if (td->test_status == TEST_STATUS_NO_COMPARE) {
+			printf("[%s] SKIP compare reference\n", td->test_name);
+		} else {
+			switch (td->test_status) {
+			case TEST_STATUS_ERR_RUN:
+				printf("[%s] ERROR: run test\n", td->test_name);
+				break;
+			case TEST_STATUS_ERR_OUTPUT:
+				printf("[%s] ERROR: output file\n", td->test_name);
+				break;
+			case TEST_STATUS_ERR_INPUT:
+				printf("[%s] ERROR: input file\n", td->test_name);
+				break;
+			case TEST_STATUS_ERR_REFERENCE:
+				printf("[%s] ERROR: reference file\n", td->test_name);
+				break;
+			case TEST_STATUS_FAIL_COMPARE:
+				printf("[%s] FAIL: compare reference and output file\n", td->test_name);
+				break;
+			default:
+				printf("[%s] ERROR: no %d\n", td->test_name, td->test_status);
+				break;
+			}
 		}
 	}
 
@@ -203,6 +226,63 @@ static int run_test_single(struct test_case_t *test_case, struct test_data_t *te
 	}
 
 exit:
+	return ret;
+}
+
+static int verify_test_single(struct test_case_t *tc, struct test_data_t *td)
+{
+	int i, ret = 0;
+	int file_idx, err_count;
+	FILE *fp_out = NULL;
+	FILE *fp_ref = NULL;
+
+	td->test_status = TEST_STATUS_NO_COMPARE;
+
+	for (i = 0; i < MAX_NUM_OF_WDMA; i++) {
+		if (tc->output_file[i].id == -1) {
+			continue;
+		}
+		if (tc->reference_file[i].id == -1) {
+			continue;
+		}
+		if (tc->output_file[i].len == 0) {
+			continue;
+		}
+
+		fp_out = fopen(tc->output_file[i].name, "rb");
+		if (fp_out == NULL) {
+			printf("[%s] error: file open %s\n", __func__, tc->output_file[i].name);
+			perror("  fopen() failed");
+			td->test_status = TEST_STATUS_ERR_OUTPUT;
+			continue;
+		}
+
+		fp_ref = fopen(tc->reference_file[i].name, "rb");
+		if (fp_ref == NULL) {
+			printf("[%s] error: file open %s\n", __func__, tc->reference_file[i].name);
+			perror("  fopen() failed");
+			td->test_status = TEST_STATUS_ERR_REFERENCE;
+			continue;
+		}
+
+		/*
+		 * Compare reference and output file
+		 */
+		for (err_count = 0, file_idx = 0; file_idx < tc->output_file[i].len; file_idx++) {
+			if (fgetc(fp_ref) != fgetc(fp_out)) {
+				err_count++;
+			}
+		}
+
+		if (err_count) {
+			td->test_status = TEST_STATUS_FAIL_COMPARE;
+			printf("[%s] %s fail: compare %s and %s (err_count %d)\n", __func__, tc->test_name,
+					tc->output_file[i].name, tc->reference_file[i].name, err_count);
+		} else {
+			td->test_status = TEST_STATUS_PASS;
+		}
+	}
+
 	return ret;
 }
 
@@ -280,6 +360,7 @@ static int setup_image_file(struct test_case_t *tc, struct image_file_t *img)
 				printf("[%s] error: read %s %d bytes\n", __func__, tc->input_file[i].name, tc->input_file[i].len);
 			}
 			ret = -1;
+			tc->input_file[i].len = 0;
 		}
 
 		/* store image info */
@@ -382,8 +463,16 @@ static int write_output_image(struct test_case_t *tc)
 
 			written_len = fwrite(tc->output_file[i].vaddr, 1, output_len, fp);
 			if (written_len != output_len) {
+				/*
+				 * If failed, output_file[i].len = 0
+				 */
+				tc->output_file[i].len = 0;
 				printf("  error: wrote %d bytes != %d\n", written_len, output_len);
 			} else {
+				/*
+				 * If succeed, output_file[i].len = written_len
+				 */
+				tc->output_file[i].len = written_len;
 				printf("  wrote(%d)\n", written_len);
 			}
 			fclose(fp);

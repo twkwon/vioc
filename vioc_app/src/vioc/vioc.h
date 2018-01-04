@@ -215,8 +215,9 @@ struct test_case_t {
 	int test_no;
 	char test_name[SIZE_OF_TEST_NAME];
 
-	struct image_buf_info_t input_file[MAX_NUM_OF_RDMA];
-	struct image_buf_info_t output_file[MAX_NUM_OF_WDMA];
+	struct image_buf_info_t input_file[MAX_NUM_OF_RDMA];		// input images
+	struct image_buf_info_t output_file[MAX_NUM_OF_WDMA];		// output images
+	struct image_buf_info_t reference_file[MAX_NUM_OF_WDMA];	// reference images to compare output files
 
 	addr_t *vioc_base_addr;
 	struct vioc_rdma_t rdma1;
@@ -240,6 +241,27 @@ struct test_case_t {
  *-----------------------------------------------------------------------------
  */
 
+enum e_test_status {
+	TEST_STATUS_PASS,			// pass the test case
+
+	TEST_STATUS_RUN_PASS,		// pass run test
+	TEST_STATUS_RUN_SKIP,		// skip run test
+
+	TEST_STATUS_NO_INPUT,
+	TEST_STATUS_NO_OUTPUT,
+	TEST_STATUS_NO_REFERENCE,
+	TEST_STATUS_NO_COMPARE,
+
+	/* errors */
+	TEST_STATUS_ERR_RUN,
+	TEST_STATUS_ERR_OUTPUT,
+	TEST_STATUS_ERR_INPUT,
+	TEST_STATUS_ERR_REFERENCE,
+
+	/* fail */
+	TEST_STATUS_FAIL_COMPARE,
+};
+
 struct test_data_reg_val_t {
 	int reg[MAX_NUM_OF_REG_DATA_COMPONENT];	// get register's value from data(.txt);
 	int nr_regs;							// number of parsed regs
@@ -248,10 +270,11 @@ struct test_data_reg_val_t {
 struct test_data_t {
 	int test_no;
 	char test_name[SIZE_OF_TEST_NAME];
-	int test_status;	// -1: test error, 0: test skip, 1: test run
+	enum e_test_status test_status;
 
-	struct image_buf_info_t input_file[MAX_NUM_OF_RDMA];
-	struct image_buf_info_t output_file[MAX_NUM_OF_WDMA];
+	struct image_buf_info_t input_file[MAX_NUM_OF_RDMA];		// input images
+	struct image_buf_info_t output_file[MAX_NUM_OF_WDMA];		// output images
+	struct image_buf_info_t reference_file[MAX_NUM_OF_WDMA];	// reference images to compare output files
 
 	//struct test_data_reg_val_t rdma[MAX_NUM_OF_RDMA];
 	struct test_data_reg_val_t rdma1;

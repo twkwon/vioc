@@ -138,13 +138,14 @@ int parser(struct test_data_t *tdata, struct getbuf_t *tcase, int test_no)
 	printf("nr_vioc(%d) nr_regs(%d)\n", nr_vioc, nr_regs);
 
 	/* get test name */
-	sscanf(buf, "%[^','],%[^','],%d,%d,%d,%[^','],%d,%d,%d,%[^','],%d,%d,%d,%[^','],%d,%d,%d,%[^','],%[^',']",
+	sscanf(buf, "%[^','],%[^','],%d,%d,%d,%[^','],%d,%d,%d,%[^','],%d,%d,%d,%[^','],%d,%d,%d,%[^','],%[^','],%[^','],%[^',']",
 			tdata->test_name,
 			tdata->input_file[0].name, &tdata->input_file[0].width, &tdata->input_file[0].height, &tdata->input_file[0].fmt,
 			tdata->input_file[1].name, &tdata->input_file[1].width, &tdata->input_file[1].height, &tdata->input_file[1].fmt,
 			tdata->input_file[2].name, &tdata->input_file[2].width, &tdata->input_file[2].height, &tdata->input_file[2].fmt,
 			tdata->input_file[3].name, &tdata->input_file[3].width, &tdata->input_file[3].height, &tdata->input_file[3].fmt,
-			tdata->output_file[0].name, tdata->output_file[1].name);
+			tdata->output_file[0].name, tdata->output_file[1].name,
+			tdata->reference_file[0].name, tdata->reference_file[1].name);
 
 	start_pos = 0;
 	for (i = 0; i < nr_vioc; i++) {
@@ -291,6 +292,9 @@ void print_parsed_data(struct test_data_t *t)
 	}
 	for (i = 0; i < MAX_NUM_OF_WDMA; i++) {
 		printf("  %d WDMA output: %s\n", i, t->output_file[i].name);
+	}
+	for (i = 0; i < MAX_NUM_OF_WDMA; i++) {
+		printf("  %d Reference  : %s\n", i, t->reference_file[i].name);
 	}
 
 	printf("\n  1st RDMA:");

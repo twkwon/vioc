@@ -192,10 +192,12 @@ static int vioc_get_component_info(struct test_case_t *tc, struct test_data_t *t
 	printf("[%s]\n", __func__);
 
 	/* get infos (test no, test name, input/output files) */
+	//TODO: is it ok? 64bits machine has to use (sizeof(struct image_buf_info_t) * MAX_NUM_OF_RDMA)
 	tc->test_no = td->test_no;
 	memcpy(tc->test_name, td->test_name, sizeof(tc->test_name));
 	memcpy(tc->input_file, td->input_file, sizeof(tc->input_file));
 	memcpy(tc->output_file, td->output_file, sizeof(tc->output_file));
+	memcpy(tc->reference_file, td->reference_file, sizeof(tc->reference_file));
 
 	/*
 	 * RDMA - max 4 RDMAs
