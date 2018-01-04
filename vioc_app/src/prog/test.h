@@ -23,4 +23,6 @@
 #define REG_START_OFFSET_OUTCFG	(2)
 #define REG_START_OFFSET_CONFIG	(2)
 
+#define REG_ALWAYS_READ			(1)
+
 #endif	//__TEST_H__

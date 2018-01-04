@@ -63,10 +63,10 @@ int outcfg_verify_regs(struct vioc_outcfg_t *outcfg)
 	d = outcfg->addr;
 
 	printf("VERIFY OUTCFG%d\n", outcfg->info.id);
-	if (outcfg->info.id < 0) {
-		printf("\tN/A\n");
-		return ret;
-	}
+	//if (outcfg->info.id < 0) {
+	//	printf("\tN/A\n");
+	//	return ret;
+	//}
 
 	/* CTRL */
 	dv = read_reg(&d->uMISCCFG);

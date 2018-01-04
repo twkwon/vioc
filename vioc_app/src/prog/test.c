@@ -167,7 +167,7 @@ static int run_test_single(struct test_case_t *test_case, struct test_data_t *te
 	}
 
 	/*
-	 * setup input & output image files
+	 * setup input, output, reference image files
 	 */
 	ret = setup_image_file(test_case, image);
 	if (ret) {
