@@ -106,7 +106,7 @@ int setup_vioc_path(struct test_case_t *test_case)
 	}
 
 	/* for debugging */
-	ret = vioc_verify_regs(test_case);
+	vioc_verify_regs(test_case);
 
 exit:
 	return ret;
@@ -397,7 +397,7 @@ static int vioc_map_component_regs(struct test_case_t *tc, struct test_data_t *t
 	/*
 	 * OUTCFG
 	 */
-	if (tc->outcfg.info.id != -1) {
+	if (tc->outcfg.info.id != -1 || REG_ALWAYS_READ) {
 		mapped = outcfg_map_regs(&tc->outcfg, &td->outcfg);
 		nr_regs_data = td->outcfg.nr_regs - REG_START_OFFSET_OUTCFG;
 		tc->outcfg.info.nr_regs = mapped;
@@ -411,7 +411,7 @@ static int vioc_map_component_regs(struct test_case_t *tc, struct test_data_t *t
 	/*
 	 * CONFIG
 	 */
-	if (tc->config.info.id != -1) {
+	if (tc->config.info.id != -1 || REG_ALWAYS_READ) {
 		mapped = config_map_regs(&tc->config, &td->config);
 		nr_regs_data = td->config.nr_regs - REG_START_OFFSET_CONFIG;
 		tc->config.info.nr_regs = mapped;

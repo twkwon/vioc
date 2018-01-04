@@ -96,10 +96,10 @@ int config_verify_regs(struct vioc_config_t *config)
 	d = config->addr;
 
 	printf("VERIFY CONFIG%d\n", config->info.id);
-	if (config->info.id < 0) {
-		printf("\tN/A\n");
-		return ret;
-	}
+	//if (config->info.id < 0) {
+	//	printf("\tN/A\n");
+	//	return ret;
+	//}
 
 	/* CFG_PATH_EDR */
 	dv = read_reg(&d->uPATH_EDR);
@@ -137,7 +137,7 @@ int config_config(struct test_case_t *tc)
 	/* CFG_PATH_EDR */
 	val = read_reg(&config_reg->uPATH_EDR);
 	BITCSET(val, V_CONFIG_PATH_EDR_MASK, config_val->uPATH_EDR.bREG.EDR_S << V_CONFIG_PATH_EDR_SHIFT);
-	write_reg(&config_reg->uMISC0, val);
+	write_reg(&config_reg->uPATH_EDR, val);
 
 	reg = read_reg(&config_reg->uPATH_EDR);
 	if (val != reg) {
