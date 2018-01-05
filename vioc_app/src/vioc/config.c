@@ -37,6 +37,7 @@
 static int plugin_rdma(struct test_case_t *tc, enum vioc_components);
 static int plugin_sc(struct test_case_t *, enum vioc_components);
 static int plugin_lut(struct test_case_t *, enum vioc_components);
+static int plugin_vin(struct test_case_t *, enum vioc_components);
 
 
 int config_map_regs(struct vioc_config_t *config, struct test_data_reg_val_t *data)
@@ -187,6 +188,10 @@ int config_plugin(struct test_case_t *tc, enum vioc_components comp)
 		ret = plugin_lut(tc, comp);
 		if (ret) {goto err;}
 		break;
+	case VC_VIN:
+		ret = plugin_vin(tc, comp);
+		if (ret) {goto err;}
+		break;
 	default:
 		ret = -1;
 		goto err;
@@ -329,5 +334,22 @@ static int plugin_lut(struct test_case_t *tc, enum vioc_components comp)
 	//TODO:
 	printf("[%s] TODO: this is empty funtion!!!\n", __func__);
 
+	return ret;
+}
+
+static int plugin_vin(struct test_case_t *tc, enum vioc_components comp)
+{
+	//TODO:VIN plug-in instead of RDMA or CFG_VIN_SEL ???
+
+	int ret = 0;
+	struct vioc_vin_t *vin;
+
+	vin = &tc->vin;
+
+
+	printf("[%s] plug-in VIN%d -> SEL(0x%x)\n", __func__, vin->info.id, vin->info.plugin);
+	return ret;
+//err:
+	printf("[%s] error: plug-in VIN%d\n", __func__, vin->info.id);
 	return ret;
 }
