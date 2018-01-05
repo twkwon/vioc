@@ -9,6 +9,7 @@
 #include <vioc_lut.h>
 #include <vioc_outcfg.h>
 #include <vioc_ireq.h>
+#include <vioc_vin.h>
 
 #include <test.h>
 
@@ -32,6 +33,7 @@
 #define OFFSET_WMIX_FROM_VIOC_BASE(id)	(HwVIOC_WMIX0 + (HwVIOC_WMIX_GAP * id) - BASE_ADDR_VIOC)
 #define OFFSET_SC_FROM_VIOC_BASE(id)	(HwVIOC_SC0 + (HwVIOC_SC_GAP * id) - BASE_ADDR_VIOC)
 #define OFFSET_LUT_FROM_VIOC_BASE		(HwVIOC_LUT - BASE_ADDR_VIOC)
+#define OFFSET_VIN_FROM_VIOC_BASE(id)	(HwVIOC_VIN00 + (HwVIOC_VIN_GAP * id) - BASE_ADDR_VIOC)
 #define OFFSET_OUTCFG_FROM_VIOC_BASE	(HwVIOC_OUTCFG - BASE_ADDR_VIOC)
 #define OFFSET_CONFIG_FROM_VIOC_BASE	(HwVIOC_CONFIG - BASE_ADDR_VIOC)
 
@@ -71,6 +73,7 @@ enum vioc_components {
 	VC_WMIX,
 	VC_SC,
 	VC_LUT,
+	VC_VIN,
 	VC_OUTCFG,
 	VC_CONFIG,
 	VC_END = VC_CONFIG,
@@ -199,6 +202,12 @@ struct vioc_lut_t {
 	VIOC_LUT reg;
 };
 
+struct vioc_vin_t {
+	struct vioc_component_t info;
+	VIOC_VIN *addr;
+	VIOC_VIN reg;
+};
+
 struct vioc_outcfg_t {
 	struct vioc_component_t info;
 	VIOC_OUTCFG *addr;
@@ -229,6 +238,7 @@ struct test_case_t {
 	struct vioc_wmix_t wmix;
 	struct vioc_sc_t sc;
 	struct vioc_lut_t lut;
+	struct vioc_vin_t vin;
 	struct vioc_outcfg_t outcfg;
 	struct vioc_config_t config;
 };
@@ -287,6 +297,7 @@ struct test_data_t {
 	struct test_data_reg_val_t wmix;
 	struct test_data_reg_val_t sc;
 	struct test_data_reg_val_t lut;
+	struct test_data_reg_val_t vin;
 	struct test_data_reg_val_t outcfg;
 	struct test_data_reg_val_t config;
 
@@ -325,6 +336,10 @@ extern int sc_setup(struct vioc_sc_t *);
 extern int lut_map_regs(struct vioc_lut_t *, struct test_data_reg_val_t *);
 extern int lut_verify_regs(struct vioc_lut_t *);
 extern int lut_setup(struct vioc_lut_t *);
+
+extern int vin_map_regs(struct vioc_vin_t *, struct test_data_reg_val_t *);
+extern int vin_verify_regs(struct vioc_vin_t *);
+extern int vin_setup(struct vioc_vin_t *);
 
 extern int outcfg_map_regs(struct vioc_outcfg_t *, struct test_data_reg_val_t *);
 extern int outcfg_verify_regs(struct vioc_outcfg_t *);

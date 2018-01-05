@@ -29,6 +29,7 @@ const char *name_vioc_compoent[] = {
 	[VC_WMIX]		= "WMIX",
 	[VC_SC]			= "SC",
 	[VC_LUT]		= "LUT",
+	[VC_VIN]		= "VIN",
 	[VC_OUTCFG]		= "OUTCFG",
 	[VC_CONFIG]		= "CONFIG",
 };
@@ -123,6 +124,7 @@ int shoot_test(struct test_case_t *tc)
 	 *  2: set update bit
 	 * component order (M2M path)
 	 *  RDMA -> [SC] -> [LUT] -> WMIX -> [SC] -> [LUT]  -> WDMA
+	 *  VIN -> [SC] -> WMIX -> [SC] -> WDMA
 	 */
 	if (tc->rdma1.info.id != -1) {
 		BITCSET(tc->rdma1.addr->uCTRL.nREG, 1 << 28, 1 << 28);
@@ -139,6 +141,10 @@ int shoot_test(struct test_case_t *tc)
 	if (tc->rdma4.info.id != -1) {
 		BITCSET(tc->rdma4.addr->uCTRL.nREG, 1 << 28, 1 << 28);
 		BITCSET(tc->rdma4.addr->uCTRL.nREG, 1 << 16, 1 << 16);
+	}
+
+	if (tc->vin.info.id != -1) {
+		BITCSET(tc->vin.addr->uVIN_CTRL.nREG, 1 << 0, 1 << 0);
 	}
 
 	if (tc->sc.info.id != -1) {
@@ -258,6 +264,14 @@ static int vioc_get_component_info(struct test_case_t *tc, struct test_data_t *t
 	tc->lut.info.plugin = td->lut.reg[1];
 	tc->lut.info.addr_offset = OFFSET_LUT_FROM_VIOC_BASE;
 	tc->lut.addr = (VIOC_LUT *)(tc->vioc_base_addr + INT32_OFFSET(tc->lut.info.addr_offset));
+
+	/*
+	 * VIN
+	 */
+	tc->vin.info.id = td->vin.reg[0];
+	tc->vin.info.plugin = td->vin.reg[1];
+	tc->vin.info.addr_offset = OFFSET_VIN_FROM_VIOC_BASE(tc->vin.info.id);
+	tc->vin.addr = (VIOC_VIN *)(tc->vioc_base_addr + INT32_OFFSET(tc->vin.info.addr_offset));
 
 	/*
 	 * OUTCFG
@@ -397,6 +411,20 @@ static int vioc_map_component_regs(struct test_case_t *tc, struct test_data_t *t
 	}
 
 	/*
+	 * VIN
+	 */
+	if (tc->vin.info.id != -1) {
+		mapped = vin_map_regs(&tc->vin, &td->vin);
+		nr_regs_data = td->vin.nr_regs - REG_START_OFFSET_VIN;
+		tc->vin.info.nr_regs = mapped;
+
+		printf("mapping: VIN%d %d register values[%d] %s\n", tc->vin.info.id,
+			mapped, nr_regs_data, (mapped == nr_regs_data) ? "" : "<-- error");
+
+		ret += mapped - nr_regs_data;
+	}
+
+	/*
 	 * OUTCFG
 	 */
 	if (tc->outcfg.info.id != -1 || REG_ALWAYS_READ) {
@@ -516,6 +544,17 @@ static int vioc_set_component_regs(struct test_case_t *tc)
 	}
 
 	/*
+	 * VIN
+	 */
+	if (tc->vin.info.id != -1) {
+		ret = vin_setup(&tc->vin);
+		if (ret) {
+			printf("[%s] error: %s", __func__, name_vioc_compoent[VC_VIN]);
+			goto exit;
+		}
+	}
+
+	/*
 	 * OUTCFG - WARNING: do not set whole registers
 	 */
 	if (tc->outcfg.info.id != -1 && 0) {
@@ -601,6 +640,17 @@ static int vioc_config_path(struct test_case_t *tc)
 	}
 
 	/*
+	 * VIN
+	 */
+	if (tc->vin.info.id != -1 && tc->vin.info.plugin != -1) {
+		ret = config_plugin(tc, VC_VIN);
+		if (ret) {
+			printf("[%s] error: plug-in %s", __func__, name_vioc_compoent[VC_VIN]);
+			goto exit;
+		}
+	}
+
+	/*
 	 * OUTCFG - ONLY set the specified registers
 	 */
 	ret = outcfg_config(tc);
@@ -630,41 +680,46 @@ static int vioc_verify_regs(struct test_case_t *tc)
 	/*
 	 * RDMA - max 4 RDMAs
 	 */
-	ret = rdma_verify_regs(&tc->rdma1);
-	ret = rdma_verify_regs(&tc->rdma2);
-	ret = rdma_verify_regs(&tc->rdma3);
-	ret = rdma_verify_regs(&tc->rdma4);
+	ret += rdma_verify_regs(&tc->rdma1);
+	ret += rdma_verify_regs(&tc->rdma2);
+	ret += rdma_verify_regs(&tc->rdma3);
+	ret += rdma_verify_regs(&tc->rdma4);
 
 	/*
 	 * WDMA - max 2 RDMAs
 	 */
-	ret = wdma_verify_regs(&tc->wdma1);
-	ret = wdma_verify_regs(&tc->wdma2);
+	ret += wdma_verify_regs(&tc->wdma1);
+	ret += wdma_verify_regs(&tc->wdma2);
 
 	/*
 	 * WMIX
 	 */
-	ret = wmix_verify_regs(&tc->wmix);
+	ret += wmix_verify_regs(&tc->wmix);
 
 	/*
 	 * SC
 	 */
-	ret = sc_verify_regs(&tc->sc);
+	ret += sc_verify_regs(&tc->sc);
 
 	/*
 	 * LUT
 	 */
-	ret = lut_verify_regs(&tc->lut);
+	ret += lut_verify_regs(&tc->lut);
+
+	/*
+	 * VIN
+	 */
+	ret += vin_verify_regs(&tc->vin);
 
 	/*
 	 * OUTCFG
 	 */
-	ret = outcfg_verify_regs(&tc->outcfg);
+	ret += outcfg_verify_regs(&tc->outcfg);
 
 	/*
 	 * CONFIG
 	 */
-	ret = config_verify_regs(&tc->config);
+	ret += config_verify_regs(&tc->config);
 
 	return ret;
 }
