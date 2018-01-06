@@ -141,7 +141,7 @@
 //******************************************************************************
 /* VIN */
 #define HwVIOC_VIN_GAP			(0x1000)
-#define HwVIOC_VIN_LUT_GAT		(0x400)
+#define HwVIOC_VIN_LUT_GAP		(0x400)
 #define HwVIOC_VINDEMUX         ( (BASE_ADDR_VIOC  + 0xA800         ))
 #define HwVIOC_VIN00            ( (BASE_ADDR_VIOC  + 0x4000         ))
 #define HwVIOC_VIN01            ( (BASE_ADDR_VIOC  + 0x4400         ))

@@ -222,6 +222,9 @@ int parser(struct test_data_t *tdata, struct getbuf_t *tcase, int test_no)
 					tdata->vin.reg[j] = val;
 					tdata->vin.nr_regs = count;
 					break;
+				case VC_VIN_LUT:
+					tdata->vin_lut.reg[j] = val;
+					tdata->vin_lut.nr_regs = count;
 				case VC_OUTCFG:
 					tdata->outcfg.reg[j] = val;
 					tdata->outcfg.nr_regs = count;
@@ -340,6 +343,10 @@ void print_parsed_data(struct test_data_t *t)
 	printf("\n   VIN:");
 	for (i = 0; i < t->vin.nr_regs; i++) {
 		printf("%d,", t->vin.reg[i]);
+	}
+	printf("\n   VIN_LUT:");
+	for (i = 0; i < t->vin_lut.nr_regs; i++) {
+		printf("%d,", t->vin_lut.reg[i]);
 	}
 	printf("\nOUTCFG:");
 	for (i = 0; i < t->outcfg.nr_regs; i++) {

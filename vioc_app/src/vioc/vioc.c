@@ -30,6 +30,7 @@ const char *name_vioc_compoent[] = {
 	[VC_SC]			= "SC",
 	[VC_LUT]		= "LUT",
 	[VC_VIN]		= "VIN",
+	[VC_VIN_LUT]	= "VIN_LUT",
 	[VC_OUTCFG]		= "OUTCFG",
 	[VC_CONFIG]		= "CONFIG",
 };
@@ -266,12 +267,17 @@ static int vioc_get_component_info(struct test_case_t *tc, struct test_data_t *t
 	tc->lut.addr = (VIOC_LUT *)(tc->vioc_base_addr + INT32_OFFSET(tc->lut.info.addr_offset));
 
 	/*
-	 * VIN
+	 * VIN & VIN_LUT
 	 */
 	tc->vin.info.id = td->vin.reg[0];
 	tc->vin.info.plugin = td->vin.reg[1];
 	tc->vin.info.addr_offset = OFFSET_VIN_FROM_VIOC_BASE(tc->vin.info.id);
 	tc->vin.addr = (VIOC_VIN *)(tc->vioc_base_addr + INT32_OFFSET(tc->vin.info.addr_offset));
+
+	tc->vin_lut.info.id = td->vin.reg[0];
+	tc->vin_lut.info.plugin = td->vin.reg[1];
+	tc->vin_lut.info.addr_offset = tc->vin.info.addr_offset + OFFSET_VIN_LUT_FROM_VIN;
+	tc->vin_lut.addr = (VIOC_VIN_LUT_C *)(tc->vioc_base_addr + INT32_OFFSET(tc->vin_lut.info.addr_offset));
 
 	/*
 	 * OUTCFG
@@ -411,7 +417,7 @@ static int vioc_map_component_regs(struct test_case_t *tc, struct test_data_t *t
 	}
 
 	/*
-	 * VIN
+	 * VIN & VIN_LUT
 	 */
 	if (tc->vin.info.id != -1) {
 		mapped = vin_map_regs(&tc->vin, &td->vin);
@@ -419,6 +425,16 @@ static int vioc_map_component_regs(struct test_case_t *tc, struct test_data_t *t
 		tc->vin.info.nr_regs = mapped;
 
 		printf("mapping: VIN%d %d register values[%d] %s\n", tc->vin.info.id,
+			mapped, nr_regs_data, (mapped == nr_regs_data) ? "" : "<-- error");
+
+		ret += mapped - nr_regs_data;
+	}
+	if (tc->vin_lut.info.id != -1) {
+		mapped = vin_lut_map_regs(&tc->vin_lut, &td->vin_lut);
+		nr_regs_data = td->vin_lut.nr_regs - REG_START_OFFSET_VIN_LUT;
+		tc->vin_lut.info.nr_regs = mapped;
+
+		printf("mapping: VIN_LUT%d %d register values[%d] %s\n", tc->vin.info.id,
 			mapped, nr_regs_data, (mapped == nr_regs_data) ? "" : "<-- error");
 
 		ret += mapped - nr_regs_data;
@@ -544,12 +560,19 @@ static int vioc_set_component_regs(struct test_case_t *tc)
 	}
 
 	/*
-	 * VIN
+	 * VIN & VIN_LUT
 	 */
 	if (tc->vin.info.id != -1) {
 		ret = vin_setup(&tc->vin);
 		if (ret) {
 			printf("[%s] error: %s", __func__, name_vioc_compoent[VC_VIN]);
+			goto exit;
+		}
+	}
+	if (tc->vin_lut.info.id != -1) {
+		ret = vin_lut_setup(&tc->vin_lut);
+		if (ret) {
+			printf("[%s] error: %s", __func__, name_vioc_compoent[VC_VIN_LUT]);
 			goto exit;
 		}
 	}
@@ -707,9 +730,10 @@ static int vioc_verify_regs(struct test_case_t *tc)
 	ret += lut_verify_regs(&tc->lut);
 
 	/*
-	 * VIN
+	 * VIN & VIN_LUT
 	 */
 	ret += vin_verify_regs(&tc->vin);
+	ret += vin_lut_verify_regs(&tc->vin_lut);
 
 	/*
 	 * OUTCFG
