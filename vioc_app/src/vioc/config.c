@@ -346,7 +346,7 @@ static int plugin_lut(struct test_case_t *tc, enum vioc_components comp)
 {
 	int ret = 0;
 
-	//TODO:
+	//TODO:LUT
 	printf("[%s] TODO: this is empty funtion!!!\n", __func__);
 
 	return ret;

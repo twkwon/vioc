@@ -162,22 +162,7 @@ int shoot_test(struct test_case_t *tc)
 		BITCSET(tc->vin.addr->uVIN_CTRL.nREG, 1 << 0, 1 << 0);
 	}
 
-	if (tc->sc.info.id != -1) {
-		if (tc->sc.info.plugin >= 0 && tc->sc.info.plugin <= 0x13) {
-			//BITCSET(tc->sc.addr->uCTRL.nREG, 1 << 28, 1 << 28);
-			BITCSET(tc->sc.addr->uCTRL.nREG, 1 << 16, 1 << 16);
-		}
-	}
-
-	if (tc->lut.info.id != -1) {
-		//if (tc->lut.info.plugin >= 0 && tc->lut.info.plugin <= 0x13) {
-		//	BITCSET(tc->lut.addr->uCTRL.nREG, 1 << 28, 1 << 28);
-		//	BITCSET(tc->lut.addr->uCTRL.nREG, 1 << 16, 1 << 16);
-		//}
-	}
-
 	if (tc->wmix.info.id != -1) {
-		//BITCSET(tc->wmix.addr->uCTRL.nREG, 1 << 28, 1 << 28);
 		BITCSET(tc->wmix.addr->uCTRL.nREG, 1 << 16, 1 << 16);
 	}
 
@@ -189,6 +174,7 @@ int shoot_test(struct test_case_t *tc)
 	}
 
 	if (tc->lut.info.id != -1) {
+		//TODO:LUT
 		//if (tc->lut.info.plugin >= 0 && tc->lut.info.plugin <= 0x13) {
 		//	BITCSET(tc->lut.addr->uCTRL.nREG, 1 << 28, 1 << 28);
 		//	BITCSET(tc->lut.addr->uCTRL.nREG, 1 << 16, 1 << 16);
@@ -210,6 +196,9 @@ int shoot_test(struct test_case_t *tc)
 	if (tc->disp_rdma.info.id != -1) {
 		BITCSET(tc->disp_rdma.addr->uCTRL.nREG, 1 << 28, 1 << 28);
 		BITCSET(tc->disp_rdma.addr->uCTRL.nREG, 1 << 16, 1 << 16);
+	}
+	if (tc->disp_wmix.info.id != -1) {
+		BITCSET(tc->wmix.addr->uCTRL.nREG, 1 << 16, 1 << 16);
 	}
 
 	return ret;

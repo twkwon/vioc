@@ -87,13 +87,13 @@ int lut_setup(struct vioc_lut_t *lut)
 	int ret = 0;
 
 	/* check EN and UPD regs that is enabled */
-	//TODO: disable these bits
+	//TODO:LUT disable these bits
 
 	/* set physical register */
 	*lut->addr = lut->reg;
 
 	/* set lut table */
-	//TODO: set lut table
+	//TODO:LUT set lut table
 
 	return ret;
 }
