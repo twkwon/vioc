@@ -8,6 +8,7 @@ static int vioc_get_component_info(struct test_case_t *, struct test_data_t *);
 static int vioc_map_component_regs(struct test_case_t *, struct test_data_t *);
 static int vioc_set_component_regs(struct test_case_t *);
 static int vioc_config_path(struct test_case_t *);
+static int vioc_config_disp_path(struct test_case_t *);
 static int vioc_verify_regs(struct test_case_t *);
 static int vioc_set_dma_address(struct test_case_t *);
 static void vioc_get_dma_address(unsigned char, unsigned int,
@@ -20,16 +21,19 @@ static void vioc_get_dma_offset(unsigned int, unsigned int,
 
 const char *name_vioc_compoent[] = {
 	/* enum vioc_components */
+	[VC_DISP_RDMA]	= "DISP_RDMA",
 	[VC_RDMA_1st]	= "1st RDMA",
 	[VC_RDMA_2nd]	= "2nd RDMA",
 	[VC_RDMA_3rd]	= "3rd RDMA",
 	[VC_RDMA_4th]	= "4th RDMA",
 	[VC_WDMA_1st]	= "1st WDMA",
 	[VC_WDMA_2nd]	= "2nd WDMA",
+	[VC_DISP_WMIX]	= "DISP_WMIX",
 	[VC_WMIX]		= "WMIX",
 	[VC_SC]			= "SC",
 	[VC_LUT]		= "LUT",
 	[VC_VIN]		= "VIN",
+	[VC_VIN_LUT]	= "VIN_LUT",
 	[VC_OUTCFG]		= "OUTCFG",
 	[VC_CONFIG]		= "CONFIG",
 };
@@ -106,6 +110,17 @@ int setup_vioc_path(struct test_case_t *test_case)
 		goto exit;
 	}
 
+	/*
+	 * Configuration Display Path
+	 * - RDMA: fmt, size, base0/1/2, offs0/1
+	 * - WMIX: ovp
+	 */
+	ret = vioc_config_disp_path(test_case);
+	if (ret) {
+		printf("[%s] error: vioc_config_disp_path()\n", __func__);
+		goto exit;
+	}
+
 	/* for debugging */
 	vioc_verify_regs(test_case);
 
@@ -120,8 +135,8 @@ int shoot_test(struct test_case_t *tc)
 
 	/*
 	 * bit order
-	 *  1: set enable bit
-	 *  2: set update bit
+	 *  1st: set enable bit
+	 *  2nd: set update bit
 	 * component order (M2M path)
 	 *  RDMA -> [SC] -> [LUT] -> WMIX -> [SC] -> [LUT]  -> WDMA
 	 *  VIN -> [SC] -> WMIX -> [SC] -> WDMA
@@ -189,6 +204,14 @@ int shoot_test(struct test_case_t *tc)
 		BITCSET(tc->wdma2.addr->uCTRL.nREG, 1 << 16, 1 << 16);
 	}
 
+	/*
+	 * Display path RDMA
+	 */
+	if (tc->disp_rdma.info.id != -1) {
+		BITCSET(tc->disp_rdma.addr->uCTRL.nREG, 1 << 28, 1 << 28);
+		BITCSET(tc->disp_rdma.addr->uCTRL.nREG, 1 << 16, 1 << 16);
+	}
+
 	return ret;
 }
 
@@ -204,6 +227,19 @@ static int vioc_get_component_info(struct test_case_t *tc, struct test_data_t *t
 	memcpy(tc->input_file, td->input_file, sizeof(tc->input_file));
 	memcpy(tc->output_file, td->output_file, sizeof(tc->output_file));
 	memcpy(tc->reference_file, td->reference_file, sizeof(tc->reference_file));
+
+	/*
+	 * Display Path - RDMA-WMIX-DISP
+	 */
+	tc->disp_rdma.info.id = td->disp_rdma.reg[0];
+	tc->disp_rdma.info.plugin = td->disp_rdma.reg[1];
+	tc->disp_rdma.info.addr_offset = OFFSET_RDMA_FROM_VIOC_BASE(tc->disp_rdma.info.id);
+	tc->disp_rdma.addr = (VIOC_RDMA *)(tc->vioc_base_addr + INT32_OFFSET(tc->disp_rdma.info.addr_offset));
+
+	tc->disp_wmix.info.id = td->disp_wmix.reg[0];
+	tc->disp_wmix.info.plugin = td->disp_wmix.reg[1];
+	tc->disp_wmix.info.addr_offset = OFFSET_WMIX_FROM_VIOC_BASE(tc->disp_wmix.info.id);
+	tc->disp_wmix.addr = (VIOC_WMIX *)(tc->vioc_base_addr + INT32_OFFSET(tc->disp_wmix.info.addr_offset));
 
 	/*
 	 * RDMA - max 4 RDMAs
@@ -266,12 +302,17 @@ static int vioc_get_component_info(struct test_case_t *tc, struct test_data_t *t
 	tc->lut.addr = (VIOC_LUT *)(tc->vioc_base_addr + INT32_OFFSET(tc->lut.info.addr_offset));
 
 	/*
-	 * VIN
+	 * VIN & VIN_LUT
 	 */
 	tc->vin.info.id = td->vin.reg[0];
 	tc->vin.info.plugin = td->vin.reg[1];
 	tc->vin.info.addr_offset = OFFSET_VIN_FROM_VIOC_BASE(tc->vin.info.id);
 	tc->vin.addr = (VIOC_VIN *)(tc->vioc_base_addr + INT32_OFFSET(tc->vin.info.addr_offset));
+
+	tc->vin_lut.info.id = td->vin.reg[0];
+	tc->vin_lut.info.plugin = td->vin.reg[1];
+	tc->vin_lut.info.addr_offset = tc->vin.info.addr_offset + OFFSET_VIN_LUT_FROM_VIN;
+	tc->vin_lut.addr = (VIOC_VIN_LUT_C *)(tc->vioc_base_addr + INT32_OFFSET(tc->vin_lut.info.addr_offset));
 
 	/*
 	 * OUTCFG
@@ -297,6 +338,31 @@ static int vioc_map_component_regs(struct test_case_t *tc, struct test_data_t *t
 	int ret = 0;
 	int mapped = 0, nr_regs_data = 0;
 	printf("[%s]\n", __func__);
+
+	/*
+	 * Display Path - RDMA-WMIX-DISP
+	 */
+	if (tc->disp_rdma.info.id != -1) {
+		mapped = rdma_map_regs(&tc->disp_rdma, &td->disp_rdma);
+		nr_regs_data = td->disp_rdma.nr_regs - REG_START_OFFSET_RDMA;
+		tc->disp_rdma.info.nr_regs = mapped;
+
+		printf("mapping: DISP_RDMA%d %d register values[%d] %s\n", tc->disp_rdma.info.id,
+			mapped, nr_regs_data, (mapped == nr_regs_data) ? "" : "<-- error");
+
+		ret += mapped - nr_regs_data;
+	}
+
+	if (tc->disp_wmix.info.id != -1) {
+		mapped = wmix_map_regs(&tc->disp_wmix, &td->disp_wmix);
+		nr_regs_data = td->disp_wmix.nr_regs - REG_START_OFFSET_WMIX;
+		tc->disp_wmix.info.nr_regs = mapped;
+
+		printf("mapping: DISP_WMIX%d %d register values[%d] %s\n", tc->disp_wmix.info.id,
+			mapped, nr_regs_data, (mapped == nr_regs_data) ? "" : "<-- error");
+
+		ret += mapped - nr_regs_data;
+	}
 
 	/*
 	 * RDMA - max 4 RDMAs
@@ -411,7 +477,7 @@ static int vioc_map_component_regs(struct test_case_t *tc, struct test_data_t *t
 	}
 
 	/*
-	 * VIN
+	 * VIN & VIN_LUT
 	 */
 	if (tc->vin.info.id != -1) {
 		mapped = vin_map_regs(&tc->vin, &td->vin);
@@ -419,6 +485,16 @@ static int vioc_map_component_regs(struct test_case_t *tc, struct test_data_t *t
 		tc->vin.info.nr_regs = mapped;
 
 		printf("mapping: VIN%d %d register values[%d] %s\n", tc->vin.info.id,
+			mapped, nr_regs_data, (mapped == nr_regs_data) ? "" : "<-- error");
+
+		ret += mapped - nr_regs_data;
+	}
+	if (tc->vin_lut.info.id != -1) {
+		mapped = vin_lut_map_regs(&tc->vin_lut, &td->vin_lut);
+		nr_regs_data = td->vin_lut.nr_regs - REG_START_OFFSET_VIN_LUT;
+		tc->vin_lut.info.nr_regs = mapped;
+
+		printf("mapping: VIN_LUT%d %d register values[%d] %s\n", tc->vin.info.id,
 			mapped, nr_regs_data, (mapped == nr_regs_data) ? "" : "<-- error");
 
 		ret += mapped - nr_regs_data;
@@ -459,6 +535,25 @@ static int vioc_set_component_regs(struct test_case_t *tc)
 {
 	int ret = 0;
 	printf("[%s]\n", __func__);
+
+	/*
+	 * Display Path - RDMA-WMIX-DISP
+	 */
+	if (tc->disp_rdma.info.id != -1) {
+		ret = rdma_setup(&tc->disp_rdma);
+		if (ret) {
+			printf("[%s] error: %s", __func__, name_vioc_compoent[VC_DISP_RDMA]);
+			goto exit;
+		}
+	}
+
+	if (tc->disp_wmix.info.id != -1) {
+		ret = wmix_setup(&tc->disp_wmix);
+		if (ret) {
+			printf("[%s] error: %s", __func__, name_vioc_compoent[VC_DISP_WMIX]);
+			goto exit;
+		}
+	}
 
 	/*
 	 * RDMA - max 4 RDMAs
@@ -544,12 +639,19 @@ static int vioc_set_component_regs(struct test_case_t *tc)
 	}
 
 	/*
-	 * VIN
+	 * VIN & VIN_LUT
 	 */
 	if (tc->vin.info.id != -1) {
 		ret = vin_setup(&tc->vin);
 		if (ret) {
 			printf("[%s] error: %s", __func__, name_vioc_compoent[VC_VIN]);
+			goto exit;
+		}
+	}
+	if (tc->vin_lut.info.id != -1) {
+		ret = vin_lut_setup(&tc->vin_lut);
+		if (ret) {
+			printf("[%s] error: %s", __func__, name_vioc_compoent[VC_VIN_LUT]);
 			goto exit;
 		}
 	}
@@ -584,6 +686,17 @@ static int vioc_config_path(struct test_case_t *tc)
 {
 	int ret = 0;
 	printf("[%s]\n", __func__);
+
+	/*
+	 * Display Path - RDMA
+	 */
+	if (tc->disp_rdma.info.id != -1 && tc->disp_rdma.info.plugin != -1) {
+		ret = config_plugin(tc, VC_DISP_RDMA);
+		if (ret) {
+			printf("[%s] error: plug-in %s", __func__, name_vioc_compoent[VC_DISP_RDMA]);
+			goto exit;
+		}
+	}
 
 	/*
 	 * RDMA - max 4 RDMAs
@@ -672,6 +785,57 @@ exit:
 	return ret;
 }
 
+/*
+ * Configuration Display Path
+ * - RDMA: fmt, size, base0/1/2, offs0/1
+ * - WMIX: ovp
+ */
+static int vioc_config_disp_path(struct test_case_t *tc)
+{
+	int ret = 0;
+	addr_t base0, base1, base2;
+	unsigned int offset0, offset1;
+	unsigned int fmt;
+	unsigned int width, height;
+	struct vioc_rdma_t *rdma;
+	struct vioc_wdma_t *wdma;
+
+	rdma = &tc->disp_rdma;
+
+	/* select wdma to display */
+	if (tc->wdma1.info.plugin == 1) {
+		wdma = &tc->wdma1;
+	} else if (tc->wdma2.info.plugin == 1) {
+		wdma = &tc->wdma2;
+	}
+
+	if (ISSET(rdma->auto_set, AUTO_RDMA_FMT)) {
+		fmt = wdma->reg.uCTRL.bREG.FMT;
+		rdma_set_fmt(rdma, fmt);
+	}
+
+	if (ISSET(rdma->auto_set, AUTO_RDMA_SIZE)) {
+		width = wdma->reg.uSIZE.bREG.WIDTH;
+		height = wdma->reg.uSIZE.bREG.HEIGHT;
+		rdma_set_size(rdma, width, height);
+	}
+
+	if (ISSET(rdma->auto_set, AUTO_RDMA_BASE)) {
+		base0 = wdma->reg.nBASE0;
+		base1 = wdma->reg.nBASE1;
+		base2 = wdma->reg.nBASE2;
+		rdma_set_address(rdma, base0, base1, base2);
+	}
+
+	if (ISSET(rdma->auto_set, AUTO_RDMA_OFFS)) {
+		offset0 = wdma->reg.uOFFSET.bREG.OFFSET0;
+		offset1 = wdma->reg.uOFFSET.bREG.OFFSET1;
+		rdma_set_offset(rdma, offset0, offset1);
+	}
+
+	return ret;
+}
+
 static int vioc_verify_regs(struct test_case_t *tc)
 {
 	int ret = 0;
@@ -680,6 +844,7 @@ static int vioc_verify_regs(struct test_case_t *tc)
 	/*
 	 * RDMA - max 4 RDMAs
 	 */
+	ret += rdma_verify_regs(&tc->disp_rdma);
 	ret += rdma_verify_regs(&tc->rdma1);
 	ret += rdma_verify_regs(&tc->rdma2);
 	ret += rdma_verify_regs(&tc->rdma3);
@@ -694,6 +859,7 @@ static int vioc_verify_regs(struct test_case_t *tc)
 	/*
 	 * WMIX
 	 */
+	ret += wmix_verify_regs(&tc->disp_wmix);
 	ret += wmix_verify_regs(&tc->wmix);
 
 	/*
@@ -707,9 +873,10 @@ static int vioc_verify_regs(struct test_case_t *tc)
 	ret += lut_verify_regs(&tc->lut);
 
 	/*
-	 * VIN
+	 * VIN & VIN_LUT
 	 */
 	ret += vin_verify_regs(&tc->vin);
+	ret += vin_lut_verify_regs(&tc->vin_lut);
 
 	/*
 	 * OUTCFG
@@ -732,8 +899,8 @@ static int vioc_verify_regs(struct test_case_t *tc)
 static int vioc_set_dma_address(struct test_case_t *tc)
 {
 	int i, ret = 0;
-	addr_t offset0, offset1;
 	addr_t base0, base1, base2;
+	unsigned int offset0, offset1;
 	unsigned int width, height;
 	unsigned int start_x, start_y;
 

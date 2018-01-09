@@ -96,9 +96,6 @@ int vin_map_regs(struct vioc_vin_t *vin, struct test_data_reg_val_t *data)
 	map_reg(reg->uVIN_INT.bREG.eof_int,			dat[idx]); idx++;
 	map_reg(reg->uVIN_INT.bREG.update_int,		dat[idx]); idx++;
 
-	//TODO:VIN set VIN_LUT_C
-	
-
 	return (idx - reg_start_offset);
 }
 
@@ -242,7 +239,71 @@ int vin_verify_regs(struct vioc_vin_t *vin)
 		ret = -1;
 	}
 
-	//TODO:VIN set VIN_LUT_C
+	return ret;
+}
+
+int vin_lut_map_regs(struct vioc_vin_lut_t *vin_lut, struct test_data_reg_val_t *data)
+{
+	int idx, reg_start_offset;
+	int *dat;
+	VIOC_VIN_LUT_C *reg;
+
+	/* read value of physical register */
+	vin_lut->reg = *vin_lut->addr;
+
+	reg = &vin_lut->reg;
+	dat = data->reg;
+
+	/* vin_lut's starting index is 0 */
+	reg_start_offset = REG_START_OFFSET_VIN_LUT;
+	idx = reg_start_offset;
+
+	/* VIN_LUT_C */
+	map_reg(reg->uVIN_LUT_C[0].bREG.VALUE_K_CH2, dat[idx]); idx++;
+	map_reg(reg->uVIN_LUT_C[0].bREG.VALUE_K_CH1, dat[idx]); idx++;
+	map_reg(reg->uVIN_LUT_C[0].bREG.VALUE_K_CH0, dat[idx]); idx++;
+
+	return (idx - reg_start_offset);
+}
+
+int vin_lut_setup(struct vioc_vin_lut_t *vin_lut)
+{
+	int ret = 0;
+	int i;
+
+	for (i = 1; i < 256; i++) {
+		vin_lut->reg.uVIN_LUT_C[i].nREG = vin_lut->reg.uVIN_LUT_C[0].nREG;
+	}
+
+	/* set physical register */
+	*vin_lut->addr = vin_lut->reg;
+
+	return ret;
+}
+int vin_lut_verify_regs(struct vioc_vin_lut_t *vin_lut)
+{
+	int ret = 0;
+	VIOC_VIN_LUT_C *s, *d;
+	reg_t sv, dv;
+
+	s = &vin_lut->reg;
+	d = vin_lut->addr;
+
+	printf("VERIFY VIN_LUT%d\n", vin_lut->info.id);
+	if (vin_lut->info.id < 0) {
+		printf("\tN/A\n");
+		return ret;
+	}
+
+	/* VIN_LUT_C */
+	dv = read_reg(&d->uVIN_LUT_C[0]);
+	sv = read_reg(&s->uVIN_LUT_C[0]);
+	if (dv == sv) {
+		printf("\tVIN.uVIN_LUT_C[0]: 0x%08x\n", sv);
+	} else {
+		printf("\tVIN.uVIN_LUT_C[0]: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
 
 	return ret;
 }

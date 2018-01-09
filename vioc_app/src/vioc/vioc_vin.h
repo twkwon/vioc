@@ -268,6 +268,26 @@ typedef struct _VIOC_VIN
 
 typedef struct
 {
+	unsigned		VALUE_K_CH0		:	10;
+	unsigned		VALUE_K_CH1		:	10;
+	unsigned		VALUE_K_CH2		:	10;
+	unsigned int	RESERVED0		:	 2;
+} VIN_LUT_C;
+
+typedef union
+{
+	unsigned long	nREG;
+	VIN_LUT_C		bREG;
+} VIN_LUT_C_u;
+
+typedef struct _VIOC_VIN_LUT_C
+{
+	volatile VIN_LUT_C_u			uVIN_LUT_C[256];	// VIN base + 0x400~0x7FC	VIN Look-up Table Initialize Register
+} VIOC_VIN_LUT_C, *PVIOC_VIN_LUT_C;
+
+
+typedef struct
+{
 	unsigned	enable				:	 1;
 	unsigned					:	 3;
 	unsigned	byte_select			:	 2;

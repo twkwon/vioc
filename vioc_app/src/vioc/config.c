@@ -173,6 +173,7 @@ int config_plugin(struct test_case_t *tc, enum vioc_components comp)
 	int ret = 0;
 
 	switch (comp) {
+	case VC_DISP_RDMA:
 	case VC_RDMA_1st:
 	case VC_RDMA_2nd:
 	case VC_RDMA_3rd:
@@ -209,6 +210,9 @@ static int plugin_rdma(struct test_case_t *tc, enum vioc_components comp)
 	struct vioc_rdma_t *rdma;
 
 	switch (comp) {
+	case VC_DISP_RDMA:
+		rdma = &tc->disp_rdma;
+		break;
 	case VC_RDMA_1st:
 		rdma = &tc->rdma1;
 		break;
@@ -228,6 +232,17 @@ static int plugin_rdma(struct test_case_t *tc, enum vioc_components comp)
 	}
 
 	switch (rdma->info.id) {
+	case 0:
+	case 1:
+	case 5:
+	case 8:
+	case 9:
+	case 10:
+		printf("[%s] RDMA%d is GRDMA, so it doesn't need plug-in\n", __func__, rdma->info.id);
+		ret = 0;
+		goto err_comp;
+		break;
+
 	case 2:
 		cfg_path_rdma = &tc->config.addr->uRDMA02;
 		break;

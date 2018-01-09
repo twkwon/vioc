@@ -182,6 +182,10 @@ int parser(struct test_data_t *tdata, struct getbuf_t *tcase, int test_no)
 			//printf("offset %d\n", offset);
 
 			switch (i) {
+				case VC_DISP_RDMA:
+					tdata->disp_rdma.reg[j] = val;
+					tdata->disp_rdma.nr_regs = count;
+					break;
 				case VC_RDMA_1st:
 					tdata->rdma1.reg[j] = val;
 					tdata->rdma1.nr_regs = count;
@@ -206,6 +210,10 @@ int parser(struct test_data_t *tdata, struct getbuf_t *tcase, int test_no)
 					tdata->wdma2.reg[j] = val;
 					tdata->wdma2.nr_regs = count;
 					break;
+				case VC_DISP_WMIX:
+					tdata->disp_wmix.reg[j] = val;
+					tdata->disp_wmix.nr_regs = count;
+					break;
 				case VC_WMIX:
 					tdata->wmix.reg[j] = val;
 					tdata->wmix.nr_regs = count;
@@ -222,6 +230,9 @@ int parser(struct test_data_t *tdata, struct getbuf_t *tcase, int test_no)
 					tdata->vin.reg[j] = val;
 					tdata->vin.nr_regs = count;
 					break;
+				case VC_VIN_LUT:
+					tdata->vin_lut.reg[j] = val;
+					tdata->vin_lut.nr_regs = count;
 				case VC_OUTCFG:
 					tdata->outcfg.reg[j] = val;
 					tdata->outcfg.nr_regs = count;
@@ -301,6 +312,15 @@ void print_parsed_data(struct test_data_t *t)
 		printf("  %d Reference  : %s\n", i, t->reference_file[i].name);
 	}
 
+	printf("\n DISP_RDMA:");
+	for (i = 0; i < t->disp_rdma.nr_regs; i++) {
+		printf("%d,", t->disp_rdma.reg[i]);
+	}
+	printf("\n DISP_WMIX:");
+	for (i = 0; i < t->disp_wmix.nr_regs; i++) {
+		printf("%d,", t->disp_wmix.reg[i]);
+	}
+
 	printf("\n  1st RDMA:");
 	for (i = 0; i < t->rdma1.nr_regs; i++) {
 		printf("%d,", t->rdma1.reg[i]);
@@ -317,6 +337,7 @@ void print_parsed_data(struct test_data_t *t)
 	for (i = 0; i < t->rdma4.nr_regs; i++) {
 		printf("%d,", t->rdma4.reg[i]);
 	}
+
 	printf("\n  1st WDMA:");
 	for (i = 0; i < t->wdma1.nr_regs; i++) {
 		printf("%d,", t->wdma1.reg[i]);
@@ -325,6 +346,7 @@ void print_parsed_data(struct test_data_t *t)
 	for (i = 0; i < t->wdma2.nr_regs; i++) {
 		printf("%d,", t->wdma2.reg[i]);
 	}
+
 	printf("\n  WMIX:");
 	for (i = 0; i < t->wmix.nr_regs; i++) {
 		printf("%d,", t->wmix.reg[i]);
@@ -333,14 +355,21 @@ void print_parsed_data(struct test_data_t *t)
 	for (i = 0; i < t->sc.nr_regs; i++) {
 		printf("%d,", t->sc.reg[i]);
 	}
+
 	printf("\n   LUT:");
 	for (i = 0; i < t->lut.nr_regs; i++) {
 		printf("%d,", t->lut.reg[i]);
 	}
+
 	printf("\n   VIN:");
 	for (i = 0; i < t->vin.nr_regs; i++) {
 		printf("%d,", t->vin.reg[i]);
 	}
+	printf("\n   VIN_LUT:");
+	for (i = 0; i < t->vin_lut.nr_regs; i++) {
+		printf("%d,", t->vin_lut.reg[i]);
+	}
+
 	printf("\nOUTCFG:");
 	for (i = 0; i < t->outcfg.nr_regs; i++) {
 		printf("%d,", t->outcfg.reg[i]);
