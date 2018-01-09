@@ -3,7 +3,17 @@
 #include <vioc.h>
 
 
-void rdma_set_offset(struct vioc_rdma_t *rdma, addr_t offset0, addr_t offset1)
+void rdma_set_fmt(struct vioc_rdma_t *rdma, unsigned int fmt)
+{
+	BITCSET(rdma->addr->uMISC.nREG, 0x0000001f, fmt);
+}
+
+void rdma_set_size(struct vioc_rdma_t *rdma, unsigned int width, unsigned int height)
+{
+	BITCSET(rdma->addr->uSIZE.nREG, 0xffffffff, (height << 16) | width);
+}
+
+void rdma_set_offset(struct vioc_rdma_t *rdma, unsigned int offset0, unsigned int offset1)
 {
 	BITCSET(rdma->addr->uOFFSET.nREG, 0xffffffff, (offset1 << 16) | offset0);
 }
@@ -20,6 +30,7 @@ int rdma_map_regs(struct vioc_rdma_t *rdma, struct test_data_reg_val_t *data)
 	int idx, reg_start_offset;
 	int *dat;
 	VIOC_RDMA *reg;
+	unsigned int auto_set = 0;	// select automatic setting about FMT, SIZE, BASE0/1/2, OFFS0/1
 
 	/* read value of physical register */
 	rdma->reg = *rdma->addr;
@@ -54,7 +65,12 @@ int rdma_map_regs(struct vioc_rdma_t *rdma, struct test_data_reg_val_t *data)
 	map_reg(reg->uCTRL.bREG.BR,		dat[idx]); idx++;
 	map_reg(reg->uCTRL.bREG.R2YM2,	dat[idx]); idx++;
 	map_reg(reg->uCTRL.bREG.Y2RM2,	dat[idx]); idx++;
-	map_reg(reg->uCTRL.bREG.FMT,	dat[idx]); idx++;
+
+	map_reg(reg->uCTRL.bREG.FMT,	dat[idx]);
+	if (dat[idx] == -1) {
+		BITCSET(auto_set, AUTO_RDMA_FMT, AUTO_RDMA_FMT);
+	}
+	idx++;
 
 	/* PTS */
 	map_reg(reg->uPTS.bREG.BOT, dat[idx]); idx++;
@@ -62,10 +78,18 @@ int rdma_map_regs(struct vioc_rdma_t *rdma, struct test_data_reg_val_t *data)
 
 	/* SIZE */
 	map_reg(reg->uSIZE.bREG.HEIGHT,	dat[idx]); idx++;
-	map_reg(reg->uSIZE.bREG.WIDTH,	dat[idx]); idx++;
+	map_reg(reg->uSIZE.bREG.WIDTH,	dat[idx]);
+	if (dat[idx] == -1) {
+		BITCSET(auto_set, AUTO_RDMA_SIZE, AUTO_RDMA_SIZE);
+	}
+	idx++;
 
 	/* BASE0 */
-	map_reg(reg->nBASE0, dat[idx]); idx++;
+	map_reg(reg->nBASE0, dat[idx]);
+	if (dat[idx] == -1) {
+		BITCSET(auto_set, AUTO_RDMA_BASE, AUTO_RDMA_BASE);
+	}
+	idx++;
 
 	/* CADDR (RO) */
 	map_reg(reg->nCBASE, dat[idx]); idx++;
@@ -78,7 +102,11 @@ int rdma_map_regs(struct vioc_rdma_t *rdma, struct test_data_reg_val_t *data)
 
 	/* OFFS */
 	map_reg(reg->uOFFSET.bREG.OFFSET1,	dat[idx]); idx++;
-	map_reg(reg->uOFFSET.bREG.OFFSET0,	dat[idx]); idx++;
+	map_reg(reg->uOFFSET.bREG.OFFSET0,	dat[idx]);
+	if (dat[idx] == -1) {
+		BITCSET(auto_set, AUTO_RDMA_OFFS, AUTO_RDMA_OFFS);
+	}
+	idx++;
 
 	/* MISC */
 	map_reg(reg->uMISC.bREG.ISSUE,	dat[idx]); idx++;
@@ -135,6 +163,8 @@ int rdma_map_regs(struct vioc_rdma_t *rdma, struct test_data_reg_val_t *data)
 	/* CROP_POS */
 	map_reg(reg->uCROPPOS.bREG.YPOS,	dat[idx]); idx++;
 	map_reg(reg->uCROPPOS.bREG.XPOS,	dat[idx]); idx++;
+
+	rdma->auto_set = auto_set;
 
 	return (idx - reg_start_offset);
 }

@@ -25,7 +25,7 @@
 #define BITCLR(X, MASK)				((X) &= ~((unsigned int)(MASK)) )
 #define BITXOR(X, MASK)				((X) ^= (unsigned int)(MASK) )
 #define ISZERO(X, MASK)				(!(((unsigned int)(X))&((unsigned int)(MASK))))
-#define	ISSET(X, MASK)				((unsigned long)(X)&((unsigned long)(MASK)))
+#define	ISSET(X, MASK)				((unsigned int)(X)&((unsigned int)(MASK)))
 
 /* offset from vioc base address */
 #define OFFSET_RDMA_FROM_VIOC_BASE(id)	(HwVIOC_RDMA00 + (HwVIOC_RDMA_GAP * id) - BASE_ADDR_VIOC)
@@ -65,12 +65,14 @@ typedef unsigned int reg_t;
 
 enum vioc_components {
 	VC_START = 0,
-	VC_RDMA_1st = VC_START,
+	VC_DISP_RDMA = VC_START,
+	VC_RDMA_1st,
 	VC_RDMA_2nd,
 	VC_RDMA_3rd,
 	VC_RDMA_4th,
 	VC_WDMA_1st,
 	VC_WDMA_2nd,
+	VC_DISP_WMIX,
 	VC_WMIX,
 	VC_SC,
 	VC_LUT,
@@ -174,10 +176,17 @@ struct vioc_component_t {
 	int plugin;					// SELECT bits of plug-in register in the Configuration & Interrupt part
 };
 
+#define AUTO_RDMA_FMT	0x0001
+#define AUTO_RDMA_SIZE	0x0010
+#define AUTO_RDMA_BASE	0x0100
+#define AUTO_RDMA_OFFS	0x1000
+
 struct vioc_rdma_t {
 	struct vioc_component_t info;
 	VIOC_RDMA *addr;			// virtual address of physical register (by mmap)
 	VIOC_RDMA reg;				// parsed register values
+
+	int auto_set;
 };
 
 struct vioc_wdma_t {
@@ -237,12 +246,14 @@ struct test_case_t {
 	struct image_buf_info_t reference_file[MAX_NUM_OF_WDMA];	// reference images to compare output files
 
 	addr_t *vioc_base_addr;
+	struct vioc_rdma_t disp_rdma;
 	struct vioc_rdma_t rdma1;
 	struct vioc_rdma_t rdma2;
 	struct vioc_rdma_t rdma3;
 	struct vioc_rdma_t rdma4;
 	struct vioc_wdma_t wdma1;
 	struct vioc_wdma_t wdma2;
+	struct vioc_wmix_t disp_wmix;
 	struct vioc_wmix_t wmix;
 	struct vioc_sc_t sc;
 	struct vioc_lut_t lut;
@@ -296,18 +307,25 @@ struct test_data_t {
 	struct image_buf_info_t reference_file[MAX_NUM_OF_WDMA];	// reference images to compare output files
 
 	//struct test_data_reg_val_t rdma[MAX_NUM_OF_RDMA];
+	struct test_data_reg_val_t disp_rdma;	// rdma of display path
 	struct test_data_reg_val_t rdma1;
 	struct test_data_reg_val_t rdma2;
 	struct test_data_reg_val_t rdma3;
 	struct test_data_reg_val_t rdma4;
+
 	//struct test_data_reg_val_t wdma[MAX_NUM_OF_WDMA];
 	struct test_data_reg_val_t wdma1;
 	struct test_data_reg_val_t wdma2;
+
+	struct test_data_reg_val_t disp_wmix;	// wmix of display path
 	struct test_data_reg_val_t wmix;
+
 	struct test_data_reg_val_t sc;
 	struct test_data_reg_val_t lut;
-	struct test_data_reg_val_t vin;
-	struct test_data_reg_val_t vin_lut;
+
+	struct test_data_reg_val_t vin;			// vin
+	struct test_data_reg_val_t vin_lut;		// VIN_LUT_C registers
+
 	struct test_data_reg_val_t outcfg;
 	struct test_data_reg_val_t config;
 
@@ -326,8 +344,10 @@ extern int shoot_test(struct test_case_t *);
 extern int rdma_map_regs(struct vioc_rdma_t *, struct test_data_reg_val_t *);
 extern int rdma_verify_regs(struct vioc_rdma_t *);
 extern int rdma_setup(struct vioc_rdma_t *);
-extern void rdma_set_offset(struct vioc_rdma_t *, addr_t, addr_t);
+extern void rdma_set_offset(struct vioc_rdma_t *, unsigned int, unsigned int);
 extern void rdma_set_address(struct vioc_rdma_t *, addr_t, addr_t, addr_t);
+extern void rdma_set_fmt(struct vioc_rdma_t *, unsigned int);
+extern void rdma_set_size(struct vioc_rdma_t *, unsigned int, unsigned int);
 
 extern int wdma_map_regs(struct vioc_wdma_t *, struct test_data_reg_val_t *);
 extern int wdma_verify_regs(struct vioc_wdma_t *);
