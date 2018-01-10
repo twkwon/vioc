@@ -1,8 +1,6 @@
 #ifndef __VIOC_RDMA_H__
 #define	__VIOC_RDMA_H__
 
-#include "tcc_video_regs.h"
-
 #define VIOC_RDMA_STAT_ICFG		0x00000001UL
 #define VIOC_RDMA_STAT_IEOFR		0x00000002UL
 #define VIOC_RDMA_STAT_IEOFF 		0x00000004UL

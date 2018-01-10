@@ -25,8 +25,6 @@
 #ifndef __VIOC_WMIX_H__
 #define __VIOC_WMIX_H__
 
-#include "tcc_video_regs.h"
-
 typedef	struct
 {
 	unsigned		OVP		:  5;

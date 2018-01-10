@@ -24,8 +24,6 @@
 #ifndef __VIOC_WDMA_H__
 #define	__VIOC_WDMA_H__
 
-#include "tcc_video_regs.h"
-
 #define 	VIOC_WDMA_IREQ_UPD_MASK 		0x00000001UL
 #define 	VIOC_WDMA_IREQ_SREQ_MASK 		0x00000002UL
 #define 	VIOC_WDMA_IREQ_ROLL_MASK 		0x00000004UL

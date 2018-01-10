@@ -3,6 +3,11 @@
 #include <vioc.h>
 
 
+void wmix_en_ctrl(struct vioc_wmix_t *wmix, unsigned int enable)
+{
+	BITCSET(wmix->addr->uCTRL.nREG, 1 << 16, enable << 16);
+}
+
 int wmix_map_regs(struct vioc_wmix_t *wmix, struct test_data_reg_val_t *data)
 {
 	int idx, reg_start_offset;

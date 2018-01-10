@@ -24,10 +24,28 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-#ifndef __REG_PHYSICAL_H__
-#define __REG_PHYSICAL_H__
+#ifndef __VIOC_REGS_H__
+#define __VIOC_REGS_H__
 
-//#include "tcc_types.h"
+#include "vioc_rdma.h"
+#include "vioc_wdma.h"
+#include "vioc_wmix.h"
+#include "vioc_scaler.h"
+#include "vioc_lut.h"
+#include "vioc_outcfg.h"
+#include "vioc_ireq.h"
+#include "vioc_vin.h"
+
+/* offset from vioc base address */
+#define OFFSET_RDMA_FROM_VIOC_BASE(id)	(HwVIOC_RDMA00 + (HwVIOC_RDMA_GAP * id) - BASE_ADDR_VIOC)
+#define OFFSET_WDMA_FROM_VIOC_BASE(id)	(HwVIOC_WDMA00 + (HwVIOC_WDMA_GAP * id) - BASE_ADDR_VIOC)
+#define OFFSET_WMIX_FROM_VIOC_BASE(id)	(HwVIOC_WMIX0 + (HwVIOC_WMIX_GAP * id) - BASE_ADDR_VIOC)
+#define OFFSET_SC_FROM_VIOC_BASE(id)	(HwVIOC_SC0 + (HwVIOC_SC_GAP * id) - BASE_ADDR_VIOC)
+#define OFFSET_LUT_FROM_VIOC_BASE		(HwVIOC_LUT - BASE_ADDR_VIOC)
+#define OFFSET_VIN_FROM_VIOC_BASE(id)	(HwVIOC_VIN00 + (HwVIOC_VIN_GAP * id) - BASE_ADDR_VIOC)
+#define OFFSET_VIN_LUT_FROM_VIN			(HwVIOC_VIN_LUT_GAP)
+#define OFFSET_OUTCFG_FROM_VIOC_BASE	(HwVIOC_OUTCFG - BASE_ADDR_VIOC)
+#define OFFSET_CONFIG_FROM_VIOC_BASE	(HwVIOC_CONFIG - BASE_ADDR_VIOC)
 
 /*******************************************************************************
 *
@@ -367,4 +385,4 @@
 
 #define VIOC_LUT_DEV_MAX 	VIOC_LUT_DEV1
 
-#endif //__REG_PHYSICAL_H__
+#endif //__VIOC_REGS_H__

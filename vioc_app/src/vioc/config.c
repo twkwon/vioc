@@ -38,6 +38,12 @@ static int plugin_rdma(struct test_case_t *tc, enum vioc_components);
 static int plugin_sc(struct test_case_t *, enum vioc_components);
 static int plugin_lut(struct test_case_t *, enum vioc_components);
 static int plugin_vin(struct test_case_t *, enum vioc_components);
+static int reset_wdma_ctrl(struct test_case_t *, enum vioc_components, unsigned int);
+static int reset_wmix_ctrl(struct test_case_t *, enum vioc_components, unsigned int);
+static int reset_rdma_ctrl(struct test_case_t *, enum vioc_components, unsigned int);
+static int reset_vin_ctrl(struct test_case_t *, enum vioc_components, unsigned int);
+static int reset_sc_ctrl(struct test_case_t *, enum vioc_components, unsigned int);
+static int reset_lut_ctrl(struct test_case_t *, enum vioc_components, unsigned int);
 
 
 int config_map_regs(struct vioc_config_t *config, struct test_data_reg_val_t *data)
@@ -326,8 +332,29 @@ static int plugin_sc(struct test_case_t *tc, enum vioc_components comp)
 		goto err;
 	}
 
+	/* disable sc that has same plugin number */
+	if (tc->config.addr->uSC0.bREG.SELECT == sc->info.plugin) {
+		BITCSET(tc->config.addr->uSC0.nREG, V_CONFIG_EN_MASK, 0x0 << V_CONFIG_EN_SHIFT);
+	}
+	if (tc->config.addr->uSC1.bREG.SELECT == sc->info.plugin) {
+		BITCSET(tc->config.addr->uSC1.nREG, V_CONFIG_EN_MASK, 0x0 << V_CONFIG_EN_SHIFT);
+	}
+	if (tc->config.addr->uSC2.bREG.SELECT == sc->info.plugin) {
+		BITCSET(tc->config.addr->uSC2.nREG, V_CONFIG_EN_MASK, 0x0 << V_CONFIG_EN_SHIFT);
+	}
+	if (tc->config.addr->uSC3.bREG.SELECT == sc->info.plugin) {
+		BITCSET(tc->config.addr->uSC3.nREG, V_CONFIG_EN_MASK, 0x0 << V_CONFIG_EN_SHIFT);
+	}
+	if (tc->config.addr->uSC4.bREG.SELECT == sc->info.plugin) {
+		BITCSET(tc->config.addr->uSC4.nREG, V_CONFIG_EN_MASK, 0x0 << V_CONFIG_EN_SHIFT);
+	}
+
+	/* disable */
+	BITCSET(cfg_path_sc->nREG, V_CONFIG_EN_MASK, 0x0 << V_CONFIG_EN_SHIFT);
+	/* set plug-in */
 	BITCSET(cfg_path_sc->nREG, V_CONFIG_PATH_MASK, sc->info.plugin << V_CONFIG_PATH_SHIFT);
-	BITCSET(cfg_path_sc->nREG, V_CONFIG_EN_MASK, 1 << V_CONFIG_EN_SHIFT);
+	/* enable */
+	BITCSET(cfg_path_sc->nREG, V_CONFIG_EN_MASK, 0x1 << V_CONFIG_EN_SHIFT);
 
 	loop = 0xf000;
 	while(loop--) {
@@ -366,5 +393,303 @@ static int plugin_vin(struct test_case_t *tc, enum vioc_components comp)
 	return ret;
 //err:
 	printf("[%s] error: plug-in VIN%d\n", __func__, vin->info.id);
+	return ret;
+}
+
+int config_plugout_sc(struct test_case_t *tc, unsigned int id)
+{
+	int ret = 0;
+	volatile VIOC_CONFIG_PATH_u *cfg_path_sc;
+
+	switch (id) {
+	case 0:
+		cfg_path_sc = &tc->config.addr->uSC0;
+		break;
+	case 1:
+		cfg_path_sc = &tc->config.addr->uSC1;
+		break;
+	case 2:
+		cfg_path_sc = &tc->config.addr->uSC2;
+		break;
+	case 3:
+		cfg_path_sc = &tc->config.addr->uSC3;
+		break;
+	case 4:
+		cfg_path_sc = &tc->config.addr->uSC4;
+		break;
+	default:
+		ret = -1;
+		goto err;
+	}
+
+	/* disable */
+	BITCSET(cfg_path_sc->nREG, V_CONFIG_EN_MASK, 0x0 << V_CONFIG_EN_SHIFT);
+
+	printf("[%s] plug-out SC%d\n", __func__, id);
+	return ret;
+err:
+	printf("[%s] error: plug-out SC%d\n", __func__, id);
+	return ret;
+}
+
+int config_reset(struct test_case_t *tc)
+{
+	int ret = 0;
+	unsigned int reset_status;
+
+	/*
+	 * reset status
+	 * - wdma -> wmix -> rdma/vin -> sc/lut
+	 * - disp_rdma
+	 */
+	reset_status = 1;
+
+	if (tc->wdma1.info.id != -1) {
+		ret += reset_wdma_ctrl(tc, VC_WDMA_1st, reset_status);
+	}
+	if (tc->wdma2.info.id != -1) {
+		ret += reset_wdma_ctrl(tc, VC_WDMA_2nd, reset_status);
+	}
+
+	if (tc->wmix.info.id != -1) {
+		ret += reset_wmix_ctrl(tc, VC_WMIX, reset_status);
+	}
+
+	if (tc->rdma1.info.id != -1) {
+		ret += reset_rdma_ctrl(tc, VC_RDMA_1st, reset_status);
+	}
+	if (tc->rdma2.info.id != -1) {
+		ret += reset_rdma_ctrl(tc, VC_RDMA_2nd, reset_status);
+	}
+	if (tc->rdma3.info.id != -1) {
+		ret += reset_rdma_ctrl(tc, VC_RDMA_3rd, reset_status);
+	}
+	if (tc->rdma4.info.id != -1) {
+		ret += reset_rdma_ctrl(tc, VC_RDMA_4th, reset_status);
+	}
+
+	if (tc->vin.info.id != -1) {
+		ret += reset_vin_ctrl(tc, VC_VIN, reset_status);
+	}
+
+	if (tc->sc.info.id != -1) {
+		ret += reset_sc_ctrl(tc, VC_SC, reset_status);
+	}
+
+	if (tc->lut.info.id != -1) {
+		ret += reset_lut_ctrl(tc, VC_LUT, reset_status);
+	}
+
+	if (tc->disp_rdma.info.id != -1) {
+		ret += reset_rdma_ctrl(tc, VC_DISP_RDMA, reset_status);
+	}
+
+	/*
+	 * normal status
+	 * - rdma/vin -> wmix -> sc/lut -> wdma
+	 * - disp_rdma
+	 */
+	reset_status = 0;
+
+	if (tc->rdma1.info.id != -1) {
+		ret += reset_rdma_ctrl(tc, VC_RDMA_1st, reset_status);
+	}
+	if (tc->rdma2.info.id != -1) {
+		ret += reset_rdma_ctrl(tc, VC_RDMA_2nd, reset_status);
+	}
+	if (tc->rdma3.info.id != -1) {
+		ret += reset_rdma_ctrl(tc, VC_RDMA_3rd, reset_status);
+	}
+	if (tc->rdma4.info.id != -1) {
+		ret += reset_rdma_ctrl(tc, VC_RDMA_4th, reset_status);
+	}
+
+	if (tc->vin.info.id != -1) {
+		ret += reset_vin_ctrl(tc, VC_VIN, reset_status);
+	}
+
+	if (tc->wmix.info.id != -1) {
+		ret += reset_wmix_ctrl(tc, VC_WMIX, reset_status);
+	}
+
+	if (tc->sc.info.id != -1) {
+		ret += reset_sc_ctrl(tc, VC_SC, reset_status);
+	}
+
+	if (tc->lut.info.id != -1) {
+		ret += reset_lut_ctrl(tc, VC_LUT, reset_status);
+	}
+
+	if (tc->wdma1.info.id != -1) {
+		ret += reset_wdma_ctrl(tc, VC_WDMA_1st, reset_status);
+	}
+	if (tc->wdma2.info.id != -1) {
+		ret += reset_wdma_ctrl(tc, VC_WDMA_2nd, reset_status);
+	}
+
+	if (tc->disp_rdma.info.id != -1) {
+		ret += reset_rdma_ctrl(tc, VC_DISP_RDMA, reset_status);
+	}
+
+	return ret;
+}
+
+static int reset_wdma_ctrl(struct test_case_t *tc, enum vioc_components comp, unsigned int reset)
+{
+	int ret = 0;
+	volatile VIOC_POWER_BLOCKS_u *cfg_reset;
+	struct vioc_wdma_t *wdma;
+
+	switch (comp) {
+	case VC_WDMA_1st:
+		wdma = &tc->wdma1;
+		break;
+	case VC_WDMA_2nd:
+		wdma = &tc->wdma2;
+		break;
+	default:
+		ret = -1;
+		printf("[%s] component id(%d) is not WDMA\n", __func__, comp);
+		return ret;
+	}
+
+	cfg_reset = &tc->config.addr->uSOFTRESET;
+
+	BITCSET(cfg_reset->nREG[1], 0x1 << (0 + wdma->info.id), reset << (0 + wdma->info.id));
+
+	printf("[%s] WDMA%d.reset = %s\n", __func__, wdma->info.id, reset ? "reset" : "normal");
+	return ret;
+}
+
+static int reset_wmix_ctrl(struct test_case_t *tc, enum vioc_components comp, unsigned int reset)
+{
+	int ret = 0;
+	volatile VIOC_POWER_BLOCKS_u *cfg_reset;
+	struct vioc_wmix_t *wmix;
+
+	switch (comp) {
+	case VC_WMIX:
+		wmix = &tc->wmix;
+		break;
+	default:
+		ret = -1;
+		printf("[%s] component id(%d) is not WMIX\n", __func__, comp);
+		return ret;
+	}
+
+	cfg_reset = &tc->config.addr->uSOFTRESET;
+
+	BITCSET(cfg_reset->nREG[1], 0x1 << (9 + wmix->info.id), reset << (9 + wmix->info.id));
+
+	printf("[%s] WMIX%d.reset = %s\n", __func__, wmix->info.id, reset ? "reset" : "normal");
+	return ret;
+}
+
+static int reset_rdma_ctrl(struct test_case_t *tc, enum vioc_components comp, unsigned int reset)
+{
+	int ret = 0;
+	volatile VIOC_POWER_BLOCKS_u *cfg_reset;
+	struct vioc_rdma_t *rdma;
+
+	switch (comp) {
+	case VC_DISP_RDMA:
+		rdma = &tc->disp_rdma;
+		break;
+	case VC_RDMA_1st:
+		rdma = &tc->rdma1;
+		break;
+	case VC_RDMA_2nd:
+		rdma = &tc->rdma2;
+		break;
+	case VC_RDMA_3rd:
+		rdma = &tc->rdma3;
+		break;
+	case VC_RDMA_4th:
+		rdma = &tc->rdma4;
+		break;
+	default:
+		ret = -1;
+		printf("[%s] component id(%d) is not RDMA\n", __func__, comp);
+		return ret;
+	}
+
+	cfg_reset = &tc->config.addr->uSOFTRESET;
+
+	BITCSET(cfg_reset->nREG[0], 0x1 << (0 + rdma->info.id), reset << (0 + rdma->info.id));
+
+	printf("[%s] RDMA%d.reset = %s\n", __func__, rdma->info.id, reset ? "reset" : "normal");
+	return ret;
+}
+
+static int reset_vin_ctrl(struct test_case_t *tc, enum vioc_components comp, unsigned int reset)
+{
+	int ret = 0;
+	volatile VIOC_POWER_BLOCKS_u *cfg_reset;
+	struct vioc_vin_t *vin;
+
+	switch (comp) {
+	case VC_VIN:
+		vin = &tc->vin;
+		break;
+	default:
+		ret = -1;
+		printf("[%s] component id(%d) is not VIN\n", __func__, comp);
+		return ret;
+	}
+
+	cfg_reset = &tc->config.addr->uSOFTRESET;
+
+	BITCSET(cfg_reset->nREG[0], 0x1 << (24 + vin->info.id), reset << (24 + vin->info.id));
+
+	printf("[%s] VIN%d.reset = %s\n", __func__, vin->info.id, reset ? "reset" : "normal");
+	return ret;
+}
+
+static int reset_sc_ctrl(struct test_case_t *tc, enum vioc_components comp, unsigned int reset)
+{
+	int ret = 0;
+	volatile VIOC_POWER_BLOCKS_u *cfg_reset;
+	struct vioc_sc_t *sc;
+
+	switch (comp) {
+	case VC_SC:
+		sc = &tc->sc;
+		break;
+	default:
+		ret = -1;
+		printf("[%s] component id(%d) is not SC\n", __func__, comp);
+		return ret;
+	}
+
+	cfg_reset = &tc->config.addr->uSOFTRESET;
+
+	BITCSET(cfg_reset->nREG[0], 0x1 << (28 + sc->info.id), reset << (28 + sc->info.id));
+
+	printf("[%s] SC%d.reset = %s\n", __func__, sc->info.id, reset ? "reset" : "normal");
+	return ret;
+}
+
+//TODO:LUT
+static int reset_lut_ctrl(struct test_case_t *tc, enum vioc_components comp, unsigned int reset)
+{
+	int ret = 0;
+	//volatile VIOC_POWER_BLOCKS_u *cfg_reset;
+	//struct vioc_lut_t *lut;
+	//
+	//switch (comp) {
+	//case VC_LUT:
+	//	lut = &tc->lut;
+	//	break;
+	//default:
+	//	ret = -1;
+	//	printf("[%s] component id(%d) is not LUT\n", __func__, comp);
+	//	return ret;
+	//}
+	//
+	//cfg_reset = &tc->config.addr->uSOFTRESET;
+	//
+	//BITCSET(cfg_reset->nREG[0], 0x1 << (28 + lut->info.id), reset << (28 + lut->info.id));
+	//
+	//printf("[%s] LUT%d.reset = %s\n", __func__, lut->info.id, reset ? "reset" : "normal");
 	return ret;
 }

@@ -3,6 +3,12 @@
 #include <vioc.h>
 
 
+void rdma_en_ctrl(struct vioc_rdma_t *rdma, unsigned int enable)
+{
+	BITCSET(rdma->addr->uCTRL.nREG, 1 << 28, enable << 28);
+	BITCSET(rdma->addr->uCTRL.nREG, 1 << 16, enable << 16);
+}
+
 void rdma_set_fmt(struct vioc_rdma_t *rdma, unsigned int fmt)
 {
 	BITCSET(rdma->addr->uMISC.nREG, 0x0000001f, fmt);

@@ -23,6 +23,8 @@ int test_main(char *file_name, char *pmap_name)
 	char c;
 	int i, ret = 0;
 	int nr_test;	// number of test cases
+	int todo_disable_sc_id = -1;
+	addr_t *backup_vioc_base_address = NULL;
 	struct test_case_t *test_case;
 	struct test_data_t *test_data, *td;
 	struct pmap_t pmap;
@@ -53,6 +55,7 @@ int test_main(char *file_name, char *pmap_name)
 		ret = -1;
 		goto err2;
 	}
+	backup_vioc_base_address = test_case->vioc_base_addr;
 
 	/*
 	 * get pmap info for image buffers
@@ -113,6 +116,10 @@ int test_main(char *file_name, char *pmap_name)
 			printf("      - %s\n", td->test_name);
 			printf("==================================\n");
 
+			memset(test_case, 0, sizeof(struct test_case_t));
+			test_case->vioc_base_addr = backup_vioc_base_address;
+			test_case->todo_disable_prev_sc_id = todo_disable_sc_id;
+
 			ret = run_test_single(test_case, td, &image);
 			if (ret) {
 				td->test_status = TEST_STATUS_ERR_RUN;
@@ -123,6 +130,10 @@ int test_main(char *file_name, char *pmap_name)
 				 */
 				ret = verify_test_single(test_case, td);
 			}
+
+			/* You must reset this components before testing next case */
+			todo_disable_sc_id = test_case->sc.info.id;
+
 		} else {
 			td->test_status = TEST_STATUS_RUN_SKIP;
 			printf("---> SKIP TEST%d:%s\n", td->test_no, td->test_name);

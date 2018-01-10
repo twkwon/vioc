@@ -25,8 +25,6 @@
 #ifndef __VIOC_CPUIF_H__
 #define	__VIOC_CPUIF_H__
 
-#include "tcc_video_regs.h"
-
 ////////////////////////////////////////////////////////////////////////////////
 //
 //	OUTPUT CONFIGURATION

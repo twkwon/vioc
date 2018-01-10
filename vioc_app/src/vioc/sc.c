@@ -3,6 +3,11 @@
 #include <vioc.h>
 
 
+void sc_en_ctrl(struct vioc_sc_t *sc, unsigned int enable)
+{
+	BITCSET(sc->addr->uCTRL.nREG, 1 << 16, enable << 16);
+}
+
 int sc_map_regs(struct vioc_sc_t *sc, struct test_data_reg_val_t *data)
 {
 	int idx, reg_start_offset;

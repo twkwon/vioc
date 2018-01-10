@@ -25,8 +25,6 @@
 #ifndef __VIOC_SCALER_H__
 #define	__VIOC_SCALER_H__
 
-#include  "tcc_video_regs.h"
-
 typedef enum {
 	SC_IMG_FMT_1PPP = 0,
 	SC_IMG_FMT_2PPP,

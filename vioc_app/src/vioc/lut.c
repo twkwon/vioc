@@ -3,6 +3,12 @@
 #include <vioc.h>
 
 
+void lut_en_ctrl(struct vioc_lut_t *lut, unsigned int enable)
+{
+	//TODO:LUT
+	//BITCSET(lut->addr->uCTRL.nREG, 1 << 16, enable << 16);
+}
+
 int lut_map_regs(struct vioc_lut_t *lut, struct test_data_reg_val_t *data)
 {
 	int idx, reg_start_offset;

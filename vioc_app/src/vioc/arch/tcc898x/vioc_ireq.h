@@ -25,8 +25,6 @@
 #ifndef __VIOC_IREQ_H__
 #define	__VIOC_IREQ_H__
 
-#include  "tcc_video_regs.h"
-
 typedef enum
 {
 	VIOC_IREQ_DEV0   = 0,

@@ -6,6 +6,7 @@
 
 static int vioc_get_component_info(struct test_case_t *, struct test_data_t *);
 static int vioc_map_component_regs(struct test_case_t *, struct test_data_t *);
+static int vioc_reset_path(struct test_case_t *);
 static int vioc_set_component_regs(struct test_case_t *);
 static int vioc_config_path(struct test_case_t *);
 static int vioc_config_disp_path(struct test_case_t *);
@@ -84,6 +85,11 @@ int setup_vioc_path(struct test_case_t *test_case)
 	printf("[%s]\n", __func__);
 
 	/*
+	 * reset vioc components
+	 */
+	ret = vioc_reset_path(test_case);
+
+	/*
 	 * set vioc registers
 	 */
 	ret = vioc_set_component_regs(test_case);
@@ -142,78 +148,50 @@ int shoot_test(struct test_case_t *tc)
 	 *  VIN -> [SC] -> WMIX -> [SC] -> WDMA
 	 */
 	if (tc->rdma1.info.id != -1) {
-		BITCSET(tc->rdma1.addr->uCTRL.nREG, 1 << 28, 1 << 28);
-		BITCSET(tc->rdma1.addr->uCTRL.nREG, 1 << 16, 1 << 16);
+		rdma_en_ctrl(&tc->rdma1, 1);
 	}
 	if (tc->rdma2.info.id != -1) {
-		BITCSET(tc->rdma2.addr->uCTRL.nREG, 1 << 28, 1 << 28);
-		BITCSET(tc->rdma2.addr->uCTRL.nREG, 1 << 16, 1 << 16);
+		rdma_en_ctrl(&tc->rdma2, 1);
 	}
 	if (tc->rdma3.info.id != -1) {
-		BITCSET(tc->rdma3.addr->uCTRL.nREG, 1 << 28, 1 << 28);
-		BITCSET(tc->rdma3.addr->uCTRL.nREG, 1 << 16, 1 << 16);
+		rdma_en_ctrl(&tc->rdma3, 1);
 	}
 	if (tc->rdma4.info.id != -1) {
-		BITCSET(tc->rdma4.addr->uCTRL.nREG, 1 << 28, 1 << 28);
-		BITCSET(tc->rdma4.addr->uCTRL.nREG, 1 << 16, 1 << 16);
+		rdma_en_ctrl(&tc->rdma4, 1);
 	}
 
 	if (tc->vin.info.id != -1) {
-		BITCSET(tc->vin.addr->uVIN_CTRL.nREG, 1 << 0, 1 << 0);
+		vin_en_ctrl(&tc->vin, 1);
 	}
 
 	if (tc->sc.info.id != -1) {
-		//if (tc->sc.info.plugin >= 0 && tc->sc.info.plugin <= 0x13) {
-			BITCSET(tc->sc.addr->uCTRL.nREG, 1 << 16, 1 << 16);
-		//}
+		sc_en_ctrl(&tc->sc, 1);
 	}
 
 	if (tc->lut.info.id != -1) {
-		//TODO: LUT
-		//if (tc->lut.info.plugin >= 0 && tc->lut.info.plugin <= 0x13) {
-		//	BITCSET(tc->lut.addr->uCTRL.nREG, 1 << 28, 1 << 28);
-		//	BITCSET(tc->lut.addr->uCTRL.nREG, 1 << 16, 1 << 16);
-		//}
+		lut_en_ctrl(&tc->lut, 1);
 	}
 
 	if (tc->wmix.info.id != -1) {
-		//BITCSET(tc->wmix.addr->uCTRL.nREG, 1 << 28, 1 << 28);
-		BITCSET(tc->wmix.addr->uCTRL.nREG, 1 << 16, 1 << 16);
+		wmix_en_ctrl(&tc->wmix, 1);
 	}
-
-	//if (tc->sc.info.id != -1) {
-	//	if (tc->sc.info.plugin >= 0x14 && tc->sc.info.plugin <= 0x1C) {
-	//		BITCSET(tc->sc.addr->uCTRL.nREG, 1 << 16, 1 << 16);
-	//	}
-	//}
-	//
-	//if (tc->lut.info.id != -1) {
-	//	//TODO: LUT
-	//	//if (tc->lut.info.plugin >= 0 && tc->lut.info.plugin <= 0x13) {
-	//	//	BITCSET(tc->lut.addr->uCTRL.nREG, 1 << 28, 1 << 28);
-	//	//	BITCSET(tc->lut.addr->uCTRL.nREG, 1 << 16, 1 << 16);
-	//	//}
-	//}
 
 	if (tc->wdma1.info.id != -1) {
-		BITCSET(tc->wdma1.addr->uCTRL.nREG, 1 << 28, 1 << 28);
-		BITCSET(tc->wdma1.addr->uCTRL.nREG, 1 << 16, 1 << 16);
+		wdma_en_ctrl(&tc->wdma1, 1);
 	}
 	if (tc->wdma2.info.id != -1) {
-		BITCSET(tc->wdma2.addr->uCTRL.nREG, 1 << 28, 1 << 28);
-		BITCSET(tc->wdma2.addr->uCTRL.nREG, 1 << 16, 1 << 16);
+		wdma_en_ctrl(&tc->wdma2, 1);
 	}
 
 	/*
-	 * Display path RDMA
+	 * Display path
 	 */
 	if (tc->disp_rdma.info.id != -1) {
-		BITCSET(tc->disp_rdma.addr->uCTRL.nREG, 1 << 28, 1 << 28);
-		BITCSET(tc->disp_rdma.addr->uCTRL.nREG, 1 << 16, 1 << 16);
+		rdma_en_ctrl(&tc->disp_rdma, 1);
 	}
-	if (tc->disp_wmix.info.id != -1) {
-		BITCSET(tc->wmix.addr->uCTRL.nREG, 1 << 16, 1 << 16);
-	}
+	//if (tc->disp_wmix.info.id != -1) {
+	//	wmix_en_ctrl(&tc->disp_wmix, 1);
+	//}
 
 	return ret;
 }
@@ -530,6 +508,64 @@ static int vioc_map_component_regs(struct test_case_t *tc, struct test_data_t *t
 
 		ret += mapped - nr_regs_data;
 	}
+
+	return ret;
+}
+
+static int vioc_reset_path(struct test_case_t *tc)
+{
+	int ret = 0;
+
+	/* Disable previous sc */
+	config_plugout_sc(tc, tc->todo_disable_prev_sc_id);
+
+	/*
+	 * Disable components
+	 */
+	if (tc->wdma1.info.id != -1) {
+		wdma_en_ctrl(&tc->wdma1, 0);
+	}
+	if (tc->wdma2.info.id != -1) {
+		wdma_en_ctrl(&tc->wdma2, 0);
+	}
+
+	if (tc->wmix.info.id != -1) {
+		wmix_en_ctrl(&tc->wmix, 0);
+	}
+
+	if (tc->rdma1.info.id != -1) {
+		rdma_en_ctrl(&tc->rdma1, 0);
+	}
+	if (tc->rdma2.info.id != -1) {
+		rdma_en_ctrl(&tc->rdma2, 0);
+	}
+	if (tc->rdma3.info.id != -1) {
+		rdma_en_ctrl(&tc->rdma3, 0);
+	}
+	if (tc->rdma4.info.id != -1) {
+		rdma_en_ctrl(&tc->rdma4, 0);
+	}
+
+	if (tc->vin.info.id != -1) {
+		vin_en_ctrl(&tc->vin, 0);
+	}
+
+	if (tc->sc.info.id != -1) {
+		sc_en_ctrl(&tc->sc, 0);
+	}
+
+	if (tc->lut.info.id != -1) {
+		lut_en_ctrl(&tc->lut, 0);
+	}
+
+	if (tc->disp_rdma.info.id != -1) {
+		rdma_en_ctrl(&tc->disp_rdma, 0);
+	}
+
+	/*
+	 * Reset components
+	 */
+	config_reset(tc);
 
 	return ret;
 }

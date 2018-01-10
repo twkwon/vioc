@@ -3,6 +3,11 @@
 #include <vioc.h>
 
 
+void vin_en_ctrl(struct vioc_vin_t *vin, unsigned int enable)
+{
+	BITCSET(vin->addr->uVIN_CTRL.nREG, 1 << 0, enable << 0);
+}
+
 int vin_map_regs(struct vioc_vin_t *vin, struct test_data_reg_val_t *data)
 {
 	int idx, reg_start_offset;

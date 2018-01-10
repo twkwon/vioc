@@ -3,6 +3,12 @@
 #include <vioc.h>
 
 
+void wdma_en_ctrl(struct vioc_wdma_t *wdma, unsigned int enable)
+{
+	BITCSET(wdma->addr->uCTRL.nREG, 1 << 28, enable << 28);
+	BITCSET(wdma->addr->uCTRL.nREG, 1 << 16, enable << 16);
+}
+
 void wdma_set_offset(struct vioc_wdma_t *wdma, addr_t offset0, addr_t offset1)
 {
 	BITCSET(wdma->addr->uOFFSET.nREG, 0xffffffff, (offset1 << 16) | offset0);

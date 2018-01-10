@@ -2,41 +2,15 @@
 #define __VIOC_H__
 
 #include <list.h>
-#include <vioc_rdma.h>
-#include <vioc_wdma.h>
-#include <vioc_wmix.h>
-#include <vioc_scaler.h>
-#include <vioc_lut.h>
-#include <vioc_outcfg.h>
-#include <vioc_ireq.h>
-#include <vioc_vin.h>
-
 #include <test.h>
 
-#define INT32_OFFSET(offset)	(offset / sizeof(addr_t))
-
-#define read_reg(reg)		(*(volatile addr_t *)(reg))
-#define write_reg(reg, val)	(*(volatile addr_t *)(reg) = (val))
-#define map_reg(reg, val)	do {if (val >= 0) reg = val;} while (0);
-
-#define BITSET(X, MASK)				((X) |= (unsigned int)(MASK))
-#define BITSCLR(X, SMASK, CMASK)	((X) = ((((unsigned int)(X)) | ((unsigned int)(SMASK))) & ~((unsigned int)(CMASK))) )
-#define BITCSET(X, CMASK, SMASK)	((X) = ((((unsigned int)(X)) & ~((unsigned int)(CMASK))) | ((unsigned int)(SMASK))) )
-#define BITCLR(X, MASK)				((X) &= ~((unsigned int)(MASK)) )
-#define BITXOR(X, MASK)				((X) ^= (unsigned int)(MASK) )
-#define ISZERO(X, MASK)				(!(((unsigned int)(X))&((unsigned int)(MASK))))
-#define	ISSET(X, MASK)				((unsigned int)(X)&((unsigned int)(MASK)))
-
-/* offset from vioc base address */
-#define OFFSET_RDMA_FROM_VIOC_BASE(id)	(HwVIOC_RDMA00 + (HwVIOC_RDMA_GAP * id) - BASE_ADDR_VIOC)
-#define OFFSET_WDMA_FROM_VIOC_BASE(id)	(HwVIOC_WDMA00 + (HwVIOC_WDMA_GAP * id) - BASE_ADDR_VIOC)
-#define OFFSET_WMIX_FROM_VIOC_BASE(id)	(HwVIOC_WMIX0 + (HwVIOC_WMIX_GAP * id) - BASE_ADDR_VIOC)
-#define OFFSET_SC_FROM_VIOC_BASE(id)	(HwVIOC_SC0 + (HwVIOC_SC_GAP * id) - BASE_ADDR_VIOC)
-#define OFFSET_LUT_FROM_VIOC_BASE		(HwVIOC_LUT - BASE_ADDR_VIOC)
-#define OFFSET_VIN_FROM_VIOC_BASE(id)	(HwVIOC_VIN00 + (HwVIOC_VIN_GAP * id) - BASE_ADDR_VIOC)
-#define OFFSET_VIN_LUT_FROM_VIN			(HwVIOC_VIN_LUT_GAP)
-#define OFFSET_OUTCFG_FROM_VIOC_BASE	(HwVIOC_OUTCFG - BASE_ADDR_VIOC)
-#define OFFSET_CONFIG_FROM_VIOC_BASE	(HwVIOC_CONFIG - BASE_ADDR_VIOC)
+#if defined(__ARCH_TCC898X__)
+#include <arch/tcc898x/vioc_regs.h>
+#elif defined(__ARCH_TCC899X__)
+#include <arch/tcc899x/vioc_regs.h>
+#else
+#error "ERROR: Not defined ARCH in configure"
+#endif
 
 #define ALIGN_BIT	(0x8 - 1)
 #define BIT_0 		(3)
@@ -44,24 +18,6 @@
 #define GET_ADDR_YUV42X_spU(Yaddr, x, y) 	(((((unsigned int)Yaddr+(x*y)) + ALIGN_BIT) >> BIT_0) << BIT_0)
 #define GET_ADDR_YUV422_spV(Uaddr, x, y) 	(((((unsigned int)Uaddr+(x*y/2)) + ALIGN_BIT) >> BIT_0) << BIT_0)
 #define GET_ADDR_YUV420_spV(Uaddr, x, y) 	(((((unsigned int)Uaddr+(x*y/4)) + ALIGN_BIT) >> BIT_0) << BIT_0)
-
-/* Rounds an integer value up to the next multiple of num */
-#define ROUND_UP_2(num)		(((num)+1)&~1)
-#define ROUND_UP_4(num)		(((num)+3)&~3)
-#define ROUND_UP_8(num)		(((num)+7)&~7)
-#define ROUND_UP_16(num)	(((num)+15)&~15)
-#define ROUND_UP_32(num)	(((num)+31)&~31)
-#define ROUND_UP_64(num)	(((num)+63)&~63)
-/* Rounds an integer value down to the next multiple of num */
-#define ROUND_DOWN_2(num)	((num)&(~1))
-#define ROUND_DOWN_4(num)	((num)&(~3))
-#define ROUND_DOWN_8(num)	((num)&(~7))
-#define ROUND_DOWN_16(num)	((num)&(~15))
-#define ROUND_DOWN_32(num)	((num)&(~31))
-#define ROUND_DOWN_64(num)	((num)&(~63))
-
-typedef unsigned int addr_t;
-typedef unsigned int reg_t;
 
 enum vioc_components {
 	VC_START = 0,
@@ -261,6 +217,8 @@ struct test_case_t {
 	struct vioc_vin_lut_t vin_lut;
 	struct vioc_outcfg_t outcfg;
 	struct vioc_config_t config;
+
+	unsigned int todo_disable_prev_sc_id;	// You must reset this components before testing next case
 };
 
 
@@ -348,24 +306,29 @@ extern void rdma_set_offset(struct vioc_rdma_t *, unsigned int, unsigned int);
 extern void rdma_set_address(struct vioc_rdma_t *, addr_t, addr_t, addr_t);
 extern void rdma_set_fmt(struct vioc_rdma_t *, unsigned int);
 extern void rdma_set_size(struct vioc_rdma_t *, unsigned int, unsigned int);
+extern void rdma_en_ctrl(struct vioc_rdma_t *, unsigned int);
 
 extern int wdma_map_regs(struct vioc_wdma_t *, struct test_data_reg_val_t *);
 extern int wdma_verify_regs(struct vioc_wdma_t *);
 extern int wdma_setup(struct vioc_wdma_t *);
 extern void wdma_set_offset(struct vioc_wdma_t *, addr_t, addr_t);
 extern void wdma_set_address(struct vioc_wdma_t *, addr_t, addr_t, addr_t);
+extern void wdma_en_ctrl(struct vioc_wdma_t *, unsigned int);
 
 extern int wmix_map_regs(struct vioc_wmix_t *, struct test_data_reg_val_t *);
 extern int wmix_verify_regs(struct vioc_wmix_t *);
 extern int wmix_setup(struct vioc_wmix_t *);
+extern void wmix_en_ctrl(struct vioc_wmix_t *, unsigned int);
 
 extern int sc_map_regs(struct vioc_sc_t *, struct test_data_reg_val_t *);
 extern int sc_verify_regs(struct vioc_sc_t *);
 extern int sc_setup(struct vioc_sc_t *);
+extern void sc_en_ctrl(struct vioc_sc_t *, unsigned int);
 
 extern int lut_map_regs(struct vioc_lut_t *, struct test_data_reg_val_t *);
 extern int lut_verify_regs(struct vioc_lut_t *);
 extern int lut_setup(struct vioc_lut_t *);
+extern void lut_en_ctrl(struct vioc_lut_t *, unsigned int);
 
 extern int vin_map_regs(struct vioc_vin_t *, struct test_data_reg_val_t *);
 extern int vin_verify_regs(struct vioc_vin_t *);
@@ -373,6 +336,7 @@ extern int vin_setup(struct vioc_vin_t *);
 extern int vin_lut_map_regs(struct vioc_vin_lut_t *, struct test_data_reg_val_t *);
 extern int vin_lut_verify_regs(struct vioc_vin_lut_t *);
 extern int vin_lut_setup(struct vioc_vin_lut_t *);
+extern void vin_en_ctrl(struct vioc_vin_t *, unsigned int);
 
 extern int outcfg_map_regs(struct vioc_outcfg_t *, struct test_data_reg_val_t *);
 extern int outcfg_verify_regs(struct vioc_outcfg_t *);
@@ -383,6 +347,8 @@ extern int config_map_regs(struct vioc_config_t *, struct test_data_reg_val_t *)
 extern int config_verify_regs(struct vioc_config_t *);
 extern int config_setup(struct vioc_config_t *);
 extern int config_plugin(struct test_case_t *, enum vioc_components);
+extern int config_plugout_sc(struct test_case_t *, unsigned int);
 extern int config_config(struct test_case_t *);
+extern int config_reset(struct test_case_t *);
 
 #endif /*__VIOC_H__*/
