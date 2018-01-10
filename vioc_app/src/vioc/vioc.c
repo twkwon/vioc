@@ -162,24 +162,38 @@ int shoot_test(struct test_case_t *tc)
 		BITCSET(tc->vin.addr->uVIN_CTRL.nREG, 1 << 0, 1 << 0);
 	}
 
-	if (tc->wmix.info.id != -1) {
-		BITCSET(tc->wmix.addr->uCTRL.nREG, 1 << 16, 1 << 16);
-	}
-
 	if (tc->sc.info.id != -1) {
-		if (tc->sc.info.plugin >= 0x14 && tc->sc.info.plugin <= 0x1C) {
-			//BITCSET(tc->sc.addr->uCTRL.nREG, 1 << 28, 1 << 28);
+		//if (tc->sc.info.plugin >= 0 && tc->sc.info.plugin <= 0x13) {
 			BITCSET(tc->sc.addr->uCTRL.nREG, 1 << 16, 1 << 16);
-		}
+		//}
 	}
 
 	if (tc->lut.info.id != -1) {
-		//TODO:LUT
+		//TODO: LUT
 		//if (tc->lut.info.plugin >= 0 && tc->lut.info.plugin <= 0x13) {
 		//	BITCSET(tc->lut.addr->uCTRL.nREG, 1 << 28, 1 << 28);
 		//	BITCSET(tc->lut.addr->uCTRL.nREG, 1 << 16, 1 << 16);
 		//}
 	}
+
+	if (tc->wmix.info.id != -1) {
+		//BITCSET(tc->wmix.addr->uCTRL.nREG, 1 << 28, 1 << 28);
+		BITCSET(tc->wmix.addr->uCTRL.nREG, 1 << 16, 1 << 16);
+	}
+
+	//if (tc->sc.info.id != -1) {
+	//	if (tc->sc.info.plugin >= 0x14 && tc->sc.info.plugin <= 0x1C) {
+	//		BITCSET(tc->sc.addr->uCTRL.nREG, 1 << 16, 1 << 16);
+	//	}
+	//}
+	//
+	//if (tc->lut.info.id != -1) {
+	//	//TODO: LUT
+	//	//if (tc->lut.info.plugin >= 0 && tc->lut.info.plugin <= 0x13) {
+	//	//	BITCSET(tc->lut.addr->uCTRL.nREG, 1 << 28, 1 << 28);
+	//	//	BITCSET(tc->lut.addr->uCTRL.nREG, 1 << 16, 1 << 16);
+	//	//}
+	//}
 
 	if (tc->wdma1.info.id != -1) {
 		BITCSET(tc->wdma1.addr->uCTRL.nREG, 1 << 28, 1 << 28);
