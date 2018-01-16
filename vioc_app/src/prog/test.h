@@ -2,6 +2,12 @@
 #define __TEST_H__
 
 /*
+ * Debugging
+ */
+unsigned int debug_level;
+#define DEBUG_VERIFY	0x0001
+
+/*
  * Specific Information
  */
 #define SIZE_OF_TEST_NAME	(128)

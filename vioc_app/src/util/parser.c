@@ -49,7 +49,10 @@ int parse_test_case(char *file_name, struct test_data_t *test_data)
 		list_add_tail(&tdata->list, &test_data->list);
 	}
 
-	//print_all_list(tcase, test_data);
+	if (debug_level == DEBUG_VERIFY) {
+		print_all_list(tcase, test_data);
+	}
+
 	delete_all_list(tcase);
 	free(tcase);
 

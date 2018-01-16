@@ -104,8 +104,10 @@ int test_main(char *file_name, char *pmap_name)
 	list_for_each(pos, &test_data->list) {
 		td = list_entry(pos, struct test_data_t, list);
 
-		/* for debugging */
-		print_parsed_data(td);
+		if (debug_level == DEBUG_VERIFY) {
+			/* for debugging */
+			print_parsed_data(td);
+		}
 
 		/* run single test case */
 		printf("Do you want to run the test%d (%s)? [y/n] ", td->test_no, td->test_name);
@@ -273,6 +275,7 @@ static int verify_test_single(struct test_case_t *tc, struct test_data_t *td)
 			printf("[%s] error: file open %s\n", __func__, tc->reference_file[i].name);
 			perror("  fopen() failed");
 			td->test_status = TEST_STATUS_ERR_REFERENCE;
+			fclose(fp_out);
 			continue;
 		}
 
@@ -292,6 +295,9 @@ static int verify_test_single(struct test_case_t *tc, struct test_data_t *td)
 		} else {
 			td->test_status = TEST_STATUS_PASS;
 		}
+
+		fclose(fp_out);
+		fclose(fp_ref);
 	}
 
 	return ret;
@@ -412,10 +418,10 @@ static int setup_image_file(struct test_case_t *tc, struct image_file_t *img)
 		img->output[i].height = tc->output_file[i].height;
 	}
 
-	/*
-	 * for debugging - verify input_files
-	 */
-	verify_image_buf(tc);
+	if (debug_level == DEBUG_VERIFY) {
+		/* for debugging - verify input_files */
+		verify_image_buf(tc);
+	}
 
 	return ret;
 }
@@ -620,8 +626,8 @@ static int tcc_get_pfmt(unsigned int format)
 		case VIOC_IMG_FMT_BPP4:
 		case VIOC_IMG_FMT_BPP8:
 		case VIOC_IMG_FMT_444SEP:
-			//pfmt = ????;
-			//break;
+			pfmt = TCC_PFMT_RGB;
+			break;
 
 		default:
 			printf("[%s] Not supported foramt(%d)\n", __func__, format);

@@ -121,14 +121,18 @@ int setup_vioc_path(struct test_case_t *test_case)
 	 * - RDMA: fmt, size, base0/1/2, offs0/1
 	 * - WMIX: ovp
 	 */
-	ret = vioc_config_disp_path(test_case);
-	if (ret) {
-		printf("[%s] error: vioc_config_disp_path()\n", __func__);
-		goto exit;
+	if (test_case->disp_rdma.info.id != -1) {
+		ret = vioc_config_disp_path(test_case);
+		if (ret) {
+			printf("[%s] error: vioc_config_disp_path()\n", __func__);
+			goto exit;
+		}
 	}
 
-	/* for debugging */
-	vioc_verify_regs(test_case);
+	if (debug_level == DEBUG_VERIFY) {
+		/* for debugging */
+		vioc_verify_regs(test_case);
+	}
 
 exit:
 	return ret;
@@ -846,6 +850,8 @@ static int vioc_config_disp_path(struct test_case_t *tc)
 		wdma = &tc->wdma1;
 	} else if (tc->wdma2.info.plugin == 1) {
 		wdma = &tc->wdma2;
+	} else {
+		return ret;
 	}
 
 	if (ISSET(rdma->auto_set, AUTO_RDMA_FMT)) {
@@ -1045,6 +1051,10 @@ static void vioc_get_dma_address(unsigned char format, addr_t base_Yaddr,
 {
 	int bpp;
 	unsigned int Uaddr, Vaddr, Yoffset, UVoffset, start_yPos, start_xPos;
+
+	Uaddr = Vaddr = 0;
+	Yoffset = UVoffset = 0;
+	start_yPos = start_xPos = 0;
 
 	start_yPos = (start_y >> 1) << 1;
 	start_xPos = (start_x >> 1) << 1;
