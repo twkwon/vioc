@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+#include <debug.h>
 #include <vioc.h>
 
 #define V_OUTCFG_MRGBSEL_SHIFT	(16)
@@ -62,7 +63,7 @@ int outcfg_verify_regs(struct vioc_outcfg_t *outcfg)
 	s = &outcfg->reg;
 	d = outcfg->addr;
 
-	printf("VERIFY OUTCFG%d\n", outcfg->info.id);
+	DBG(DL_VIOC, "VERIFY OUTCFG%d\n", outcfg->info.id);
 	//if (outcfg->info.id < 0) {
 	//	printf("\tN/A\n");
 	//	return ret;
@@ -102,7 +103,7 @@ int outcfg_config(struct test_case_t *tc)
 
 	reg = read_reg(&outcfg_reg->uMISCCFG);
 	if (val != reg) {
-		printf("[%s] error: MISC(0x%08x) != val(0x%08x)\n", __func__, reg, val);
+		DBG_ERR("MISC(0x%08x) != val(0x%08x)\n", reg, val);
 		ret = -1;
 		goto exit;
 	}

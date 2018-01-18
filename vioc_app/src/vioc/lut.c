@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+#include <debug.h>
 #include <vioc.h>
 
 
@@ -113,7 +114,7 @@ int lut_verify_regs(struct vioc_lut_t *lut)
 	s = &lut->reg;
 	d = lut->addr;
 
-	printf("VERIFY LUT%d\n", lut->info.id);
+	DBG(DL_VIOC, "VERIFY LUT%d\n", lut->info.id);
 	if (lut->info.id < 0) {
 		printf("\tN/A\n");
 		return ret;

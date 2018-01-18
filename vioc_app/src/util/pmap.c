@@ -4,6 +4,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+#include <debug.h>
 #include <pmap.h>
 
 #define PATH_PROC_PMAP	"/proc/pmap"
@@ -16,10 +17,10 @@ int get_pmap(char *pname, struct pmap_t *pmap)
 
 	ret = pmap_get_info(pname, pmap);
 	if (ret < 0)
-		printf("error get pmap\n");
+		DBG_ERR("error get pmap\n");
 
-	printf("pmap->%s.base = 0x%08x\n", pname, pmap->base);
-	printf("pmap->%s.size = 0x%08x\n", pname, pmap->size);
+	DBG(DL_TEST, "pmap->%s.base = 0x%08x\n", pname, pmap->base);
+	DBG(DL_TEST, "pmap->%s.size = 0x%08x\n", pname, pmap->size);
 
 	return ret;
 }
@@ -51,7 +52,7 @@ int pmap_get_info(const char *name, struct pmap_t *mem)
 	while (1) {
 		matches = sscanf(p, "0x%x 0x%x %s", &base_addr, &size, s);
 		if (matches == 3 && !strcmp(name, s)) {
-			printf("requested physical memory '%s' (base=0x%x size=0x%x)\n",
+			DBG(DL_TEST, "requested physical memory '%s' (base=0x%x size=0x%x)\n",
 					name, base_addr, size);
 			mem->base = base_addr;
 			mem->size = size;
@@ -62,23 +63,7 @@ int pmap_get_info(const char *name, struct pmap_t *mem)
 			break;
 		p++;
 	}
-	printf("can't get physical memory '%s'", name);
+
+	DBG_ERR("can't get physical memory '%s'", name);
 	return -1;
-}
-
-int test_pmap(void)
-{
-	int ret = 0;
-	struct pmap_t pmap;
-	char *pmap_name = "video";
-
-	ret = pmap_get_info(pmap_name, &pmap);
-	if (ret < 0)
-		printf("error get pmap\n");
-
-	printf("pmap.video.name = %s\n", pmap_name);
-	printf("pmap.video.base = 0x%08x\n", pmap.base);
-	printf("pmap.video.size = 0x%08x\n", pmap.size);
-
-	return 0;
 }

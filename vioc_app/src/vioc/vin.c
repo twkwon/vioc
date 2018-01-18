@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+#include <debug.h>
 #include <vioc.h>
 
 
@@ -111,7 +112,7 @@ int vin_setup(struct vioc_vin_t *vin)
 	/* check EN (enable-bit) is 0 */
 	if (vin->reg.uVIN_CTRL.bREG.enable) {
 		vin->reg.uVIN_CTRL.bREG.enable = 0;
-		printf("vin%d EN was set, so disable it\n", vin->info.id);
+		DBG(DL_VIOC, "vin%d EN was set, so disable it\n", vin->info.id);
 	}
 
 	/* set physical register */
@@ -128,7 +129,7 @@ int vin_verify_regs(struct vioc_vin_t *vin)
 	s = &vin->reg;
 	d = vin->addr;
 
-	printf("VERIFY VIN%d\n", vin->info.id);
+	DBG(DL_VIOC, "VERIFY VIN%d\n", vin->info.id);
 	if (vin->info.id < 0) {
 		printf("\tN/A\n");
 		return ret;
@@ -294,7 +295,7 @@ int vin_lut_verify_regs(struct vioc_vin_lut_t *vin_lut)
 	s = &vin_lut->reg;
 	d = vin_lut->addr;
 
-	printf("VERIFY VIN_LUT%d\n", vin_lut->info.id);
+	DBG(DL_VIOC, "VERIFY VIN_LUT%d\n", vin_lut->info.id);
 	if (vin_lut->info.id < 0) {
 		printf("\tN/A\n");
 		return ret;

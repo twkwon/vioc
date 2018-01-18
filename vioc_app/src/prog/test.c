@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <debug.h>
 #include <vioc.h>
 #include <parser.h>
 #include <pmap.h>
@@ -39,7 +40,7 @@ int test_main(char *file_name, char *pmap_name)
 
 	nr_test = parse_test_case(file_name, test_data);
 	if (nr_test <= 0) {
-		printf("error: parse_test_case()\n");
+		DBG_ERR("parse_test_case()\n");
 		ret = nr_test;
 		goto err1;
 	}
@@ -68,20 +69,8 @@ int test_main(char *file_name, char *pmap_name)
 	image.base_vaddr = (addr_t *)vioc_mmap(pmap.base, IMAGE_NUM * IMAGE_SIZE);
 	image.base_paddr = (addr_t)pmap.base;
 	memset(image.base_vaddr, 0, sizeof(IMAGE_NUM * IMAGE_SIZE));
-	printf("Image base: paddr(0x%08x) -> vaddr(%p)\n", image.base_paddr, image.base_vaddr);
+	DBG(DL_TEST, "Image base: paddr(0x%08x) -> vaddr(%p)\n", image.base_paddr, image.base_vaddr);
 
-#if 0
-	for (i = 0; i < MAX_NUM_OF_RDMA; i++) {
-		image.input[i].vaddr = image.base_vaddr + INT32_OFFSET(IMAGE_SIZE * i);
-		image.input[i].paddr = image.base_paddr + (IMAGE_SIZE * i);
-		printf("  input%d: paddr(0x%08x) -> vaddr(%p)\n", i, image.input[i].paddr, image.input[i].vaddr);
-	}
-	for (i = 0; i < MAX_NUM_OF_WDMA; i++) {
-		image.output[i].vaddr = image.input[MAX_NUM_OF_RDMA - 1].vaddr + INT32_OFFSET(IMAGE_SIZE + (IMAGE_SIZE * i));
-		image.output[i].paddr = image.input[MAX_NUM_OF_RDMA - 1].paddr + IMAGE_SIZE + (IMAGE_SIZE * i);
-		printf(" output%d: paddr(0x%08x) -> vaddr(%p)\n", i, image.output[i].paddr, image.output[i].vaddr);
-	}
-#else
 	for (i = 0; i < MAX_NUM_OF_RDMA + MAX_NUM_OF_WDMA; i++) {
 		unsigned int offs;
 		offs = IMAGE_SIZE * i;
@@ -89,14 +78,13 @@ int test_main(char *file_name, char *pmap_name)
 		if (i < MAX_NUM_OF_RDMA) {
 			image.input[i].vaddr = image.base_vaddr + INT32_OFFSET(offs);
 			image.input[i].paddr = image.base_paddr + offs;
-			printf("  input%d: paddr(0x%08x) -> vaddr(%p)\n", i, image.input[i].paddr, image.input[i].vaddr);
+			DBG(DL_TEST, "  input%d: paddr(0x%08x) -> vaddr(%p)\n", i, image.input[i].paddr, image.input[i].vaddr);
 		} else {
 			image.output[i - MAX_NUM_OF_RDMA].vaddr = image.base_vaddr + INT32_OFFSET(offs);
 			image.output[i - MAX_NUM_OF_RDMA].paddr = image.base_paddr + offs;
-			printf(" output%d: paddr(0x%08x) -> vaddr(%p)\n", i - MAX_NUM_OF_RDMA, image.output[i - MAX_NUM_OF_RDMA].paddr, image.output[i - MAX_NUM_OF_RDMA].vaddr);
+			DBG(DL_TEST, " output%d: paddr(0x%08x) -> vaddr(%p)\n", i - MAX_NUM_OF_RDMA, image.output[i - MAX_NUM_OF_RDMA].paddr, image.output[i - MAX_NUM_OF_RDMA].vaddr);
 		}
 	}
-#endif
 
 	/*
 	 * RUN the test case on the list of test_data one by one
@@ -104,8 +92,7 @@ int test_main(char *file_name, char *pmap_name)
 	list_for_each(pos, &test_data->list) {
 		td = list_entry(pos, struct test_data_t, list);
 
-		if (debug_level == DEBUG_VERIFY) {
-			/* for debugging */
+		if (g_dbg_lvl & DL_PARSER) {
 			print_parsed_data(td);
 		}
 
@@ -191,14 +178,14 @@ err1:
 static int run_test_single(struct test_case_t *test_case, struct test_data_t *test_data, struct image_file_t *image)
 {
 	int ret = 0;
-	printf("[%s]\n", __func__);
+	DBG(DL_TEST, "\n");
 
 	/*
 	 * setup vioc components & path
 	 */
 	ret = setup_test_case(test_case, test_data);
 	if (ret) {
-		printf("[%s] error: setup_vioc_path()\n", __func__);
+		DBG_ERR("setup_vioc_path()\n");
 		goto exit;
 	}
 
@@ -207,7 +194,7 @@ static int run_test_single(struct test_case_t *test_case, struct test_data_t *te
 	 */
 	ret = setup_image_file(test_case, image);
 	if (ret) {
-		printf("[%s] error: setup_image_file()\n", __func__);
+		DBG_ERR("setup_image_file()\n");
 		goto exit;
 	}
 
@@ -216,7 +203,7 @@ static int run_test_single(struct test_case_t *test_case, struct test_data_t *te
 	 */
 	ret = setup_vioc_path(test_case);
 	if (ret) {
-		printf("[%s] error: setup_vioc_path()\n", __func__);
+		DBG_ERR("setup_vioc_path()\n");
 		goto exit;
 	}
 
@@ -225,7 +212,7 @@ static int run_test_single(struct test_case_t *test_case, struct test_data_t *te
 	 */
 	ret = shoot_test(test_case);
 	if (ret) {
-		printf("[%s] error: shoot_test()\n", __func__);
+		DBG_ERR("shoot_test()\n");
 		goto exit;
 	}
 
@@ -234,7 +221,7 @@ static int run_test_single(struct test_case_t *test_case, struct test_data_t *te
 	 */
 	ret = write_output_image(test_case);
 	if (ret) {
-		printf("[%s] error: write_output_image()\n", __func__);
+		DBG_ERR("write_output_image()\n");
 		goto exit;
 	}
 
@@ -264,7 +251,7 @@ static int verify_test_single(struct test_case_t *tc, struct test_data_t *td)
 
 		fp_out = fopen(tc->output_file[i].name, "rb");
 		if (fp_out == NULL) {
-			printf("[%s] error: file open %s\n", __func__, tc->output_file[i].name);
+			DBG_ERR("file open %s\n", tc->output_file[i].name);
 			perror("  fopen() failed");
 			td->test_status = TEST_STATUS_ERR_OUTPUT;
 			continue;
@@ -272,7 +259,7 @@ static int verify_test_single(struct test_case_t *tc, struct test_data_t *td)
 
 		fp_ref = fopen(tc->reference_file[i].name, "rb");
 		if (fp_ref == NULL) {
-			printf("[%s] error: file open %s\n", __func__, tc->reference_file[i].name);
+			DBG_ERR("file open %s\n", tc->reference_file[i].name);
 			perror("  fopen() failed");
 			td->test_status = TEST_STATUS_ERR_REFERENCE;
 			fclose(fp_out);
@@ -290,7 +277,7 @@ static int verify_test_single(struct test_case_t *tc, struct test_data_t *td)
 
 		if (err_count) {
 			td->test_status = TEST_STATUS_FAIL_COMPARE;
-			printf("[%s] %s fail: compare %s and %s (err_count %d)\n", __func__, tc->test_name,
+			DBG_ERR("%s fail: compare %s and %s (err_count %d)\n", tc->test_name,
 					tc->output_file[i].name, tc->reference_file[i].name, err_count);
 		} else {
 			td->test_status = TEST_STATUS_PASS;
@@ -306,11 +293,11 @@ static int verify_test_single(struct test_case_t *tc, struct test_data_t *td)
 static void delete_test_data_list(struct test_data_t *t)
 {
 	struct list_head *pos, *q;
-	printf("\n[%s]\n", __func__);
+	DBG(DL_TEST, "\n");
 
 	list_for_each_safe(pos, q, &t->list) {
 		struct test_data_t *k = list_entry(pos, struct test_data_t, list);
-		printf("remove test_data->test_no : %d\n", k->test_no);
+		DBG(DL_TEST, "remove test_data->test_no : %d\n", k->test_no);
 		list_del(pos);
 		free(k);
 	}
@@ -322,18 +309,19 @@ static int setup_image_file(struct test_case_t *tc, struct image_file_t *img)
 	int fname_to_int;
 	long flen;
 	FILE *fp;
-	printf("[%s]\n", __func__);
+
+	DBG(DL_TEST, "\n");
 
 	/*
 	 * open input files if test_cast has file_name
 	 */
-	printf("[%s] Input Files\n", __func__);
+	DBG(DL_TEST, "Input Files\n");
 	for (i = 0; i < MAX_NUM_OF_RDMA; i++) {
 		/*
 		 * open files if test_cast has file_name
 		 */
 		fname_to_int = atoi(tc->input_file[i].name);
-		printf("  str(%s) to int(%d)\n", tc->input_file[i].name, fname_to_int);
+		DBG(DL_TEST, "  str(%s) to int(%d)\n", tc->input_file[i].name, fname_to_int);
 		if (fname_to_int == -1) {
 			tc->input_file[i].id = -1;
 			continue;
@@ -349,7 +337,7 @@ static int setup_image_file(struct test_case_t *tc, struct image_file_t *img)
 
 		fp = fopen(tc->input_file[i].name, "rb");
 		if (fp == NULL) {
-			printf("[%s] error: file open %s\n", __func__, tc->input_file[i].name);
+			DBG_ERR("file open %s\n", tc->input_file[i].name);
 			perror("fopen() failed");
 			return -1;
 		}
@@ -359,7 +347,7 @@ static int setup_image_file(struct test_case_t *tc, struct image_file_t *img)
 		flen = ftell(fp);
 		fseek(fp, 0, SEEK_SET);
 		if (flen == 0) {
-			printf("[%s] %s is empty file\n", __func__, tc->input_file[i].name);
+			DBG_ERR("%s is empty file\n", tc->input_file[i].name);
 			fclose(fp);
 			return -1;
 		}
@@ -367,14 +355,14 @@ static int setup_image_file(struct test_case_t *tc, struct image_file_t *img)
 		/* read binary file into pmap buf */
 		tc->input_file[i].len = fread((char *)tc->input_file[i].vaddr, 1, flen, fp);
 		if (tc->input_file[i].len == flen) {
-			printf("[%s] read %s %d bytes\n", __func__, tc->input_file[i].name, tc->input_file[i].len);
+			DBG_ERR("read %s %d bytes\n", tc->input_file[i].name, tc->input_file[i].len);
 		} else {
 			if (feof(fp)) {
-				printf("[%s] error: read %s: unexpected end of file\n", __func__, tc->input_file[i].name);
+				DBG_ERR("read %s: unexpected end of file\n", tc->input_file[i].name);
 			} else if (ferror(fp)) {
 				perror("fread() failed");
 			} else {
-				printf("[%s] error: read %s %d bytes\n", __func__, tc->input_file[i].name, tc->input_file[i].len);
+				DBG_ERR("read %s %d bytes\n", tc->input_file[i].name, tc->input_file[i].len);
 			}
 			ret = -1;
 			tc->input_file[i].len = 0;
@@ -390,10 +378,10 @@ static int setup_image_file(struct test_case_t *tc, struct image_file_t *img)
 		fclose(fp);
 	}
 
-	printf("[%s] Output Files\n", __func__);
+	DBG(DL_TEST, "Output Files\n");
 	for (i = 0; i < MAX_NUM_OF_WDMA; i++) {
 		fname_to_int = atoi(tc->output_file[i].name);
-		printf("  str(%s) to int(%d)\n", tc->output_file[i].name, fname_to_int);
+		DBG(DL_TEST, "  str(%s) to int(%d)\n", tc->output_file[i].name, fname_to_int);
 		if (fname_to_int == -1) {
 			tc->output_file[i].id = -1;
 			continue;
@@ -418,7 +406,7 @@ static int setup_image_file(struct test_case_t *tc, struct image_file_t *img)
 		img->output[i].height = tc->output_file[i].height;
 	}
 
-	if (debug_level == DEBUG_VERIFY) {
+	if (g_dbg_lvl == DL_VERIFY) {
 		/* for debugging - verify input_files */
 		verify_image_buf(tc);
 	}
@@ -432,14 +420,13 @@ static int verify_image_buf(struct test_case_t *tc)
 	unsigned int len = 0;
 	FILE *fp = NULL;
 	char name[SIZE_OF_TEST_NAME];
-	printf("\n[%s]===================================================================\n", __func__);
 
 	for (i = 0; i < MAX_NUM_OF_RDMA; i++) {
-		printf("file(%s) id(%d) size(%dx%d) fmt(%d)\n", tc->input_file[i].name, tc->input_file[i].id,
+		DBG(DL_VERIFY, "Input file(%s) id(%d) size(%dx%d) fmt(%d)\n", tc->input_file[i].name, tc->input_file[i].id,
 			tc->input_file[i].width,tc->input_file[i].height, tc->input_file[i].fmt);
 		if (tc->input_file[i].id != -1) {
-			sprintf(name, "verify-%s", tc->input_file[i].name);
-			printf("  backup fname(%s)\n", name);
+			sprintf(name, "verify%d-%s", i, tc->input_file[i].name);
+			DBG(DL_VERIFY, "\tbackup fname(%s)\n", name);
 			fp = fopen(name, "wb");
 			if (fp == NULL) {
 				perror("  fopen() failed");
@@ -447,15 +434,14 @@ static int verify_image_buf(struct test_case_t *tc)
 			}
 			len = fwrite(tc->input_file[i].vaddr, 1, tc->input_file[i].len, fp);
 			if (len != tc->input_file[i].len) {
-				printf("  error: wrote %d bytes != %d\n", len, tc->input_file[i].len);
+				DBG_ERR("\twrote %d bytes != %d\n", len, tc->input_file[i].len);
 			} else {
-				printf("  file(%s) wrote(%d) requested(%d)\n", name, len, tc->input_file[i].len);
+				DBG_ERR("\tfile(%s) wrote(%d) requested(%d)\n", name, len, tc->input_file[i].len);
 			}
 			fclose(fp);
 		}
 	}
 
-	printf("===================================================================\n\n");
 	return ret;
 }
 
@@ -467,7 +453,7 @@ static int write_output_image(struct test_case_t *tc)
 
 	for (i = 0; i < MAX_NUM_OF_WDMA; i++) {
 		if (tc->output_file[i].id != -1) {
-			printf("[%s] %s writting...\n", __func__, tc->output_file[i].name);
+			DBG(DL_TEST, "%s writting...\n", tc->output_file[i].name);
 
 			output_len = tcc_get_image_size(tc->output_file[i].fmt,
 						tc->output_file[i].width, tc->output_file[i].height);
@@ -484,13 +470,13 @@ static int write_output_image(struct test_case_t *tc)
 				 * If failed, output_file[i].len = 0
 				 */
 				tc->output_file[i].len = 0;
-				printf("  error: wrote %d bytes != %d\n", written_len, output_len);
+				DBG_ERR("\t%s wrote %d bytes != %d\n", tc->output_file[i].name, written_len, output_len);
 			} else {
 				/*
 				 * If succeed, output_file[i].len = written_len
 				 */
 				tc->output_file[i].len = written_len;
-				printf("  wrote(%d)\n", written_len);
+				DBG(DL_TEST, "\twrote(%d)\n", written_len);
 			}
 			fclose(fp);
 		}
@@ -579,7 +565,7 @@ int tcc_get_bpp(unsigned int format)
 			break;
 
 		default:
-			printf("[%s] Not supported format(%d)\n", __func__, format);
+			DBG_ERR("Not supported format(%d)\n", format);
 			bpp = -1;
 			break;
 	}
@@ -630,7 +616,7 @@ static int tcc_get_pfmt(unsigned int format)
 			break;
 
 		default:
-			printf("[%s] Not supported foramt(%d)\n", __func__, format);
+			DBG_ERR("Not supported foramt(%d)\n", format);
 			pfmt = -1;
 			break;
 	}

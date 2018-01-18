@@ -7,6 +7,5 @@ struct pmap_t {
 };
 
 int get_pmap(char *, struct pmap_t *);
-int test_pmap(void);
 
 #endif

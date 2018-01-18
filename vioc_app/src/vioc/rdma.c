@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+#include <debug.h>
 #include <vioc.h>
 
 
@@ -182,13 +183,13 @@ int rdma_setup(struct vioc_rdma_t *rdma)
 	/* check EN (enable-bit) is 0 */
 	if (rdma->reg.uCTRL.bREG.IEN) {
 		rdma->reg.uCTRL.bREG.IEN = 0;
-		printf("rdma%d IEN was set, so disable it\n", rdma->info.id);
+		DBG(DL_VIOC, "rdma%d IEN was set, so disable it\n", rdma->info.id);
 	}
 
 	/* check UPD (update-bit) is 0 */
 	if (rdma->reg.uCTRL.bREG.UPD) {
 		rdma->reg.uCTRL.bREG.UPD = 0;
-		printf("rdma%d UPD was set, so disable it\n", rdma->info.id);
+		DBG(DL_VIOC, "rdma%d UPD was set, so disable it\n", rdma->info.id);
 	}
 
 	/* set physical register */
@@ -206,7 +207,7 @@ int rdma_verify_regs(struct vioc_rdma_t *rdma)
 	s = &rdma->reg;
 	d = rdma->addr;
 
-	printf("VERIFY RDMA%d\n", rdma->info.id);
+	DBG(DL_VIOC, "VERIFY RDMA%d\n", rdma->info.id);
 	if (rdma->info.id < 0) {
 		printf("\tN/A\n");
 		return ret;

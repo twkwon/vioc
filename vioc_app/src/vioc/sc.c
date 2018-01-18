@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+#include <debug.h>
 #include <vioc.h>
 
 
@@ -67,7 +68,7 @@ int sc_setup(struct vioc_sc_t *sc)
 	/* check UPD (update-bit) is 0 */
 	if (sc->reg.uCTRL.bREG.UPD) {
 		sc->reg.uCTRL.bREG.UPD = 0;
-		printf("sc%d UPD was set, so disable it\n", sc->info.id);
+		DBG(DL_VIOC, "sc%d UPD was set, so disable it\n", sc->info.id);
 	}
 
 	/* set physical register */
@@ -84,7 +85,7 @@ int sc_verify_regs(struct vioc_sc_t *sc)
 	s = &sc->reg;
 	d = sc->addr;
 
-	printf("VERIFY SC%d\n", sc->info.id);
+	DBG(DL_VIOC, "VERIFY SC%d\n", sc->info.id);
 	if (sc->info.id < 0) {
 		printf("\tN/A\n");
 		return ret;

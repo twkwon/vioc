@@ -6,6 +6,7 @@
 #include <sys/stat.h>
 #include <sys/mman.h>
 
+#include <debug.h>
 #include <mmap.h>
 #include <vioc.h>
 
@@ -39,7 +40,7 @@ addr_t *vioc_mmap(addr_t paddr, unsigned int size)
 		vaddr = NULL;
 		goto err_mmap;
 	}
-	printf("mmap: phy_addr:0x%08x -> virt_addr:%p, size:0x%08x\n", paddr, vaddr, size);
+	DBG(DL_TEST, "mmap: phy_addr:0x%08x -> virt_addr:%p, size:0x%08x\n", paddr, vaddr, size);
 
 err_mmap:
 	close(fd);
@@ -51,51 +52,3 @@ void vioc_munmap(addr_t *vaddr)
 {
 	munmap(vaddr, MMAP_DEFAULT_LEN);
 }
-
-int test_mmap(void)
-{
-	unsigned int *vaddr = NULL;
-	int dev, i;
-	unsigned int tmp1, tmp2;
-	unsigned int paddr, length;
-
-	dev = open("/dev/mem", O_RDWR|O_SYNC);
-	if (dev < 0) {
-		perror("/dev/mem open error");
-		exit(1);
-	}
-
-	paddr = MMAP_DEFAULT_ADDR + 0xd000;
-	length = 0x1000;
-
-	vaddr = (unsigned int *)mmap(0,
-				length,
-				PROT_READ|PROT_WRITE,
-				MAP_SHARED,
-				dev,
-				paddr);
-	if (vaddr == MAP_FAILED) {
-		perror("mmap failed");
-		goto _EXIT;
-	}
-	printf("mmap: phy_addr:0x%08x -> virt_addr:%p\n", paddr, vaddr);
-
-	/* read test */
-	for (i = 0; i < 10; i++) {
-		tmp1 = *((unsigned int *)(vaddr + i));
-		printf("offset %d 0x%08X\n", i * 4, tmp1);
-	}
-
-	/* write test */
-	for (i = 0; i < 10; i++) {
-		tmp2 = 0x1 + i;
-		*((unsigned int *)vaddr + i) = tmp2;
-		tmp1 = *((unsigned int *)(vaddr + i));
-		printf("offset 0x%02x: 0x%08X == 0x%08X\n", i * 4, tmp2, tmp1);
-	}
-_EXIT:
-	munmap(vaddr, length);
-	close(dev);
-	return 0;
-}
-

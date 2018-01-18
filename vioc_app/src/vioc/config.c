@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+#include <debug.h>
 #include <vioc.h>
 
 // CFG_PATH_EDR
@@ -102,7 +103,7 @@ int config_verify_regs(struct vioc_config_t *config)
 	s = &config->reg;
 	d = config->addr;
 
-	printf("VERIFY CONFIG%d\n", config->info.id);
+	DBG(DL_VIOC, "VERIFY CONFIG%d\n", config->info.id);
 	//if (config->info.id < 0) {
 	//	printf("\tN/A\n");
 	//	return ret;
@@ -148,7 +149,7 @@ int config_config(struct test_case_t *tc)
 
 	reg = read_reg(&config_reg->uPATH_EDR);
 	if (val != reg) {
-		printf("[%s] error: CFG_PATH_EDR(0x%08x) != val(0x%08x)\n", __func__, reg, val);
+		DBG_ERR("CFG_PATH_EDR(0x%08x) != val(0x%08x)\n", reg, val);
 		ret = -1;
 		goto exit;
 	}
@@ -165,7 +166,7 @@ int config_config(struct test_case_t *tc)
 
 	reg = read_reg(&config_reg->uMISC0);
 	if (val != reg) {
-		printf("[%s] error: CFG_MISC0(0x%08x) != val(0x%08x)\n", __func__, reg, val);
+		DBG_ERR("CFG_MISC0(0x%08x) != val(0x%08x)\n", reg, val);
 		ret = -1;
 		goto exit;
 	}
@@ -233,7 +234,7 @@ static int plugin_rdma(struct test_case_t *tc, enum vioc_components comp)
 		break;
 	default:
 		ret = -1;
-		printf("[%s] component id(%d) is not RDMA\n", __func__, comp);
+		DBG_ERR("component id(%d) is not RDMA\n", comp);
 		goto err_comp;
 	}
 
@@ -244,7 +245,7 @@ static int plugin_rdma(struct test_case_t *tc, enum vioc_components comp)
 	case 8:
 	case 9:
 	case 10:
-		printf("[%s] RDMA%d is GRDMA, so it doesn't need plug-in\n", __func__, rdma->info.id);
+		DBG(DL_VIOC, "RDMA%d is GRDMA, so it doesn't need plug-in\n", rdma->info.id);
 		ret = 0;
 		goto err_comp;
 		break;
@@ -293,11 +294,11 @@ static int plugin_rdma(struct test_case_t *tc, enum vioc_components comp)
 			break;
 	}
 
-	printf("[%s] plug-in RDMA%d -> SEL(0x%x)\n", __func__, rdma->info.id, rdma->info.plugin);
+	DBG(DL_VIOC, "plug-in RDMA%d -> SEL(0x%x)\n", rdma->info.id, rdma->info.plugin);
 	return ret;
 
 err_rdma_id:
-	printf("[%s] error: plug-in RDMA%d\n", __func__, rdma->info.id);
+	DBG_ERR("plug-in RDMA%d\n", rdma->info.id);
 err_comp:
 	return ret;
 }
@@ -362,10 +363,10 @@ static int plugin_sc(struct test_case_t *tc, enum vioc_components comp)
 			break;
 	}
 
-	printf("[%s] plug-in SC%d -> SEL(0x%x)\n", __func__, sc->info.id, sc->info.plugin);
+	DBG(DL_VIOC, "plug-in SC%d -> SEL(0x%x)\n", sc->info.id, sc->info.plugin);
 	return ret;
 err:
-	printf("[%s] error: plug-in SC%d\n", __func__, sc->info.id);
+	DBG_ERR("plug-in SC%d\n", sc->info.id);
 	return ret;
 }
 
@@ -374,7 +375,7 @@ static int plugin_lut(struct test_case_t *tc, enum vioc_components comp)
 	int ret = 0;
 
 	//TODO:LUT
-	printf("[%s] TODO: this is empty funtion!!!\n", __func__);
+	DBG_WARN(DL_WARN, "TODO: this is empty funtion!!!\n");
 
 	return ret;
 }
@@ -389,10 +390,10 @@ static int plugin_vin(struct test_case_t *tc, enum vioc_components comp)
 	vin = &tc->vin;
 
 
-	printf("[%s] plug-in VIN%d -> SEL(0x%x)\n", __func__, vin->info.id, vin->info.plugin);
+	DBG(DL_VIOC, "plug-in VIN%d -> SEL(0x%x)\n", vin->info.id, vin->info.plugin);
 	return ret;
 //err:
-	printf("[%s] error: plug-in VIN%d\n", __func__, vin->info.id);
+	DBG_ERR("plug-in VIN%d\n", vin->info.id);
 	return ret;
 }
 
@@ -425,10 +426,10 @@ int config_plugout_sc(struct test_case_t *tc, unsigned int id)
 	/* disable */
 	BITCSET(cfg_path_sc->nREG, V_CONFIG_EN_MASK, 0x0 << V_CONFIG_EN_SHIFT);
 
-	printf("[%s] plug-out SC%d\n", __func__, id);
+	DBG(DL_VIOC, "plug-out SC%d\n", id);
 	return ret;
 err:
-	printf("[%s] error: plug-out SC%d\n", __func__, id);
+	DBG(DL_VIOC, "error: plug-out SC%d\n", id);
 	return ret;
 }
 
@@ -549,7 +550,7 @@ static int reset_wdma_ctrl(struct test_case_t *tc, enum vioc_components comp, un
 		break;
 	default:
 		ret = -1;
-		printf("[%s] component id(%d) is not WDMA\n", __func__, comp);
+		DBG_ERR("component id(%d) is not WDMA\n", comp);
 		return ret;
 	}
 
@@ -557,7 +558,7 @@ static int reset_wdma_ctrl(struct test_case_t *tc, enum vioc_components comp, un
 
 	BITCSET(cfg_reset->nREG[1], 0x1 << (0 + wdma->info.id), reset << (0 + wdma->info.id));
 
-	printf("[%s] WDMA%d.reset = %s\n", __func__, wdma->info.id, reset ? "reset" : "normal");
+	DBG(DL_VIOC, "WDMA%d.reset = %s\n", wdma->info.id, reset ? "reset" : "normal");
 	return ret;
 }
 
@@ -573,7 +574,7 @@ static int reset_wmix_ctrl(struct test_case_t *tc, enum vioc_components comp, un
 		break;
 	default:
 		ret = -1;
-		printf("[%s] component id(%d) is not WMIX\n", __func__, comp);
+		DBG_ERR("component id(%d) is not WMIX\n", comp);
 		return ret;
 	}
 
@@ -581,7 +582,7 @@ static int reset_wmix_ctrl(struct test_case_t *tc, enum vioc_components comp, un
 
 	BITCSET(cfg_reset->nREG[1], 0x1 << (9 + wmix->info.id), reset << (9 + wmix->info.id));
 
-	printf("[%s] WMIX%d.reset = %s\n", __func__, wmix->info.id, reset ? "reset" : "normal");
+	DBG(DL_VIOC, "WMIX%d.reset = %s\n", wmix->info.id, reset ? "reset" : "normal");
 	return ret;
 }
 
@@ -609,7 +610,7 @@ static int reset_rdma_ctrl(struct test_case_t *tc, enum vioc_components comp, un
 		break;
 	default:
 		ret = -1;
-		printf("[%s] component id(%d) is not RDMA\n", __func__, comp);
+		DBG_ERR("component id(%d) is not RDMA\n", comp);
 		return ret;
 	}
 
@@ -617,7 +618,7 @@ static int reset_rdma_ctrl(struct test_case_t *tc, enum vioc_components comp, un
 
 	BITCSET(cfg_reset->nREG[0], 0x1 << (0 + rdma->info.id), reset << (0 + rdma->info.id));
 
-	printf("[%s] RDMA%d.reset = %s\n", __func__, rdma->info.id, reset ? "reset" : "normal");
+	DBG(DL_VIOC, "RDMA%d.reset = %s\n", rdma->info.id, reset ? "reset" : "normal");
 	return ret;
 }
 
@@ -633,7 +634,7 @@ static int reset_vin_ctrl(struct test_case_t *tc, enum vioc_components comp, uns
 		break;
 	default:
 		ret = -1;
-		printf("[%s] component id(%d) is not VIN\n", __func__, comp);
+		DBG_ERR("component id(%d) is not VIN\n", comp);
 		return ret;
 	}
 
@@ -641,7 +642,7 @@ static int reset_vin_ctrl(struct test_case_t *tc, enum vioc_components comp, uns
 
 	BITCSET(cfg_reset->nREG[0], 0x1 << (24 + vin->info.id), reset << (24 + vin->info.id));
 
-	printf("[%s] VIN%d.reset = %s\n", __func__, vin->info.id, reset ? "reset" : "normal");
+	DBG(DL_VIOC, "VIN%d.reset = %s\n", vin->info.id, reset ? "reset" : "normal");
 	return ret;
 }
 
@@ -657,7 +658,7 @@ static int reset_sc_ctrl(struct test_case_t *tc, enum vioc_components comp, unsi
 		break;
 	default:
 		ret = -1;
-		printf("[%s] component id(%d) is not SC\n", __func__, comp);
+		DBG_ERR("component id(%d) is not SC\n", comp);
 		return ret;
 	}
 
@@ -665,7 +666,7 @@ static int reset_sc_ctrl(struct test_case_t *tc, enum vioc_components comp, unsi
 
 	BITCSET(cfg_reset->nREG[0], 0x1 << (28 + sc->info.id), reset << (28 + sc->info.id));
 
-	printf("[%s] SC%d.reset = %s\n", __func__, sc->info.id, reset ? "reset" : "normal");
+	DBG(DL_VIOC, "SC%d.reset = %s\n", sc->info.id, reset ? "reset" : "normal");
 	return ret;
 }
 
@@ -682,7 +683,7 @@ static int reset_lut_ctrl(struct test_case_t *tc, enum vioc_components comp, uns
 	//	break;
 	//default:
 	//	ret = -1;
-	//	printf("[%s] component id(%d) is not LUT\n", __func__, comp);
+	//	DBG_ERR("component id(%d) is not LUT\n", comp);
 	//	return ret;
 	//}
 	//
@@ -690,6 +691,6 @@ static int reset_lut_ctrl(struct test_case_t *tc, enum vioc_components comp, uns
 	//
 	//BITCSET(cfg_reset->nREG[0], 0x1 << (28 + lut->info.id), reset << (28 + lut->info.id));
 	//
-	//printf("[%s] LUT%d.reset = %s\n", __func__, lut->info.id, reset ? "reset" : "normal");
+	//DBG(DL_VIOC, "LUT%d.reset = %s\n", lut->info.id, reset ? "reset" : "normal");
 	return ret;
 }

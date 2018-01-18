@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <debug.h>
 #include <vioc.h>
 
 static int vioc_get_component_info(struct test_case_t *, struct test_data_t *);
@@ -55,14 +56,14 @@ const char *name_vioc_compoent[] = {
 int setup_test_case(struct test_case_t *test_case, struct test_data_t *test_data)
 {
 	int ret = 0;
-	printf("[%s]\n", __func__);
+	DBG(DL_TEST, "\n");
 
 	/*
 	 * get address each components
 	 */
 	ret = vioc_get_component_info(test_case, test_data);
 	if (ret) {
-		printf("[%s] error: vioc_get_component_info()\n", __func__);
+		DBG_ERR("vioc_get_component_info()\n");
 		goto exit;
 	}
 
@@ -71,7 +72,7 @@ int setup_test_case(struct test_case_t *test_case, struct test_data_t *test_data
 	 */
 	ret = vioc_map_component_regs(test_case, test_data);
 	if (ret) {
-		printf("[%s] error: vioc_map_component_regs()\n", __func__);
+		DBG_ERR("vioc_map_component_regs()\n");
 		goto exit;
 	}
 
@@ -82,7 +83,8 @@ exit:
 int setup_vioc_path(struct test_case_t *test_case)
 {
 	int ret = 0;
-	printf("[%s]\n", __func__);
+
+	DBG(DL_TEST, "\n");
 
 	/*
 	 * reset vioc components
@@ -94,7 +96,7 @@ int setup_vioc_path(struct test_case_t *test_case)
 	 */
 	ret = vioc_set_component_regs(test_case);
 	if (ret) {
-		printf("[%s] error: vioc_set_component_regs()\n", __func__);
+		DBG_ERR("vioc_set_component_regs()\n");
 		goto exit;
 	}
 
@@ -103,7 +105,7 @@ int setup_vioc_path(struct test_case_t *test_case)
 	 */
 	ret = vioc_config_path(test_case);
 	if (ret) {
-		printf("[%s] error: vioc_config_path()\n", __func__);
+		DBG_ERR("vioc_config_path()\n");
 		goto exit;
 	}
 
@@ -112,7 +114,7 @@ int setup_vioc_path(struct test_case_t *test_case)
 	 */
 	ret = vioc_set_dma_address(test_case);
 	if (ret) {
-		printf("[%s] error: vioc_set_address()\n", __func__);
+		DBG_ERR("vioc_set_address()\n");
 		goto exit;
 	}
 
@@ -124,13 +126,12 @@ int setup_vioc_path(struct test_case_t *test_case)
 	if (test_case->disp_rdma.info.id != -1) {
 		ret = vioc_config_disp_path(test_case);
 		if (ret) {
-			printf("[%s] error: vioc_config_disp_path()\n", __func__);
+			DBG_ERR("vioc_config_disp_path()\n");
 			goto exit;
 		}
 	}
 
-	if (debug_level == DEBUG_VERIFY) {
-		/* for debugging */
+	if (g_dbg_lvl & DL_VIOC) {
 		vioc_verify_regs(test_case);
 	}
 
@@ -203,7 +204,8 @@ int shoot_test(struct test_case_t *tc)
 static int vioc_get_component_info(struct test_case_t *tc, struct test_data_t *td)
 {
 	int ret = 0;
-	printf("[%s]\n", __func__);
+
+	DBG(DL_TEST, "\n");
 
 	/* get infos (test no, test name, input/output files) */
 	//TODO: is it ok? 64bits machine has to use (sizeof(struct image_buf_info_t) * MAX_NUM_OF_RDMA)
@@ -322,7 +324,8 @@ static int vioc_map_component_regs(struct test_case_t *tc, struct test_data_t *t
 {
 	int ret = 0;
 	int mapped = 0, nr_regs_data = 0;
-	printf("[%s]\n", __func__);
+
+	DBG(DL_TEST, "\n");
 
 	/*
 	 * Display Path - RDMA-WMIX-DISP
@@ -332,7 +335,7 @@ static int vioc_map_component_regs(struct test_case_t *tc, struct test_data_t *t
 		nr_regs_data = td->disp_rdma.nr_regs - REG_START_OFFSET_RDMA;
 		tc->disp_rdma.info.nr_regs = mapped;
 
-		printf("mapping: DISP_RDMA%d %d register values[%d] %s\n", tc->disp_rdma.info.id,
+		DBG(DL_VIOC, "mapping: DISP_RDMA%d %d register values[%d] %s\n", tc->disp_rdma.info.id,
 			mapped, nr_regs_data, (mapped == nr_regs_data) ? "" : "<-- error");
 
 		ret += mapped - nr_regs_data;
@@ -343,7 +346,7 @@ static int vioc_map_component_regs(struct test_case_t *tc, struct test_data_t *t
 		nr_regs_data = td->disp_wmix.nr_regs - REG_START_OFFSET_WMIX;
 		tc->disp_wmix.info.nr_regs = mapped;
 
-		printf("mapping: DISP_WMIX%d %d register values[%d] %s\n", tc->disp_wmix.info.id,
+		DBG(DL_VIOC, "mapping: DISP_WMIX%d %d register values[%d] %s\n", tc->disp_wmix.info.id,
 			mapped, nr_regs_data, (mapped == nr_regs_data) ? "" : "<-- error");
 
 		ret += mapped - nr_regs_data;
@@ -357,7 +360,7 @@ static int vioc_map_component_regs(struct test_case_t *tc, struct test_data_t *t
 		nr_regs_data = td->rdma1.nr_regs - REG_START_OFFSET_RDMA;
 		tc->rdma1.info.nr_regs = mapped;
 
-		printf("mapping: 1st RDMA%d %d register values[%d] %s\n", tc->rdma1.info.id,
+		DBG(DL_VIOC, "mapping: 1st RDMA%d %d register values[%d] %s\n", tc->rdma1.info.id,
 			mapped, nr_regs_data, (mapped == nr_regs_data) ? "" : "<-- error");
 
 		ret += mapped - nr_regs_data;
@@ -368,7 +371,7 @@ static int vioc_map_component_regs(struct test_case_t *tc, struct test_data_t *t
 		nr_regs_data = td->rdma2.nr_regs - REG_START_OFFSET_RDMA;
 		tc->rdma2.info.nr_regs = mapped;
 
-		printf("mapping: 2nd RDMA%d %d register values[%d] %s\n", tc->rdma2.info.id,
+		DBG(DL_VIOC, "mapping: 2nd RDMA%d %d register values[%d] %s\n", tc->rdma2.info.id,
 			mapped, nr_regs_data, (mapped == nr_regs_data) ? "" : "<-- error");
 
 		ret += mapped - nr_regs_data;
@@ -379,7 +382,7 @@ static int vioc_map_component_regs(struct test_case_t *tc, struct test_data_t *t
 		nr_regs_data = td->rdma3.nr_regs - REG_START_OFFSET_RDMA;
 		tc->rdma3.info.nr_regs = mapped;
 
-		printf("mapping: 3rd RDMA%d %d register values[%d] %s\n", tc->rdma3.info.id,
+		DBG(DL_VIOC, "mapping: 3rd RDMA%d %d register values[%d] %s\n", tc->rdma3.info.id,
 			mapped, nr_regs_data, (mapped == nr_regs_data) ? "" : "<-- error");
 
 		ret += mapped - nr_regs_data;
@@ -390,7 +393,7 @@ static int vioc_map_component_regs(struct test_case_t *tc, struct test_data_t *t
 		nr_regs_data = td->rdma4.nr_regs - REG_START_OFFSET_RDMA;
 		tc->rdma4.info.nr_regs = mapped;
 		ret += mapped - nr_regs_data;
-		printf("mapping: 4th RDMA%d %d register values[%d] %s\n", tc->rdma4.info.id,
+		DBG(DL_VIOC, "mapping: 4th RDMA%d %d register values[%d] %s\n", tc->rdma4.info.id,
 			mapped, nr_regs_data, (mapped == nr_regs_data) ? "" : "<-- error");
 	}
 
@@ -402,7 +405,7 @@ static int vioc_map_component_regs(struct test_case_t *tc, struct test_data_t *t
 		nr_regs_data = td->wdma1.nr_regs - REG_START_OFFSET_WDMA;
 		tc->wdma1.info.nr_regs = mapped;
 
-		printf("mapping: 1st WDMA%d %d register values[%d] %s\n", tc->wdma1.info.id,
+		DBG(DL_VIOC, "mapping: 1st WDMA%d %d register values[%d] %s\n", tc->wdma1.info.id,
 			mapped, nr_regs_data, (mapped == nr_regs_data) ? "" : "<-- error");
 
 		ret += mapped - nr_regs_data;
@@ -413,7 +416,7 @@ static int vioc_map_component_regs(struct test_case_t *tc, struct test_data_t *t
 		nr_regs_data = td->wdma2.nr_regs - REG_START_OFFSET_WDMA;
 		tc->wdma2.info.nr_regs = mapped;
 
-		printf("mapping: 2nd WDMA%d %d register values[%d] %s\n", tc->wdma2.info.id,
+		DBG(DL_VIOC, "mapping: 2nd WDMA%d %d register values[%d] %s\n", tc->wdma2.info.id,
 			mapped, nr_regs_data, (mapped == nr_regs_data) ? "" : "<-- error");
 
 		ret += mapped - nr_regs_data;
@@ -427,7 +430,7 @@ static int vioc_map_component_regs(struct test_case_t *tc, struct test_data_t *t
 		nr_regs_data = td->wmix.nr_regs - REG_START_OFFSET_WMIX;
 		tc->wmix.info.nr_regs = mapped;
 
-		printf("mapping: WMIX%d %d register values[%d] %s\n", tc->wmix.info.id,
+		DBG(DL_VIOC, "mapping: WMIX%d %d register values[%d] %s\n", tc->wmix.info.id,
 			mapped, nr_regs_data, (mapped == nr_regs_data) ? "" : "<-- error");
 
 		ret += mapped - nr_regs_data;
@@ -441,7 +444,7 @@ static int vioc_map_component_regs(struct test_case_t *tc, struct test_data_t *t
 		nr_regs_data = td->sc.nr_regs - REG_START_OFFSET_SC;
 		tc->sc.info.nr_regs = mapped;
 
-		printf("mapping: SC%d %d register values[%d] %s\n", tc->sc.info.id,
+		DBG(DL_VIOC, "mapping: SC%d %d register values[%d] %s\n", tc->sc.info.id,
 			mapped, nr_regs_data, (mapped == nr_regs_data) ? "" : "<-- error");
 
 		ret += mapped - nr_regs_data;
@@ -455,7 +458,7 @@ static int vioc_map_component_regs(struct test_case_t *tc, struct test_data_t *t
 		nr_regs_data = td->lut.nr_regs - REG_START_OFFSET_LUT;
 		tc->lut.info.nr_regs = mapped;
 
-		printf("mapping: LUT%d %d register values[%d] %s\n", tc->lut.info.id,
+		DBG(DL_VIOC, "mapping: LUT%d %d register values[%d] %s\n", tc->lut.info.id,
 			mapped, nr_regs_data, (mapped == nr_regs_data) ? "" : "<-- error");
 
 		ret += mapped - nr_regs_data;
@@ -469,7 +472,7 @@ static int vioc_map_component_regs(struct test_case_t *tc, struct test_data_t *t
 		nr_regs_data = td->vin.nr_regs - REG_START_OFFSET_VIN;
 		tc->vin.info.nr_regs = mapped;
 
-		printf("mapping: VIN%d %d register values[%d] %s\n", tc->vin.info.id,
+		DBG(DL_VIOC, "mapping: VIN%d %d register values[%d] %s\n", tc->vin.info.id,
 			mapped, nr_regs_data, (mapped == nr_regs_data) ? "" : "<-- error");
 
 		ret += mapped - nr_regs_data;
@@ -479,7 +482,7 @@ static int vioc_map_component_regs(struct test_case_t *tc, struct test_data_t *t
 		nr_regs_data = td->vin_lut.nr_regs - REG_START_OFFSET_VIN_LUT;
 		tc->vin_lut.info.nr_regs = mapped;
 
-		printf("mapping: VIN_LUT%d %d register values[%d] %s\n", tc->vin.info.id,
+		DBG(DL_VIOC, "mapping: VIN_LUT%d %d register values[%d] %s\n", tc->vin.info.id,
 			mapped, nr_regs_data, (mapped == nr_regs_data) ? "" : "<-- error");
 
 		ret += mapped - nr_regs_data;
@@ -493,7 +496,7 @@ static int vioc_map_component_regs(struct test_case_t *tc, struct test_data_t *t
 		nr_regs_data = td->outcfg.nr_regs - REG_START_OFFSET_OUTCFG;
 		tc->outcfg.info.nr_regs = mapped;
 
-		printf("mapping: OUTCFG%d %d register values[%d] %s\n", tc->outcfg.info.id,
+		DBG(DL_VIOC, "mapping: OUTCFG%d %d register values[%d] %s\n", tc->outcfg.info.id,
 			mapped, nr_regs_data, (mapped == nr_regs_data) ? "" : "<-- error");
 
 		ret += mapped - nr_regs_data;
@@ -507,7 +510,7 @@ static int vioc_map_component_regs(struct test_case_t *tc, struct test_data_t *t
 		nr_regs_data = td->config.nr_regs - REG_START_OFFSET_CONFIG;
 		tc->config.info.nr_regs = mapped;
 
-		printf("mapping: CONFIG%d %d register values[%d] %s\n", tc->config.info.id,
+		DBG(DL_VIOC, "mapping: CONFIG%d %d register values[%d] %s\n", tc->config.info.id,
 			mapped, nr_regs_data, (mapped == nr_regs_data) ? "" : "<-- error");
 
 		ret += mapped - nr_regs_data;
@@ -577,7 +580,8 @@ static int vioc_reset_path(struct test_case_t *tc)
 static int vioc_set_component_regs(struct test_case_t *tc)
 {
 	int ret = 0;
-	printf("[%s]\n", __func__);
+
+	DBG(DL_TEST, "\n");
 
 	/*
 	 * Display Path - RDMA-WMIX-DISP
@@ -585,7 +589,7 @@ static int vioc_set_component_regs(struct test_case_t *tc)
 	if (tc->disp_rdma.info.id != -1) {
 		ret = rdma_setup(&tc->disp_rdma);
 		if (ret) {
-			printf("[%s] error: %s", __func__, name_vioc_compoent[VC_DISP_RDMA]);
+			DBG_ERR("%s\n", name_vioc_compoent[VC_DISP_RDMA]);
 			goto exit;
 		}
 	}
@@ -593,7 +597,7 @@ static int vioc_set_component_regs(struct test_case_t *tc)
 	if (tc->disp_wmix.info.id != -1) {
 		ret = wmix_setup(&tc->disp_wmix);
 		if (ret) {
-			printf("[%s] error: %s", __func__, name_vioc_compoent[VC_DISP_WMIX]);
+			DBG_ERR("%s\n", name_vioc_compoent[VC_DISP_WMIX]);
 			goto exit;
 		}
 	}
@@ -604,28 +608,28 @@ static int vioc_set_component_regs(struct test_case_t *tc)
 	if (tc->rdma1.info.id != -1) {
 		ret = rdma_setup(&tc->rdma1);
 		if (ret) {
-			printf("[%s] error: %s", __func__, name_vioc_compoent[VC_RDMA_1st]);
+			DBG_ERR("%s\n", name_vioc_compoent[VC_RDMA_1st]);
 			goto exit;
 		}
 	}
 	if (tc->rdma2.info.id != -1) {
 		ret = rdma_setup(&tc->rdma2);
 		if (ret) {
-			printf("[%s] error: %s", __func__, name_vioc_compoent[VC_RDMA_2nd]);
+			DBG_ERR("%s\n", name_vioc_compoent[VC_RDMA_2nd]);
 			goto exit;
 		}
 	}
 	if (tc->rdma3.info.id != -1) {
 		ret = rdma_setup(&tc->rdma3);
 		if (ret) {
-			printf("[%s] error: %s", __func__, name_vioc_compoent[VC_RDMA_3rd]);
+			DBG_ERR("%s\n", name_vioc_compoent[VC_RDMA_3rd]);
 			goto exit;
 		}
 	}
 	if (tc->rdma4.info.id != -1) {
 		ret = rdma_setup(&tc->rdma4);
 		if (ret) {
-			printf("[%s] error: %s", __func__, name_vioc_compoent[VC_RDMA_4th]);
+			DBG_ERR("%s\n", name_vioc_compoent[VC_RDMA_4th]);
 			goto exit;
 		}
 	}
@@ -636,14 +640,14 @@ static int vioc_set_component_regs(struct test_case_t *tc)
 	if (tc->wdma1.info.id != -1) {
 		ret = wdma_setup(&tc->wdma1);
 		if (ret) {
-			printf("[%s] error: %s", __func__, name_vioc_compoent[VC_WDMA_1st]);
+			DBG_ERR("%s\n", name_vioc_compoent[VC_WDMA_1st]);
 			goto exit;
 		}
 	}
 	if (tc->wdma2.info.id != -1) {
 		ret = wdma_setup(&tc->wdma2);
 		if (ret) {
-			printf("[%s] error: %s", __func__, name_vioc_compoent[VC_WDMA_2nd]);
+			DBG_ERR("%s\n", name_vioc_compoent[VC_WDMA_2nd]);
 			goto exit;
 		}
 	}
@@ -654,7 +658,7 @@ static int vioc_set_component_regs(struct test_case_t *tc)
 	if (tc->wmix.info.id != -1) {
 		ret = wmix_setup(&tc->wmix);
 		if (ret) {
-			printf("[%s] error: %s", __func__, name_vioc_compoent[VC_WMIX]);
+			DBG_ERR("%s\n", name_vioc_compoent[VC_WMIX]);
 			goto exit;
 		}
 	}
@@ -665,7 +669,7 @@ static int vioc_set_component_regs(struct test_case_t *tc)
 	if (tc->sc.info.id != -1) {
 		ret = sc_setup(&tc->sc);
 		if (ret) {
-			printf("[%s] error: %s", __func__, name_vioc_compoent[VC_SC]);
+			DBG_ERR("%s\n", name_vioc_compoent[VC_SC]);
 			goto exit;
 		}
 	}
@@ -676,7 +680,7 @@ static int vioc_set_component_regs(struct test_case_t *tc)
 	if (tc->lut.info.id != -1) {
 		ret = lut_setup(&tc->lut);
 		if (ret) {
-			printf("[%s] error: %s", __func__, name_vioc_compoent[VC_LUT]);
+			DBG_ERR("%s\n", name_vioc_compoent[VC_LUT]);
 			goto exit;
 		}
 	}
@@ -687,14 +691,14 @@ static int vioc_set_component_regs(struct test_case_t *tc)
 	if (tc->vin.info.id != -1) {
 		ret = vin_setup(&tc->vin);
 		if (ret) {
-			printf("[%s] error: %s", __func__, name_vioc_compoent[VC_VIN]);
+			DBG_ERR("%s\n", name_vioc_compoent[VC_VIN]);
 			goto exit;
 		}
 	}
 	if (tc->vin_lut.info.id != -1) {
 		ret = vin_lut_setup(&tc->vin_lut);
 		if (ret) {
-			printf("[%s] error: %s", __func__, name_vioc_compoent[VC_VIN_LUT]);
+			DBG_ERR("%s\n", name_vioc_compoent[VC_VIN_LUT]);
 			goto exit;
 		}
 	}
@@ -705,7 +709,7 @@ static int vioc_set_component_regs(struct test_case_t *tc)
 	if (tc->outcfg.info.id != -1 && 0) {
 		ret = outcfg_setup(&tc->outcfg);
 		if (ret) {
-			printf("[%s] error: %s", __func__, name_vioc_compoent[VC_OUTCFG]);
+			DBG_ERR("%s\n", name_vioc_compoent[VC_OUTCFG]);
 			goto exit;
 		}
 	}
@@ -716,7 +720,7 @@ static int vioc_set_component_regs(struct test_case_t *tc)
 	if (tc->config.info.id != -1 && 0) {
 		ret = config_setup(&tc->config);
 		if (ret) {
-			printf("[%s] error: %s", __func__, name_vioc_compoent[VC_CONFIG]);
+			DBG_ERR("%s\n", name_vioc_compoent[VC_CONFIG]);
 			goto exit;
 		}
 	}
@@ -728,7 +732,8 @@ exit:
 static int vioc_config_path(struct test_case_t *tc)
 {
 	int ret = 0;
-	printf("[%s]\n", __func__);
+
+	DBG(DL_TEST, "\n");
 
 	/*
 	 * Display Path - RDMA
@@ -736,7 +741,7 @@ static int vioc_config_path(struct test_case_t *tc)
 	if (tc->disp_rdma.info.id != -1 && tc->disp_rdma.info.plugin != -1) {
 		ret = config_plugin(tc, VC_DISP_RDMA);
 		if (ret) {
-			printf("[%s] error: plug-in %s", __func__, name_vioc_compoent[VC_DISP_RDMA]);
+			DBG_ERR("plug-in %s", name_vioc_compoent[VC_DISP_RDMA]);
 			goto exit;
 		}
 	}
@@ -747,28 +752,28 @@ static int vioc_config_path(struct test_case_t *tc)
 	if (tc->rdma1.info.id != -1 && tc->rdma1.info.plugin != -1) {
 		ret = config_plugin(tc, VC_RDMA_1st);
 		if (ret) {
-			printf("[%s] error: plug-in %s", __func__, name_vioc_compoent[VC_RDMA_1st]);
+			DBG_ERR("plug-in %s", name_vioc_compoent[VC_RDMA_1st]);
 			goto exit;
 		}
 	}
 	if (tc->rdma2.info.id != -1 && tc->rdma2.info.plugin != -1) {
 		ret = config_plugin(tc, VC_RDMA_2nd);
 		if (ret) {
-			printf("[%s] error: plug-in %s", __func__, name_vioc_compoent[VC_RDMA_2nd]);
+			DBG_ERR("plug-in %s", name_vioc_compoent[VC_RDMA_2nd]);
 			goto exit;
 		}
 	}
 	if (tc->rdma3.info.id != -1 && tc->rdma3.info.plugin != -1) {
 		ret = config_plugin(tc, VC_RDMA_3rd);
 		if (ret) {
-			printf("[%s] error: plug-in %s", __func__, name_vioc_compoent[VC_RDMA_3rd]);
+			DBG_ERR("plug-in %s", name_vioc_compoent[VC_RDMA_3rd]);
 			goto exit;
 		}
 	}
 	if (tc->rdma4.info.id != -1 && tc->rdma4.info.plugin != -1) {
 		ret = config_plugin(tc, VC_RDMA_4th);
 		if (ret) {
-			printf("[%s] error: plug-in %s", __func__, name_vioc_compoent[VC_RDMA_4th]);
+			DBG_ERR("plug-in %s", name_vioc_compoent[VC_RDMA_4th]);
 			goto exit;
 		}
 	}
@@ -779,7 +784,7 @@ static int vioc_config_path(struct test_case_t *tc)
 	if (tc->sc.info.id != -1 && tc->sc.info.plugin != -1) {
 		ret = config_plugin(tc, VC_SC);
 		if (ret) {
-			printf("[%s] error: plug-in %s", __func__, name_vioc_compoent[VC_SC]);
+			DBG_ERR("plug-in %s", name_vioc_compoent[VC_SC]);
 			goto exit;
 		}
 	}
@@ -790,7 +795,7 @@ static int vioc_config_path(struct test_case_t *tc)
 	if (tc->lut.info.id != -1 && tc->lut.info.plugin != -1) {
 		ret = config_plugin(tc, VC_LUT);
 		if (ret) {
-			printf("[%s] error: plug-in %s", __func__, name_vioc_compoent[VC_LUT]);
+			DBG_ERR("plug-in %s", name_vioc_compoent[VC_LUT]);
 			goto exit;
 		}
 	}
@@ -801,7 +806,7 @@ static int vioc_config_path(struct test_case_t *tc)
 	if (tc->vin.info.id != -1 && tc->vin.info.plugin != -1) {
 		ret = config_plugin(tc, VC_VIN);
 		if (ret) {
-			printf("[%s] error: plug-in %s", __func__, name_vioc_compoent[VC_VIN]);
+			DBG_ERR("plug-in %s", name_vioc_compoent[VC_VIN]);
 			goto exit;
 		}
 	}
@@ -811,7 +816,7 @@ static int vioc_config_path(struct test_case_t *tc)
 	 */
 	ret = outcfg_config(tc);
 	if (ret) {
-		printf("[%s] error: %s", __func__, name_vioc_compoent[VC_LUT]);
+		DBG_ERR("%s", name_vioc_compoent[VC_LUT]);
 		goto exit;
 	}
 
@@ -820,7 +825,7 @@ static int vioc_config_path(struct test_case_t *tc)
 	 */
 	ret = config_config(tc);
 	if (ret) {
-		printf("[%s] error: %s", __func__, name_vioc_compoent[VC_LUT]);
+		DBG_ERR("%s", name_vioc_compoent[VC_LUT]);
 		goto exit;
 	}
 
@@ -884,7 +889,8 @@ static int vioc_config_disp_path(struct test_case_t *tc)
 static int vioc_verify_regs(struct test_case_t *tc)
 {
 	int ret = 0;
-	printf("[%s]\n", __func__);
+
+	DBG(DL_TEST, "\n");
 
 	/*
 	 * RDMA - max 4 RDMAs
@@ -987,10 +993,10 @@ static int vioc_set_dma_address(struct test_case_t *tc)
 			rdma->reg.uOFFSET.bREG.OFFSET0 = offset0;
 			rdma->reg.uOFFSET.bREG.OFFSET1 = offset1;
 
-			printf("rdma[%d] base0: 0x%08x = 0x%08x\n", i, rdma->reg.nBASE0, base0);
-			printf("rdma[%d] base1: 0x%08x = 0x%08x\n", i, rdma->reg.nBASE1, base1);
-			printf("rdma[%d] base2: 0x%08x = 0x%08x\n", i, rdma->reg.nBASE2, base2);
-			printf("rdma[%d]offset: 0x%08lx (0x%x, 0x%x)\n", i, rdma->reg.uOFFSET.nREG, offset1, offset0);
+			DBG(DL_VIOC, "rdma[%d] base0: 0x%08x = 0x%08x\n", i, rdma->reg.nBASE0, base0);
+			DBG(DL_VIOC, "rdma[%d] base1: 0x%08x = 0x%08x\n", i, rdma->reg.nBASE1, base1);
+			DBG(DL_VIOC, "rdma[%d] base2: 0x%08x = 0x%08x\n", i, rdma->reg.nBASE2, base2);
+			DBG(DL_VIOC, "rdma[%d]offset: 0x%08lx (0x%x, 0x%x)\n", i, rdma->reg.uOFFSET.nREG, offset1, offset0);
 
 			rdma_set_offset(rdma, offset0, offset1);
 			rdma_set_address(rdma, base0, base1, base2);
@@ -1031,10 +1037,10 @@ static int vioc_set_dma_address(struct test_case_t *tc)
 			wdma->reg.uOFFSET.bREG.OFFSET0 = offset0;
 			wdma->reg.uOFFSET.bREG.OFFSET1 = offset1;
 
-			printf("wdma[%d] base0: 0x%08x = 0x%08x\n", i, wdma->reg.nBASE0, base0);
-			printf("wdma[%d] base1: 0x%08x = 0x%08x\n", i, wdma->reg.nBASE1, base1);
-			printf("wdma[%d] base2: 0x%08x = 0x%08x\n", i, wdma->reg.nBASE2, base2);
-			printf("wdma[%d]offset: 0x%08lx (0x%x, 0x%x)\n", i, wdma->reg.uOFFSET.nREG, offset1, offset0);
+			DBG(DL_VIOC, "wdma[%d] base0: 0x%08x = 0x%08x\n", i, wdma->reg.nBASE0, base0);
+			DBG(DL_VIOC, "wdma[%d] base1: 0x%08x = 0x%08x\n", i, wdma->reg.nBASE1, base1);
+			DBG(DL_VIOC, "wdma[%d] base2: 0x%08x = 0x%08x\n", i, wdma->reg.nBASE2, base2);
+			DBG(DL_VIOC, "wdma[%d]offset: 0x%08lx (0x%x, 0x%x)\n", i, wdma->reg.uOFFSET.nREG, offset1, offset0);
 
 			wdma_set_offset(wdma, offset0, offset1);
 			wdma_set_address(wdma, base0, base1, base2);

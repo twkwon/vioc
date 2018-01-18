@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+#include <debug.h>
 #include <vioc.h>
 
 
@@ -155,13 +156,13 @@ int wdma_setup(struct vioc_wdma_t *wdma)
 	/* check EN (enable-bit) is 0 */
 	if (wdma->reg.uCTRL.bREG.IEN) {
 		wdma->reg.uCTRL.bREG.IEN = 0;
-		printf("wdma%d IEN was set, so disable it\n", wdma->info.id);
+		DBG(DL_VIOC, "wdma%d IEN was set, so disable it\n", wdma->info.id);
 	}
 
 	/* check UPD (update-bit) is 0 */
 	if (wdma->reg.uCTRL.bREG.UPD) {
 		wdma->reg.uCTRL.bREG.UPD = 0;
-		printf("wdma%d UPD was set, so disable it\n", wdma->info.id);
+		DBG(DL_VIOC, "wdma%d UPD was set, so disable it\n", wdma->info.id);
 	}
 
 	/* set physical register */
@@ -179,7 +180,7 @@ int wdma_verify_regs(struct vioc_wdma_t *wdma)
 	s = &wdma->reg;
 	d = wdma->addr;
 
-	printf("VERIFY WDMA%d\n", wdma->info.id);
+	DBG(DL_VIOC, "VERIFY WDMA%d\n", wdma->info.id);
 	if (wdma->info.id < 0) {
 		printf("\tN/A\n");
 		return ret;

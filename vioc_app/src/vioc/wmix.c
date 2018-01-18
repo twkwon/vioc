@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+#include <debug.h>
 #include <vioc.h>
 
 
@@ -257,7 +258,7 @@ int wmix_setup(struct vioc_wmix_t *wmix)
 	/* check UPD (update-bit) is 0 */
 	if (wmix->reg.uCTRL.bREG.UPD) {
 		wmix->reg.uCTRL.bREG.UPD = 0;
-		printf("wmix%d UPD was set, so disable it\n", wmix->info.id);
+		DBG(DL_VIOC, "wmix%d UPD was set, so disable it\n", wmix->info.id);
 	}
 
 	/* set physical register */
@@ -275,7 +276,7 @@ int wmix_verify_regs(struct vioc_wmix_t *wmix)
 	s = &wmix->reg;
 	d = wmix->addr;
 
-	printf("VERIFY WMIX%d\n", wmix->info.id);
+	DBG(DL_VIOC, "VERIFY WMIX%d\n", wmix->info.id);
 	if (wmix->info.id < 0) {
 		printf("\tN/A\n");
 		return ret;

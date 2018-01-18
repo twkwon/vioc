@@ -3,7 +3,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <fcntl.h>
+#include <unistd.h>
 
+#include <debug.h>
 #include <parser.h>
 #include <vioc.h>
 
@@ -26,7 +29,7 @@ int parse_test_case(char *file_name, struct test_data_t *test_data)
 	/* open the test case file */
 	fp = fopen(file_name, "r");
 	if (fp == NULL) {
-		printf("error: file open %s\n", file_name);
+		DBG_ERR("file open %s\n", file_name);
 		perror("fopen() failed");
 		return -1;
 	}
@@ -49,7 +52,7 @@ int parse_test_case(char *file_name, struct test_data_t *test_data)
 		list_add_tail(&tdata->list, &test_data->list);
 	}
 
-	if (debug_level == DEBUG_VERIFY) {
+	if (g_dbg_lvl & DL_PARSER) {
 		print_all_list(tcase, test_data);
 	}
 
@@ -70,21 +73,22 @@ int read_data(FILE *fp, struct getbuf_t *tcase)
 	size_t len = 0;
 	ssize_t read;
 
-	printf("[%s]\n", __func__);
+	//DBG(DL_TEST, "%d\n", nr_test);
+	DBG(DL_TEST, "\n");
 
 	nr_test = 1;
 	while ((read = getline(&line, &len, fp)) != -1) {
 		struct getbuf_t *gb;
 		gb = (struct getbuf_t *)malloc(sizeof(struct getbuf_t));
 
-		printf("\nRetrieved line of length %zu (excluding terminate NULL character)\n", read);
-		printf("getline: %s", line);
+		DBG(DL_PARSER, "Retrieved line of length %zu (excluding terminate NULL character)\n", read);
+		DBG(DL_PARSER, "getline: %s", line);
 
 		gb->idx = nr_test++;
 		gb->buf_size = read + 1;
 		gb->buf = calloc(gb->buf_size, sizeof(char));
 		memcpy(gb->buf, line, (gb->buf_size * sizeof(char)));
-		printf("\ngb->buf (size %d): %s", gb->buf_size, gb->buf);
+		DBG(DL_PARSER, "gb->buf (size %d): %s", gb->buf_size, gb->buf);
 
 		list_add_tail(&gb->list, &tcase->list);
 		//list_add(&gb->list, &tcase->list);
@@ -106,12 +110,12 @@ int parser(struct test_data_t *tdata, struct getbuf_t *tcase, int test_no)
 	char *start_addr;	// start address of vioc component
 	int offset;			// read reg val from start_addr + offset
 
-	printf("\n[%s]\n", __func__);
+	DBG(DL_TEST, "\n");
 
 	list_for_each(pos, &tcase->list) {
 		gb = list_entry(pos, struct getbuf_t, list);
 		if (gb->idx == test_no) {
-			printf("found gb->idx(%d) gb->buf_size(%d)\n", gb->idx, gb->buf_size);
+			DBG(DL_PARSER, "found gb->idx(%d) gb->buf_size(%d)\n", gb->idx, gb->buf_size);
 			tdata->test_no = gb->idx;
 			buf = calloc(gb->buf_size, sizeof(char));
 			memcpy(buf, gb->buf, (gb->buf_size * sizeof(char)));
@@ -119,26 +123,26 @@ int parser(struct test_data_t *tdata, struct getbuf_t *tcase, int test_no)
 		}
 	}
 
-	printf("test_no: %d buf: %s", tdata->test_no, buf);
+	DBG(DL_PARSER, "test_no: %d buf: %s", tdata->test_no, buf);
 
 	i = 0;
 	nr_vioc = 0;
 	nr_regs = 0;
 	do {
 		sscanf(buf+i, "%c", &c);
-		//printf("%c", c);
+		//DBG(DL_PARSER, "%c", c);
 		if (',' == c) {
 			//printf("',' is %dth\n", i);
 			nr_regs_end[nr_regs++] = i;
 		} else if (':' == c) {
-			//printf("':' is %dth\n", i);
+			//DBG(DL_PARSER, "':' is %dth\n", i);
 			nr_vioc_start[nr_vioc++] = i + 1;
 		}
 		i++;
 	} while ('\n' != c);
 
 	nr_vioc = nr_vioc - 1;
-	printf("nr_vioc(%d) nr_regs(%d)\n", nr_vioc, nr_regs);
+	DBG(DL_PARSER, "nr_vioc(%d) nr_regs(%d)\n", nr_vioc, nr_regs);
 
 	/* get test name */
 	sscanf(buf, "%[^','],%[^','],%d,%d,%d,%[^','],%d,%d,%d,%[^','],%d,%d,%d,%[^','],%d,%d,%d,%[^','],%[^','],%[^','],%[^',']",
@@ -165,7 +169,7 @@ int parser(struct test_data_t *tdata, struct getbuf_t *tcase, int test_no)
 				count++;
 			}
 		}
-		printf("case(%d): start_pos(%d) count(%d)\n", i, start_pos, count);
+		DBG(DL_PARSER, "case(%d): start_pos(%d) count(%d)\n", i, start_pos, count);
 		start_addr = buf + nr_vioc_start[i];
 		offset = 0;
 
@@ -176,13 +180,13 @@ int parser(struct test_data_t *tdata, struct getbuf_t *tcase, int test_no)
 
 			if (j == 0) {
 				diff = nr_regs_end[start_pos] - (nr_vioc_start[i] - 1);
-				//printf("%d = %d - %d\n", diff, nr_regs_end[start_pos], (nr_vioc_start[i] - 1));
+				//DBG(DL_PARSER, "%d = %d - %d\n", diff, nr_regs_end[start_pos], (nr_vioc_start[i] - 1));
 			} else {
 				diff = nr_regs_end[start_pos + (j - 1) + 1] - nr_regs_end[start_pos + (j - 1)];
-				//printf("%d = %d - %d\n", diff, nr_regs_end[start_pos + (j - 1) + 1], nr_regs_end[start_pos + (j - 1)]);
+				//DBG(DL_PARSER, "%d = %d - %d\n", diff, nr_regs_end[start_pos + (j - 1) + 1], nr_regs_end[start_pos + (j - 1)]);
 			}
 			offset += diff;
-			//printf("offset %d\n", offset);
+			//DBG(DL_PARSER, "offset %d\n", offset);
 
 			switch (i) {
 				case VC_DISP_RDMA:
@@ -250,7 +254,8 @@ int parser(struct test_data_t *tdata, struct getbuf_t *tcase, int test_no)
 		}
 	}
 
-	//print_parsed_data(tdata);
+	//if (g_dbg_lvl & DL_PARSER)
+		//print_parsed_data(tdata);
 
 	free(buf);
 
@@ -260,20 +265,20 @@ int parser(struct test_data_t *tdata, struct getbuf_t *tcase, int test_no)
 void print_all_list(struct getbuf_t *t, struct test_data_t *td)
 {
 	struct list_head *pos;
-	printf("\n[%s]\n", __func__);
+	DBG(DL_TEST, "\n");
 
 	if (t != NULL) {
-		printf("PRINT getbuf_t list\n");
+		DBG(DL_PARSER, "PRINT getbuf_t list\n");
 		list_for_each(pos, &t->list) {
 			struct getbuf_t *k = list_entry(pos, struct getbuf_t, list);
-			printf("idx : %d\n", k->idx);
-			printf("size: %d\n", k->buf_size);
-			printf("buf : %s\n", k->buf);
+			DBG(DL_PARSER, "idx : %d\n", k->idx);
+			DBG(DL_PARSER, "size: %d\n", k->buf_size);
+			DBG(DL_PARSER, "buf : %s\n", k->buf);
 		}
 	}
 
 	if (td != NULL) {
-		printf("PRINT test_data_t list");
+		DBG(DL_PARSER, "PRINT test_data_t list");
 		list_for_each(pos, &td->list) {
 			struct test_data_t *tmp = list_entry(pos, struct test_data_t, list);
 			print_parsed_data(tmp);
@@ -284,11 +289,11 @@ void print_all_list(struct getbuf_t *t, struct test_data_t *td)
 void delete_all_list(struct getbuf_t *t)
 {
 	struct list_head *pos, *q;
-	printf("\n[%s]\n", __func__);
+	DBG(DL_TEST, "\n");
 
 	list_for_each_safe(pos, q, &t->list) {
 		struct getbuf_t *k = list_entry(pos, struct getbuf_t, list);
-		printf("remove tcase->idx : %d\n", k->idx);
+		DBG(DL_PARSER, "remove tcase->idx : %d\n", k->idx);
 		free(k->buf);
 		list_del(pos);
 		free(k);
