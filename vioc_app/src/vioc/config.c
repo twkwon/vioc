@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <unistd.h>
 
 #include <debug.h>
 #include <vioc.h>
@@ -482,8 +483,11 @@ int config_reset(struct test_case_t *tc)
 	}
 
 	if (tc->disp_rdma.info.id != -1) {
+		rdma_set_size(&tc->disp_rdma, 0, 0);
 		ret += reset_rdma_ctrl(tc, VC_DISP_RDMA, reset_status);
 	}
+
+	sleep(1);
 
 	/*
 	 * normal status
@@ -531,6 +535,8 @@ int config_reset(struct test_case_t *tc)
 	if (tc->disp_rdma.info.id != -1) {
 		ret += reset_rdma_ctrl(tc, VC_DISP_RDMA, reset_status);
 	}
+
+	sleep(1);
 
 	return ret;
 }

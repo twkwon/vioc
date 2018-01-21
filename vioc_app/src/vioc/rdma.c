@@ -12,7 +12,32 @@ void rdma_en_ctrl(struct vioc_rdma_t *rdma, unsigned int enable)
 
 void rdma_set_fmt(struct vioc_rdma_t *rdma, unsigned int fmt)
 {
-	BITCSET(rdma->addr->uMISC.nREG, 0x0000001f, fmt);
+	BITCSET(rdma->addr->uMISC.nREG, 0x1f << 0, fmt << 0);
+}
+
+void rdma_set_fmt10(struct vioc_rdma_t *rdma, unsigned int fmt10)
+{
+	BITCSET(rdma->addr->uMISC.nREG, 0x7 << 5, fmt10 << 5);
+}
+
+void rdma_set_y2r(struct vioc_rdma_t *rdma, unsigned int y2r)
+{
+	BITCSET(rdma->addr->uCTRL.nREG, 0x1 << 8, y2r << 8);
+}
+
+void rdma_set_y2rmd(struct vioc_rdma_t *rdma, unsigned int y2rmd)
+{
+	BITCSET(rdma->addr->uMISC.nREG, 0x7 << 8, y2rmd << 8);
+}
+
+void rdma_set_r2y(struct vioc_rdma_t *rdma, unsigned int r2y)
+{
+	BITCSET(rdma->addr->uCTRL.nREG, 0x1 << 17, r2y << 17);
+}
+
+void rdma_set_r2ymd(struct vioc_rdma_t *rdma, unsigned int r2ymd)
+{
+	BITCSET(rdma->addr->uMISC.nREG, 0x7, r2ymd << 12);
 }
 
 void rdma_set_size(struct vioc_rdma_t *rdma, unsigned int width, unsigned int height)
@@ -61,22 +86,28 @@ int rdma_map_regs(struct vioc_rdma_t *rdma, struct test_data_reg_val_t *data)
 	map_reg(reg->uCTRL.bREG.NUVIH,	dat[idx]); idx++;
 	map_reg(reg->uCTRL.bREG.DIT,	dat[idx]); idx++;
 	map_reg(reg->uCTRL.bREG.DITS,	dat[idx]); idx++;
+
 	map_reg(reg->uCTRL.bREG.R2YMD,	dat[idx]); idx++;
-	map_reg(reg->uCTRL.bREG.R2Y,	dat[idx]); idx++;
+	map_reg(reg->uCTRL.bREG.R2Y,	dat[idx]);
+	if (dat[idx] == -1) {BITCSET(auto_set, AUTO_DMA_R2Y, AUTO_DMA_R2Y);}
+	idx++;
+
 	map_reg(reg->uCTRL.bREG.UPD,	dat[idx]); idx++;
 	map_reg(reg->uCTRL.bREG.PD,		dat[idx]); idx++;
 	map_reg(reg->uCTRL.bREG.SWAP,	dat[idx]); idx++;
 	map_reg(reg->uCTRL.bREG.AEN,	dat[idx]); idx++;
+
 	map_reg(reg->uCTRL.bREG.Y2RMD,	dat[idx]); idx++;
-	map_reg(reg->uCTRL.bREG.Y2R,	dat[idx]); idx++;
+	map_reg(reg->uCTRL.bREG.Y2R,	dat[idx]);
+	if (dat[idx] == -1) {BITCSET(auto_set, AUTO_DMA_Y2R, AUTO_DMA_Y2R);}
+	idx++;
+
 	map_reg(reg->uCTRL.bREG.BR,		dat[idx]); idx++;
 	map_reg(reg->uCTRL.bREG.R2YM2,	dat[idx]); idx++;
 	map_reg(reg->uCTRL.bREG.Y2RM2,	dat[idx]); idx++;
 
 	map_reg(reg->uCTRL.bREG.FMT,	dat[idx]);
-	if (dat[idx] == -1) {
-		BITCSET(auto_set, AUTO_RDMA_FMT, AUTO_RDMA_FMT);
-	}
+	if (dat[idx] == -1) {BITCSET(auto_set, AUTO_DMA_FMT, AUTO_DMA_FMT);}
 	idx++;
 
 	/* PTS */
@@ -86,16 +117,12 @@ int rdma_map_regs(struct vioc_rdma_t *rdma, struct test_data_reg_val_t *data)
 	/* SIZE */
 	map_reg(reg->uSIZE.bREG.HEIGHT,	dat[idx]); idx++;
 	map_reg(reg->uSIZE.bREG.WIDTH,	dat[idx]);
-	if (dat[idx] == -1) {
-		BITCSET(auto_set, AUTO_RDMA_SIZE, AUTO_RDMA_SIZE);
-	}
+	if (dat[idx] == -1) {BITCSET(auto_set, AUTO_DMA_SIZE, AUTO_DMA_SIZE);}
 	idx++;
 
 	/* BASE0 */
 	map_reg(reg->nBASE0, dat[idx]);
-	if (dat[idx] == -1) {
-		BITCSET(auto_set, AUTO_RDMA_BASE, AUTO_RDMA_BASE);
-	}
+	if (dat[idx] == -1) {BITCSET(auto_set, AUTO_DMA_BASE, AUTO_DMA_BASE);}
 	idx++;
 
 	/* CADDR (RO) */
@@ -110,18 +137,28 @@ int rdma_map_regs(struct vioc_rdma_t *rdma, struct test_data_reg_val_t *data)
 	/* OFFS */
 	map_reg(reg->uOFFSET.bREG.OFFSET1,	dat[idx]); idx++;
 	map_reg(reg->uOFFSET.bREG.OFFSET0,	dat[idx]);
-	if (dat[idx] == -1) {
-		BITCSET(auto_set, AUTO_RDMA_OFFS, AUTO_RDMA_OFFS);
-	}
+	if (dat[idx] == -1) {BITCSET(auto_set, AUTO_DMA_OFFS, AUTO_DMA_OFFS);}
 	idx++;
 
 	/* MISC */
 	map_reg(reg->uMISC.bREG.ISSUE,	dat[idx]); idx++;
 	map_reg(reg->uMISC.bREG.LPEN,	dat[idx]); idx++;
-	map_reg(reg->uMISC.bREG.R2YMD,	dat[idx]); idx++;
-	map_reg(reg->uMISC.bREG.Y2RMD,	dat[idx]); idx++;
-	map_reg(reg->uMISC.bREG.FMT10, 	dat[idx]); idx++;
-	map_reg(reg->uMISC.bREG.FMT,	dat[idx]); idx++;
+
+	map_reg(reg->uMISC.bREG.R2YMD,	dat[idx]);
+	if (dat[idx] == -1) {BITCSET(auto_set, AUTO_DMA_R2YMD, AUTO_DMA_R2YMD);}
+	idx++;
+	map_reg(reg->uMISC.bREG.Y2RMD,	dat[idx]);
+	if (dat[idx] == -1) {BITCSET(auto_set, AUTO_DMA_Y2RMD, AUTO_DMA_Y2RMD);}
+	idx++;
+
+	map_reg(reg->uMISC.bREG.FMT10,	dat[idx]);
+	if (dat[idx] == -1) {BITCSET(auto_set, AUTO_DMA_FMT10, AUTO_DMA_FMT10);}
+	idx++;
+	map_reg(reg->uMISC.bREG.FMT,	dat[idx]);
+	if (dat[idx] == -1 && ISSET(auto_set, AUTO_DMA_FMT)) {
+		BITCSET(auto_set, AUTO_DMA_FMT, AUTO_DMA_FMT);
+	}
+	idx++;
 
 	/* ALPHA */
 	map_reg(reg->uALPHA.bREG.ALPHA1, dat[idx]); idx++;

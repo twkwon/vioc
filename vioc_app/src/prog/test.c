@@ -1,12 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include <debug.h>
 #include <vioc.h>
 #include <parser.h>
 #include <pmap.h>
 #include <mmap.h>
+
+extern unsigned int auto_test;
 
 static void delete_test_data_list(struct test_data_t *);
 static int run_test_single(struct test_case_t *, struct test_data_t *, struct image_file_t *);
@@ -96,20 +99,23 @@ int test_main(char *file_name, char *pmap_name)
 			print_parsed_data(td);
 		}
 
-		/* run single test case */
+		if (auto_test)
+			goto run_test;
+
 		printf("Do you want to run the test%d (%s)? [y/n] ", td->test_no, td->test_name);
 		c = getchar();
 		if (c == 'y' || c == 'Y') {
-			printf("\n\n==================================\n");
-			printf("     RUN TEST CASE No.%d\n", td->test_no);
-			printf("      - %s\n", td->test_name);
-			printf("==================================\n");
+run_test:
+			printf("\n============================================\n");
+			printf(" TEST CASE No.%d - %s\n", td->test_no, td->test_name);
+			printf("============================================\n");
 
 			memset(test_case, 0, sizeof(struct test_case_t));
 			test_case->vioc_base_addr = backup_vioc_base_address;
 			test_case->todo_disable_prev_sc_id = todo_disable_sc_id;
 
 			ret = run_test_single(test_case, td, &image);
+			sleep(3);
 			if (ret) {
 				td->test_status = TEST_STATUS_ERR_RUN;
 				printf("---> ERROR: run test\n");
@@ -127,7 +133,9 @@ int test_main(char *file_name, char *pmap_name)
 			td->test_status = TEST_STATUS_RUN_SKIP;
 			printf("---> SKIP TEST%d:%s\n", td->test_no, td->test_name);
 		}
-		getchar();
+
+		if (!auto_test)
+			getchar();
 	}
 
 	printf("\n<----------- END OF TEST ----------->\n");
@@ -309,6 +317,7 @@ static int setup_image_file(struct test_case_t *tc, struct image_file_t *img)
 	int fname_to_int;
 	long flen;
 	FILE *fp;
+	unsigned int output_len;
 
 	DBG(DL_TEST, "\n");
 
@@ -355,7 +364,7 @@ static int setup_image_file(struct test_case_t *tc, struct image_file_t *img)
 		/* read binary file into pmap buf */
 		tc->input_file[i].len = fread((char *)tc->input_file[i].vaddr, 1, flen, fp);
 		if (tc->input_file[i].len == flen) {
-			DBG_ERR("read %s %d bytes\n", tc->input_file[i].name, tc->input_file[i].len);
+			DBG(DL_TEST, "read %s %d bytes\n", tc->input_file[i].name, tc->input_file[i].len);
 		} else {
 			if (feof(fp)) {
 				DBG_ERR("read %s: unexpected end of file\n", tc->input_file[i].name);
@@ -404,6 +413,13 @@ static int setup_image_file(struct test_case_t *tc, struct image_file_t *img)
 		img->output[i].fmt = tc->output_file[i].fmt;
 		img->output[i].width = tc->output_file[i].width;
 		img->output[i].height = tc->output_file[i].height;
+
+		/*
+		 * clear output buffer as zero
+		 */
+		output_len = tcc_get_image_size(tc->output_file[i].fmt,
+						tc->output_file[i].width, tc->output_file[i].height);
+		memset((unsigned char *)tc->output_file[i].vaddr, 0, output_len);
 	}
 
 	if (g_dbg_lvl == DL_VERIFY) {
@@ -518,13 +534,11 @@ int tcc_get_bpp(unsigned int format)
 	int bpp;
 
 	switch (format) {
-
-		/* What is these ? */
 		case VIOC_IMG_FMT_BPP1:
 		case VIOC_IMG_FMT_BPP2:
 		case VIOC_IMG_FMT_BPP4:
-			//bpp = ????;
-			//break;
+			bpp = 1;
+			break;
 
 			/* RGB formats */
 		case VIOC_IMG_FMT_BPP8:

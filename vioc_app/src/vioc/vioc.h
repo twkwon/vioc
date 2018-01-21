@@ -45,6 +45,12 @@ enum tcc_pix_fmt {
     TCC_PFMT_RGB,
 };
 
+/* FMT10 */
+#define DATA_FMT_8BIT		0
+#define DATA_FMT_10BIT		1
+#define DATA_FMT_16BIT		3
+
+/* IMAGE FORMAT */
 #define VIOC_IMG_FMT_BPP1           0       // 1bit
 #define VIOC_IMG_FMT_BPP2           1       // 2bits
 #define VIOC_IMG_FMT_BPP4           2       // 4bits
@@ -132,10 +138,15 @@ struct vioc_component_t {
 	int plugin;					// SELECT bits of plug-in register in the Configuration & Interrupt part
 };
 
-#define AUTO_RDMA_FMT	0x0001
-#define AUTO_RDMA_SIZE	0x0010
-#define AUTO_RDMA_BASE	0x0100
-#define AUTO_RDMA_OFFS	0x1000
+#define AUTO_DMA_FMT		(0x00000001)
+#define AUTO_DMA_FMT10		(0x00000002)
+#define AUTO_DMA_Y2R		(0x00000010)
+#define AUTO_DMA_Y2RMD		(0x00000020)
+#define AUTO_DMA_R2Y		(0x00000040)
+#define AUTO_DMA_R2YMD		(0x00000080)
+#define AUTO_DMA_SIZE		(0x00000100)
+#define AUTO_DMA_BASE		(0x00001000)
+#define AUTO_DMA_OFFS		(0x00010000)
 
 struct vioc_rdma_t {
 	struct vioc_component_t info;
@@ -305,6 +316,11 @@ extern int rdma_setup(struct vioc_rdma_t *);
 extern void rdma_set_offset(struct vioc_rdma_t *, unsigned int, unsigned int);
 extern void rdma_set_address(struct vioc_rdma_t *, addr_t, addr_t, addr_t);
 extern void rdma_set_fmt(struct vioc_rdma_t *, unsigned int);
+extern void rdma_set_fmt10(struct vioc_rdma_t *, unsigned int);
+extern void rdma_set_y2r(struct vioc_rdma_t *, unsigned int);
+extern void rdma_set_y2rmd(struct vioc_rdma_t *, unsigned int);
+extern void rdma_set_r2y(struct vioc_rdma_t *, unsigned int);
+extern void rdma_set_r2ymd(struct vioc_rdma_t *, unsigned int);
 extern void rdma_set_size(struct vioc_rdma_t *, unsigned int, unsigned int);
 extern void rdma_en_ctrl(struct vioc_rdma_t *, unsigned int);
 

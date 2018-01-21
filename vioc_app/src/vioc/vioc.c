@@ -1,9 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include <debug.h>
 #include <vioc.h>
+
+extern unsigned int disp_test;
 
 static int vioc_get_component_info(struct test_case_t *, struct test_data_t *);
 static int vioc_map_component_regs(struct test_case_t *, struct test_data_t *);
@@ -86,6 +89,10 @@ int setup_vioc_path(struct test_case_t *test_case)
 
 	DBG(DL_TEST, "\n");
 
+	if (test_case->disp_rdma.info.id != -1 && disp_test == 0) {
+		test_case->disp_rdma.info.id = -1;
+	}
+
 	/*
 	 * reset vioc components
 	 */
@@ -142,7 +149,7 @@ exit:
 int shoot_test(struct test_case_t *tc)
 {
 	int ret = 0;
-	printf("\n\nSHOOTING !!!!!\n\n");
+	printf("SHOOTING !!!!!\n");
 
 	/*
 	 * bit order
@@ -569,6 +576,8 @@ static int vioc_reset_path(struct test_case_t *tc)
 		rdma_en_ctrl(&tc->disp_rdma, 0);
 	}
 
+	sleep(1);
+
 	/*
 	 * Reset components
 	 */
@@ -843,8 +852,9 @@ static int vioc_config_disp_path(struct test_case_t *tc)
 	int ret = 0;
 	addr_t base0, base1, base2;
 	unsigned int offset0, offset1;
-	unsigned int fmt;
+	unsigned int fmt, fmt10;
 	unsigned int width, height;
+	unsigned int y2r, y2rmd, r2y, r2ymd;
 	struct vioc_rdma_t *rdma;
 	struct vioc_wdma_t *wdma;
 
@@ -859,28 +869,61 @@ static int vioc_config_disp_path(struct test_case_t *tc)
 		return ret;
 	}
 
-	if (ISSET(rdma->auto_set, AUTO_RDMA_FMT)) {
+	if (ISSET(rdma->auto_set, AUTO_DMA_FMT)) {
 		fmt = wdma->reg.uCTRL.bREG.FMT;
 		rdma_set_fmt(rdma, fmt);
 	}
 
-	if (ISSET(rdma->auto_set, AUTO_RDMA_SIZE)) {
+	if (ISSET(rdma->auto_set, AUTO_DMA_FMT10)) {
+		fmt10 = wdma->reg.uCTRL.bREG.FMT10;
+		rdma_set_fmt10(rdma, fmt10);
+	}
+
+	if (ISSET(rdma->auto_set, AUTO_DMA_SIZE)) {
 		width = wdma->reg.uSIZE.bREG.WIDTH;
 		height = wdma->reg.uSIZE.bREG.HEIGHT;
 		rdma_set_size(rdma, width, height);
 	}
 
-	if (ISSET(rdma->auto_set, AUTO_RDMA_BASE)) {
+	if (ISSET(rdma->auto_set, AUTO_DMA_BASE)) {
 		base0 = wdma->reg.nBASE0;
 		base1 = wdma->reg.nBASE1;
 		base2 = wdma->reg.nBASE2;
 		rdma_set_address(rdma, base0, base1, base2);
 	}
 
-	if (ISSET(rdma->auto_set, AUTO_RDMA_OFFS)) {
+	if (ISSET(rdma->auto_set, AUTO_DMA_OFFS)) {
 		offset0 = wdma->reg.uOFFSET.bREG.OFFSET0;
 		offset1 = wdma->reg.uOFFSET.bREG.OFFSET1;
 		rdma_set_offset(rdma, offset0, offset1);
+	}
+
+	/*
+	 * DISP_PATH rules:
+	 * - If there are user values, we will set these.
+	 * - Otherwise, always displays RGB format and Y2RMD, R2YMD are mode 0
+	 */
+	if (ISSET(rdma->auto_set, AUTO_DMA_Y2R)) {
+		if (wdma->reg.uCTRL.bREG.FMT >= VIOC_IMG_FMT_444SEP)
+			y2r = 1;
+		else
+			y2r = 0;
+		rdma_set_y2r(rdma, y2r);
+	}
+
+	if (ISSET(rdma->auto_set, AUTO_DMA_Y2RMD)) {
+		y2rmd = 0;
+		rdma_set_y2rmd(rdma, y2rmd);
+	}
+
+	if (ISSET(rdma->auto_set, AUTO_DMA_R2Y)) {
+		r2y = 0;
+		rdma_set_r2y(rdma, r2y);
+	}
+
+	if (ISSET(rdma->auto_set, AUTO_DMA_R2YMD)) {
+		r2ymd = 0;
+		rdma_set_r2ymd(rdma, r2ymd);
 	}
 
 	return ret;
@@ -954,6 +997,7 @@ static int vioc_set_dma_address(struct test_case_t *tc)
 	unsigned int offset0, offset1;
 	unsigned int width, height;
 	unsigned int start_x, start_y;
+	int format;
 
 	for (i = 0; i < MAX_NUM_OF_RDMA; i++) {
 		if (tc->input_file[i].id != -1) {
@@ -983,9 +1027,28 @@ static int vioc_set_dma_address(struct test_case_t *tc)
 			base0 = tc->input_file[i].paddr;
 			width = tc->input_file[i].width;
 			height = tc->input_file[i].height;
+			format = tc->input_file[i].fmt;
 
-			vioc_get_dma_offset(tc->input_file[i].fmt, width, &offset0, &offset1);
-			vioc_get_dma_address(tc->input_file[i].fmt, base0, width, height, start_x, start_y, &base0, &base1, &base2);
+			switch (rdma->reg.uMISC.bREG.FMT10 && 0x3) {
+			case DATA_FMT_16BIT:
+				/* FMT[1:0] - b01: 16bit format */
+				vioc_get_dma_offset(format, (width * 2), &offset0, &offset1);
+				/* I can't calculate base1,2 so I set these with margin */
+				vioc_get_dma_address(format, base0, (width * 2), height, start_x, start_y, &base0, &base1, &base2);
+				break;
+			case DATA_FMT_10BIT:
+				/* FMT[1:0] - b11: 10bit format */
+				vioc_get_dma_offset(format, (width * 125 / 100), &offset0, &offset1);
+				/* I can't calculate base1,2 so I set these with margin */
+				vioc_get_dma_address(format, base0, (width * 125 / 100), height, start_x, start_y, &base0, &base1, &base2);
+				break;
+			case DATA_FMT_8BIT:
+			default:
+				/* FMT[1:0] - b00: 8bit format */
+				vioc_get_dma_offset(format, width, &offset0, &offset1);
+				vioc_get_dma_address(format, base0, width, height, start_x, start_y, &base0, &base1, &base2);
+				break;
+			}
 
 			rdma->reg.nBASE0 = base0;
 			rdma->reg.nBASE1 = base1;
@@ -1005,7 +1068,6 @@ static int vioc_set_dma_address(struct test_case_t *tc)
 
 	for (i = 0; i < MAX_NUM_OF_WDMA; i++) {
 		if (tc->output_file[i].id != -1) {
-			int format;
 			struct vioc_wdma_t *wdma;
 
 			switch (i) {
@@ -1028,8 +1090,26 @@ static int vioc_set_dma_address(struct test_case_t *tc)
 			height = wdma->reg.uSIZE.bREG.HEIGHT;
 			format = wdma->reg.uCTRL.bREG.FMT;
 
-			vioc_get_dma_offset(format, width, &offset0, &offset1);
-			vioc_get_dma_address(format, base0, width, height, start_x, start_y, &base0, &base1, &base2);
+			switch (wdma->reg.uCTRL.bREG.FMT10 && 0x3) {
+			case DATA_FMT_16BIT:
+				/* FMT[1:0] - b01: 16bit format */
+				vioc_get_dma_offset(format, (width * 2), &offset0, &offset1);
+				/* I can't calculate base1,2 so I set these with margin */
+				vioc_get_dma_address(format, base0, (width * 2), height, start_x, start_y, &base0, &base1, &base2);
+				break;
+			case DATA_FMT_10BIT:
+				/* FMT[1:0] - b11: 10bit format */
+				vioc_get_dma_offset(format, (width * 125 / 100), &offset0, &offset1);
+				/* I can't calculate base1,2 so I set these with margin */
+				vioc_get_dma_address(format, base0, (width * 125 / 100), height, start_x, start_y, &base0, &base1, &base2);
+				break;
+			case DATA_FMT_8BIT:
+			default:
+				/* FMT[1:0] - b00: 8bit format */
+				vioc_get_dma_offset(format, width, &offset0, &offset1);
+				vioc_get_dma_address(format, base0, width, height, start_x, start_y, &base0, &base1, &base2);
+				break;
+			}
 
 			wdma->reg.nBASE0 = base0;
 			wdma->reg.nBASE1 = base1;
