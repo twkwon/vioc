@@ -432,3 +432,65 @@ int rdma_verify_regs(struct vioc_rdma_t *rdma)
 
 	return ret;
 }
+
+int prev_disp_rdma_id = -2;
+VIOC_RDMA prev_disp_rdma_regs;
+int disp_rdma_clear_regs(struct test_case_t *tc)
+{
+	int ret = 0;
+
+	DBG(DL_VIOC, "\n");
+
+	if (tc->disp_rdma.info.id != -1) {
+		return ret;
+	}
+
+	/*
+	 * If first setting disp_rdma after starting app
+	 */
+	if (-2 == prev_disp_rdma_id) {
+		/* disable & reset */
+		rdma_en_ctrl(&tc->disp_rdma, 0);
+		rdma_set_size(&tc->disp_rdma, 0, 0);
+		ret += reset_rdma_ctrl(tc, VC_DISP_RDMA, 1);
+		ret += reset_rdma_ctrl(tc, VC_DISP_RDMA, 0);
+
+		/* backup disp_rdma regs */
+		prev_disp_rdma_id = tc->disp_rdma.info.id;
+		prev_disp_rdma_regs = *tc->disp_rdma.addr;		// backup regs after resetting
+
+		DBG(DL_VIOC, "first disp_rdma(%d)\n",prev_disp_rdma_id );
+		return ret;
+	}
+
+	/*
+	 * If the currrnt disp_rdma is equal to the previous disp_rdma
+	 */
+	if (prev_disp_rdma_id == tc->disp_rdma.info.id) {
+		rdma_en_ctrl(&tc->disp_rdma, 0);
+		*tc->disp_rdma.addr = prev_disp_rdma_regs;		// restore regs
+
+		DBG(DL_VIOC, "restore disp_rdma(%d)\n",prev_disp_rdma_id );
+		return ret;
+	}
+
+	/*
+	 * If new disp_rdma
+	 */
+	if (prev_disp_rdma_id != tc->disp_rdma.info.id) {
+		/* disable & reset */
+		rdma_en_ctrl(&tc->disp_rdma, 0);
+		rdma_set_size(&tc->disp_rdma, 0, 0);
+		ret += reset_rdma_ctrl(tc, VC_DISP_RDMA, 1);
+		ret += reset_rdma_ctrl(tc, VC_DISP_RDMA, 0);
+
+		/* backup disp_rdma regs */
+		prev_disp_rdma_id = tc->disp_rdma.info.id;
+		prev_disp_rdma_regs = *tc->disp_rdma.addr;		// backup regs after resetting
+
+		DBG(DL_VIOC, "new disp_rdma(%d)\n",prev_disp_rdma_id );
+		return ret;
+	}
+
+	return ret;
+}

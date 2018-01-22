@@ -42,7 +42,7 @@ static int plugin_lut(struct test_case_t *, enum vioc_components);
 static int plugin_vin(struct test_case_t *, enum vioc_components);
 static int reset_wdma_ctrl(struct test_case_t *, enum vioc_components, unsigned int);
 static int reset_wmix_ctrl(struct test_case_t *, enum vioc_components, unsigned int);
-static int reset_rdma_ctrl(struct test_case_t *, enum vioc_components, unsigned int);
+int reset_rdma_ctrl(struct test_case_t *, enum vioc_components, unsigned int);
 static int reset_vin_ctrl(struct test_case_t *, enum vioc_components, unsigned int);
 static int reset_sc_ctrl(struct test_case_t *, enum vioc_components, unsigned int);
 static int reset_lut_ctrl(struct test_case_t *, enum vioc_components, unsigned int);
@@ -482,10 +482,12 @@ int config_reset(struct test_case_t *tc)
 		ret += reset_lut_ctrl(tc, VC_LUT, reset_status);
 	}
 
+#ifndef DO_NOT_RESET_DISP_PATH
 	if (tc->disp_rdma.info.id != -1) {
 		rdma_set_size(&tc->disp_rdma, 0, 0);
 		ret += reset_rdma_ctrl(tc, VC_DISP_RDMA, reset_status);
 	}
+#endif
 
 	sleep(1);
 
@@ -532,9 +534,11 @@ int config_reset(struct test_case_t *tc)
 		ret += reset_wdma_ctrl(tc, VC_WDMA_2nd, reset_status);
 	}
 
+#ifndef DO_NOT_RESET_DISP_PATH
 	if (tc->disp_rdma.info.id != -1) {
 		ret += reset_rdma_ctrl(tc, VC_DISP_RDMA, reset_status);
 	}
+#endif
 
 	sleep(1);
 
@@ -592,7 +596,7 @@ static int reset_wmix_ctrl(struct test_case_t *tc, enum vioc_components comp, un
 	return ret;
 }
 
-static int reset_rdma_ctrl(struct test_case_t *tc, enum vioc_components comp, unsigned int reset)
+int reset_rdma_ctrl(struct test_case_t *tc, enum vioc_components comp, unsigned int reset)
 {
 	int ret = 0;
 	volatile VIOC_POWER_BLOCKS_u *cfg_reset;

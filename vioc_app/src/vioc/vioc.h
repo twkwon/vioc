@@ -323,6 +323,7 @@ extern void rdma_set_r2y(struct vioc_rdma_t *, unsigned int);
 extern void rdma_set_r2ymd(struct vioc_rdma_t *, unsigned int);
 extern void rdma_set_size(struct vioc_rdma_t *, unsigned int, unsigned int);
 extern void rdma_en_ctrl(struct vioc_rdma_t *, unsigned int);
+extern int disp_rdma_clear_regs(struct test_case_t *);
 
 extern int wdma_map_regs(struct vioc_wdma_t *, struct test_data_reg_val_t *);
 extern int wdma_verify_regs(struct vioc_wdma_t *);
@@ -366,5 +367,6 @@ extern int config_plugin(struct test_case_t *, enum vioc_components);
 extern int config_plugout_sc(struct test_case_t *, unsigned int);
 extern int config_config(struct test_case_t *);
 extern int config_reset(struct test_case_t *);
+extern int reset_rdma_ctrl(struct test_case_t *, enum vioc_components, unsigned int);
 
 #endif /*__VIOC_H__*/

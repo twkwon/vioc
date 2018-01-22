@@ -30,6 +30,9 @@
 
 #define REG_ALWAYS_READ	(1)
 
+/* reset or not about display path */
+#define DO_NOT_RESET_DISP_PATH
+
 /*
  * Specific Type
  */

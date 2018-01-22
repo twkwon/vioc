@@ -582,6 +582,9 @@ static int vioc_reset_path(struct test_case_t *tc)
 	 * Reset components
 	 */
 	config_reset(tc);
+#ifdef DO_NOT_RESET_DISP_PATH
+	disp_rdma_clear_regs(tc);
+#endif
 
 	return ret;
 }
