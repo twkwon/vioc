@@ -576,7 +576,7 @@ static int vioc_reset_path(struct test_case_t *tc)
 		rdma_en_ctrl(&tc->disp_rdma, 0);
 	}
 
-	sleep(1);
+	//sleep(1);
 
 	/*
 	 * Reset components
@@ -585,6 +585,8 @@ static int vioc_reset_path(struct test_case_t *tc)
 #ifdef DO_NOT_RESET_DISP_PATH
 	disp_rdma_clear_regs(tc);
 #endif
+
+	//sleep(1);
 
 	return ret;
 }
