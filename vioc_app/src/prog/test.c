@@ -34,6 +34,9 @@ int test_main(char *file_name, char *pmap_name)
 	struct pmap_t pmap;
 	struct list_head *pos = NULL;
 	struct image_file_t image;
+	FILE *report_fp;
+	char report_fname[SIZE_OF_TEST_NAME];
+	char report_result[SIZE_OF_TEST_NAME];
 
 	/*
 	 * parse data from test_case.txt
@@ -141,36 +144,50 @@ run_test:
 	printf("\n<----------- END OF TEST ----------->\n");
 
 	printf("\n<----------- TEST STATUS  ----------->\n");
+
+	sprintf(report_fname, "RESULT-%s.txt", file_name);
+	report_fp = fopen(report_fname, "w");
+
 	list_for_each(pos, &test_data->list) {
 		td = list_entry(pos, struct test_data_t, list);
 
 		if (td->test_status == TEST_STATUS_PASS) {
-			printf("[%s] PASS\n", td->test_name);
+			sprintf(report_result, "[%s] PASS\n", td->test_name);
 		} else if (td->test_status == TEST_STATUS_RUN_SKIP) {
-			printf("[%s] SKIP run test\n", td->test_name);
+			sprintf(report_result, "[%s] SKIP run test\n", td->test_name);
 		} else if (td->test_status == TEST_STATUS_NO_COMPARE) {
-			printf("[%s] SKIP compare reference\n", td->test_name);
+			sprintf(report_result, "[%s] SKIP compare reference\n", td->test_name);
 		} else {
 			switch (td->test_status) {
 			case TEST_STATUS_ERR_RUN:
-				printf("[%s] ERROR: run test\n", td->test_name);
+				sprintf(report_result, "[%s] ERROR: run test\n", td->test_name);
 				break;
 			case TEST_STATUS_ERR_OUTPUT:
-				printf("[%s] ERROR: output file\n", td->test_name);
+				sprintf(report_result,"[%s] ERROR: output file\n", td->test_name);
 				break;
 			case TEST_STATUS_ERR_INPUT:
-				printf("[%s] ERROR: input file\n", td->test_name);
+				sprintf(report_result, "[%s] ERROR: input file\n", td->test_name);
 				break;
 			case TEST_STATUS_ERR_REFERENCE:
-				printf("[%s] ERROR: reference file\n", td->test_name);
+				sprintf(report_result, "[%s] ERROR: reference file\n", td->test_name);
 				break;
 			case TEST_STATUS_FAIL_COMPARE:
-				printf("[%s] FAIL: compare reference and output file\n", td->test_name);
+				sprintf(report_result, "[%s] FAIL: compare reference and output file\n", td->test_name);
 				break;
 			default:
-				printf("[%s] ERROR: no %d\n", td->test_name, td->test_status);
+				sprintf(report_result, "[%s] ERROR: no %d\n", td->test_name, td->test_status);
 				break;
 			}
+		}
+
+		printf("%s", report_result);
+
+		if (report_fp == NULL) {
+			DBG_ERR("create %s\n", report_fname);
+			perror("fopen() failed");
+		} else {
+			fprintf(report_fp, "%s", report_result);
+			fclose(report_fp);
 		}
 	}
 
