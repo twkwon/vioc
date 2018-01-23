@@ -1034,7 +1034,7 @@ static int vioc_set_dma_address(struct test_case_t *tc)
 			height = tc->input_file[i].height;
 			format = tc->input_file[i].fmt;
 
-			switch (rdma->reg.uMISC.bREG.FMT10 && 0x3) {
+			switch (rdma->reg.uMISC.bREG.FMT10 & 0x3) {
 			case DATA_FMT_16BIT:
 				/* FMT[1:0] - b01: 16bit format */
 				vioc_get_dma_offset(format, (width * 2), &offset0, &offset1);
@@ -1095,7 +1095,7 @@ static int vioc_set_dma_address(struct test_case_t *tc)
 			height = wdma->reg.uSIZE.bREG.HEIGHT;
 			format = wdma->reg.uCTRL.bREG.FMT;
 
-			switch (wdma->reg.uCTRL.bREG.FMT10 && 0x3) {
+			switch (wdma->reg.uCTRL.bREG.FMT10 & 0x3) {
 			case DATA_FMT_16BIT:
 				/* FMT[1:0] - b01: 16bit format */
 				vioc_get_dma_offset(format, (width * 2), &offset0, &offset1);
