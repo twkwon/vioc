@@ -576,7 +576,7 @@ static int vioc_reset_path(struct test_case_t *tc)
 		rdma_en_ctrl(&tc->disp_rdma, 0);
 	}
 
-	sleep(1);
+	//sleep(1);
 
 	/*
 	 * Reset components
@@ -585,6 +585,8 @@ static int vioc_reset_path(struct test_case_t *tc)
 #ifdef DO_NOT_RESET_DISP_PATH
 	disp_rdma_clear_regs(tc);
 #endif
+
+	//sleep(1);
 
 	return ret;
 }
@@ -1032,7 +1034,7 @@ static int vioc_set_dma_address(struct test_case_t *tc)
 			height = tc->input_file[i].height;
 			format = tc->input_file[i].fmt;
 
-			switch (rdma->reg.uMISC.bREG.FMT10 && 0x3) {
+			switch (rdma->reg.uMISC.bREG.FMT10 & 0x3) {
 			case DATA_FMT_16BIT:
 				/* FMT[1:0] - b01: 16bit format */
 				vioc_get_dma_offset(format, (width * 2), &offset0, &offset1);
@@ -1093,7 +1095,7 @@ static int vioc_set_dma_address(struct test_case_t *tc)
 			height = wdma->reg.uSIZE.bREG.HEIGHT;
 			format = wdma->reg.uCTRL.bREG.FMT;
 
-			switch (wdma->reg.uCTRL.bREG.FMT10 && 0x3) {
+			switch (wdma->reg.uCTRL.bREG.FMT10 & 0x3) {
 			case DATA_FMT_16BIT:
 				/* FMT[1:0] - b01: 16bit format */
 				vioc_get_dma_offset(format, (width * 2), &offset0, &offset1);

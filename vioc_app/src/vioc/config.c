@@ -489,8 +489,6 @@ int config_reset(struct test_case_t *tc)
 	}
 #endif
 
-	sleep(1);
-
 	/*
 	 * normal status
 	 * - rdma/vin -> wmix -> sc/lut -> wdma
@@ -539,8 +537,6 @@ int config_reset(struct test_case_t *tc)
 		ret += reset_rdma_ctrl(tc, VC_DISP_RDMA, reset_status);
 	}
 #endif
-
-	sleep(1);
 
 	return ret;
 }

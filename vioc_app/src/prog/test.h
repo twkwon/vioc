@@ -4,7 +4,7 @@
 /*
  * Specific Information
  */
-#define SIZE_OF_TEST_NAME	(128)
+#define SIZE_OF_TEST_NAME	(64)
 
 #define MMAP_DEFAULT_ADDR	(BASE_ADDR_VIOC)	/* VIOC base address */
 #define MMAP_DEFAULT_LEN	(0x00101000)		/* 1 MByte +  4 KBytes */
