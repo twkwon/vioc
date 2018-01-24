@@ -187,9 +187,10 @@ run_test:
 			perror("fopen() failed");
 		} else {
 			fprintf(report_fp, "%s", report_result);
-			fclose(report_fp);
 		}
 	}
+
+	fclose(report_fp);
 
 	vioc_munmap(test_case->vioc_base_addr);
 err2:
