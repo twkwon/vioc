@@ -214,8 +214,14 @@ static int plugin_rdma(struct test_case_t *tc, enum vioc_components comp)
 {
 	int ret = 0;
 	unsigned int loop;
-	volatile VIOC_CONFIG_PATH_u *cfg_path_rdma;
 	struct vioc_rdma_t *rdma;
+#if defined(__ARCH_TCC898X__)
+	volatile VIOC_CONFIG_PATH_u *cfg_path_rdma;
+#elif defined(__ARCH_TCC899X__)
+	volatile VIOC_CONFIG_TYPE_SEL_u *cfg_path_rdma;
+#else
+	#error "ERROR: Not defined ARCH in configure"
+#endif
 
 	switch (comp) {
 	case VC_DISP_RDMA:
@@ -242,10 +248,17 @@ static int plugin_rdma(struct test_case_t *tc, enum vioc_components comp)
 	switch (rdma->info.id) {
 	case 0:
 	case 1:
+	case 4:
 	case 5:
 	case 8:
 	case 9:
+#if defined(__ARCH_TCC898X__)
 	case 10:
+#elif defined(__ARCH_TCC899X__)
+	// RDMA10 of TCC899X is VRDMA
+#else
+	#error "ERROR: Not defined ARCH in configure"
+#endif
 		DBG(DL_VIOC, "RDMA%d is GRDMA, so it doesn't need plug-in\n", rdma->info.id);
 		ret = 0;
 		goto err_comp;
@@ -263,6 +276,11 @@ static int plugin_rdma(struct test_case_t *tc, enum vioc_components comp)
 	case 7:
 		cfg_path_rdma = &tc->config.addr->uRDMA07;
 		break;
+#if defined(__ARCH_TCC899X__)
+	case 10:
+		cfg_path_rdma = &tc->config.addr->uRDMA10;
+		break;
+#endif
 	case 11:
 		cfg_path_rdma = &tc->config.addr->uRDMA11;
 		break;
@@ -329,6 +347,15 @@ static int plugin_sc(struct test_case_t *tc, enum vioc_components comp)
 	case 4:
 		cfg_path_sc = &tc->config.addr->uSC4;
 		break;
+#if defined(__ARCH_TCC898X__)
+	// TCC898X has 5 scalers (SC0~SC4)
+#elif defined(__ARCH_TCC899X__)
+	case 5:
+		cfg_path_sc = &tc->config.addr->uSC5;
+		break;
+#else
+	#error "ERROR: Not defined ARCH in configure"
+#endif
 	default:
 		ret = -1;
 		goto err;
@@ -350,6 +377,11 @@ static int plugin_sc(struct test_case_t *tc, enum vioc_components comp)
 	if (tc->config.addr->uSC4.bREG.SELECT == sc->info.plugin) {
 		BITCSET(tc->config.addr->uSC4.nREG, V_CONFIG_EN_MASK, 0x0 << V_CONFIG_EN_SHIFT);
 	}
+#if defined(__ARCH_TCC899X__)
+	if (tc->config.addr->uSC5.bREG.SELECT == sc->info.plugin) {
+		BITCSET(tc->config.addr->uSC5.nREG, V_CONFIG_EN_MASK, 0x0 << V_CONFIG_EN_SHIFT);
+	}
+#endif
 
 	/* disable */
 	BITCSET(cfg_path_sc->nREG, V_CONFIG_EN_MASK, 0x0 << V_CONFIG_EN_SHIFT);
@@ -419,6 +451,15 @@ int config_plugout_sc(struct test_case_t *tc, unsigned int id)
 	case 4:
 		cfg_path_sc = &tc->config.addr->uSC4;
 		break;
+#if defined(__ARCH_TCC898X__)
+	// TCC898X has 5 scalers (SC0~SC4)
+#elif defined(__ARCH_TCC899X__)
+	case 5:
+		cfg_path_sc = &tc->config.addr->uSC5;
+		break;
+#else
+	#error "ERROR: Not defined ARCH in configure"
+#endif
 	default:
 		ret = -1;
 		goto err;
@@ -655,7 +696,7 @@ static int reset_vin_ctrl(struct test_case_t *tc, enum vioc_components comp, uns
 static int reset_sc_ctrl(struct test_case_t *tc, enum vioc_components comp, unsigned int reset)
 {
 	int ret = 0;
-	volatile VIOC_POWER_BLOCKS_u *cfg_reset;
+	volatile VIOC_POWER_BLOCKS2_u *cfg_reset;
 	struct vioc_sc_t *sc;
 
 	switch (comp) {
@@ -668,9 +709,9 @@ static int reset_sc_ctrl(struct test_case_t *tc, enum vioc_components comp, unsi
 		return ret;
 	}
 
-	cfg_reset = &tc->config.addr->uSOFTRESET;
+	cfg_reset = &tc->config.addr->uSOFTRESET2;
 
-	BITCSET(cfg_reset->nREG[0], 0x1 << (28 + sc->info.id), reset << (28 + sc->info.id));
+	BITCSET(cfg_reset->nREG, 0x1 << (16 + sc->info.id), reset << (16 + sc->info.id));
 
 	DBG(DL_VIOC, "SC%d.reset = %s\n", sc->info.id, reset ? "reset" : "normal");
 	return ret;

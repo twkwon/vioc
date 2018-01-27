@@ -114,6 +114,11 @@ int wdma_map_regs(struct vioc_wdma_t *wdma, struct test_data_reg_val_t *data)
 	map_reg(reg->uDMAT.bREG.DITH21, dat[idx]); idx++;
 	map_reg(reg->uDMAT.bREG.DITH20, dat[idx]); idx++;
 
+	/* ENH */
+	//TODO: missing register
+	// ENH exists in struct _VIOC_WDMA but does not exist in data set (gsheet) and wdma_map_regs().
+	// Now, this register is set default reset value.
+
 	/* ROLL */
 	map_reg(reg->uROLL.bREG.ROLL,		dat[idx]); idx++;
 	map_reg(reg->uROLL.bREG.ROLLCNT,	dat[idx]); idx++;

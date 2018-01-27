@@ -83,7 +83,13 @@ int rdma_map_regs(struct vioc_rdma_t *rdma, struct test_data_reg_val_t *data)
 	map_reg(reg->uCTRL.bREG.DM_3D,	dat[idx]); idx++;
 	map_reg(reg->uCTRL.bREG.ASEL,	dat[idx]); idx++;
 	map_reg(reg->uCTRL.bREG.UVI,	dat[idx]); idx++;
+#if defined(__ARCH_TCC898X__)
 	map_reg(reg->uCTRL.bREG.NUVIH,	dat[idx]); idx++;
+#elif defined(__ARCH_TCC899X__)
+	idx++;	//TODO: CTRL[22].NUVIH does not exist in TCC899X
+#else
+	#error "ERROR: Not defined ARCH in configure"
+#endif
 	map_reg(reg->uCTRL.bREG.DIT,	dat[idx]); idx++;
 	map_reg(reg->uCTRL.bREG.DITS,	dat[idx]); idx++;
 

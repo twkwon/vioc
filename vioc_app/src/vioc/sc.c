@@ -27,6 +27,13 @@ int sc_map_regs(struct vioc_sc_t *sc, struct test_data_reg_val_t *data)
 
 	/* CTRL */
 	map_reg(reg->uCTRL.bREG.MODE_3D,	dat[idx]); idx++;
+#if defined(__ARCH_TCC899X__)
+	map_reg(reg->uCTRL.bREG.FFC, 0x1);	//TODO: set 0x1 because CTRL[17].FFC does not exist in data set (gsheet).
+#elif defined(__ARCH_TCC898X__)
+	/* It does not exist */
+#else
+	#error "ERROR: Not defined ARCH in configure"
+#endif
 	map_reg(reg->uCTRL.bREG.UPD,		dat[idx]); idx++;
 	map_reg(reg->uCTRL.bREG.BP,			dat[idx]); idx++;
 

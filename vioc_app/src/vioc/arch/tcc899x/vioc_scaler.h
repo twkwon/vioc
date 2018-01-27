@@ -30,73 +30,76 @@ typedef enum {
 
 typedef	struct
 {
-	unsigned	BP		:  1;
-	unsigned	RESERVE0: 15;
-	unsigned	UPD 	:  1;
-	unsigned	RESERVE1: 13;
-	unsigned	MODE_3D	:  2;
+	reg_t	BP			:  1;
+	reg_t				: 15;
+	reg_t	UPD 		:  1;
+	reg_t	FFC			:  1;	// In/out fifo auto clear. reset value is 0x1 (new feature)
+	reg_t				: 12;
+	reg_t	MODE_3D		:  2;
 } VIOC_SC_CTRL;
 
 typedef	union
 {
-	unsigned long		nREG;
+	reg_t				nREG;
 	VIOC_SC_CTRL		bREG;
 } VIOC_SC_CTRL_u;
 
 typedef	struct
 {
-	unsigned	WIDTH   	: 16;
-	unsigned	HEIGHT   	: 16;
+	reg_t	WIDTH   	: 13;
+	reg_t				: 3;
+	reg_t	HEIGHT   	: 13;
+	reg_t				: 3;
 } VIOC_SC_SIZE;
 
 typedef	union
 {
-	unsigned long		nREG;
+	reg_t				nREG;
 	VIOC_SC_SIZE		bREG;
 } VIOC_SC_SIZE_u;
 
 typedef	struct
 {
-	unsigned	XPOS    	: 16;
-	unsigned	YPOS     	: 16;
+	reg_t	XPOS    	: 13;
+	reg_t				: 3;
+	reg_t	YPOS     	: 13;
+	reg_t				: 3;
 } VIOC_SC_POS;
 
 typedef	union
 {
-	unsigned long		nREG;
+	reg_t				nREG;
 	VIOC_SC_POS			bREG;
 } VIOC_SC_POS_u;
 
 typedef	struct
 {
-	unsigned	UPDDONE		:  1;	// Register Update Done
-	unsigned	EOFRISE		:  1;	// EOF Rising
-	unsigned	EOFFALL		:  1;	// EOF Falling
-	unsigned	ERR			:  1;		// Error
-	unsigned	RESERVE0	: 12;
-	unsigned	RESERVE1	: 16;
+	reg_t	UPDDONE		:  1;	// Register Update Done
+	reg_t	EOFRISE		:  1;	// EOF Rising
+	reg_t	EOFFALL		:  1;	// EOF Falling
+	reg_t	ERR			:  1;	// Error
+	reg_t				: 28;
 } VIOC_SC_STATUS;
 
 typedef	union
 {
-	unsigned long	nREG;
-	VIOC_SC_STATUS	bREG;
+	reg_t				nREG;
+	VIOC_SC_STATUS		bREG;
 } VIOC_SC_STATUS_u;
 
 typedef	struct
 {
-	unsigned	UPDDONE		:  1;	// Register Update Done
-	unsigned	EOFRISE		:  1;	// EOF Rising
-	unsigned	EOFFALL		:  1;	// EOF Falling
-	unsigned	ERR			:  1;	// Error
-	unsigned	RESERVE0	: 12;
-	unsigned	RESERVE1	: 16;
+	reg_t	UPDDONE		:  1;	// Register Update Done
+	reg_t	EOFRISE		:  1;	// EOF Rising
+	reg_t	EOFFALL		:  1;	// EOF Falling
+	reg_t	ERR			:  1;	// Error
+	reg_t				: 28;
 } VIOC_SC_IRQMSK;
 
 typedef	union
 {
-	unsigned long	nREG;
-	VIOC_SC_IRQMSK	bREG;
+	reg_t				nREG;
+	VIOC_SC_IRQMSK		bREG;
 } VIOC_SC_IRQMSK_u;
 
 #define VIOC_SC_INT_MASK_UPDDONE 		0x00000001UL /*Status of Register Updated*/
@@ -113,7 +116,7 @@ typedef	union
 typedef	struct _VIOC_SC
 {
 	volatile VIOC_SC_CTRL_u		uCTRL;				// 0x00  R/W  0x00000000 Scaler Control Register
-	volatile unsigned int		reserved0;			// 0x04
+	volatile reg_t				reserved0;			// 0x04
 	volatile VIOC_SC_SIZE_u		uSRCSIZE;			// 0x08  R       -              Scaler Source Size Register
 	volatile VIOC_SC_SIZE_u		uDSTSIZE;			// 0x0C  R/W  0x00000000 Scaler Destination Size Register
 	volatile VIOC_SC_POS_u 		uOUTPOS;			// 0x10  R/W  0x00000000 Scaler Output Position Register
@@ -127,12 +130,12 @@ typedef struct
 	unsigned short src_width; 	 	/* Scaler Input Source Width*/
 	unsigned short src_height; 		/* Scaler Input Source Height*/
 	unsigned short dest_width; 		/* Scaler Output Image Dest Width in Output Window(Scaler out image real size) */
-	unsigned short dest_height; 		/* Scaler Output Image Dest Width in Output Window(Scaler out image real size) */
-	unsigned short output_pos_x; 		/* Scaler Output Image Positon x in output Window */
-	unsigned short output_pos_y; 		/* Scaler Output Image Positon y in output Window*/
-	unsigned short output_width;	 	/* Scaler Output Window Size*/
+	unsigned short dest_height; 	/* Scaler Output Image Dest Width in Output Window(Scaler out image real size) */
+	unsigned short output_pos_x; 	/* Scaler Output Image Positon x in output Window */
+	unsigned short output_pos_y; 	/* Scaler Output Image Positon y in output Window*/
+	unsigned short output_width;	/* Scaler Output Window Size*/
 	unsigned short output_height; 	/* Scaler Output Window Size*/
-	unsigned short bypass;  		/*Scaler Bypass Option*/
+	unsigned short bypass;  		/* Scaler Bypass Option*/
 } scaler_info_type;
-
+	
 #endif /*__VIOC_SCALER_H__*/

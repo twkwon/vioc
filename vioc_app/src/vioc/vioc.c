@@ -1064,7 +1064,8 @@ static int vioc_set_dma_address(struct test_case_t *tc)
 			DBG(DL_VIOC, "rdma[%d] base0: 0x%08x = 0x%08x\n", i, rdma->reg.nBASE0, base0);
 			DBG(DL_VIOC, "rdma[%d] base1: 0x%08x = 0x%08x\n", i, rdma->reg.nBASE1, base1);
 			DBG(DL_VIOC, "rdma[%d] base2: 0x%08x = 0x%08x\n", i, rdma->reg.nBASE2, base2);
-			DBG(DL_VIOC, "rdma[%d]offset: 0x%08lx (0x%x, 0x%x)\n", i, rdma->reg.uOFFSET.nREG, offset1, offset0);
+			DBG(DL_VIOC, "rdma[%d]offset: 0x%08x (0x%x, 0x%x)\n", i,
+								(unsigned int)rdma->reg.uOFFSET.nREG, offset1, offset0);
 
 			rdma_set_offset(rdma, offset0, offset1);
 			rdma_set_address(rdma, base0, base1, base2);
@@ -1125,7 +1126,8 @@ static int vioc_set_dma_address(struct test_case_t *tc)
 			DBG(DL_VIOC, "wdma[%d] base0: 0x%08x = 0x%08x\n", i, wdma->reg.nBASE0, base0);
 			DBG(DL_VIOC, "wdma[%d] base1: 0x%08x = 0x%08x\n", i, wdma->reg.nBASE1, base1);
 			DBG(DL_VIOC, "wdma[%d] base2: 0x%08x = 0x%08x\n", i, wdma->reg.nBASE2, base2);
-			DBG(DL_VIOC, "wdma[%d]offset: 0x%08lx (0x%x, 0x%x)\n", i, wdma->reg.uOFFSET.nREG, offset1, offset0);
+			DBG(DL_VIOC, "wdma[%d]offset: 0x%08x (0x%x, 0x%x)\n", i,
+								(unsigned int)wdma->reg.uOFFSET.nREG, offset1, offset0);
 
 			wdma_set_offset(wdma, offset0, offset1);
 			wdma_set_address(wdma, base0, base1, base2);

@@ -8,13 +8,13 @@
 #define 	ORDER_BRG 			4
 #define 	ORDER_BGR 			5
 
-#define 	FMT_YUV422_16BIT 			0
-#define 	FMT_YUV422_8BIT 			1
+#define 	FMT_YUV422_16BIT 		0
+#define 	FMT_YUV422_8BIT 		1
 #define 	FMT_YUVK4444_16BIT 		2
 #define 	FMT_YUVK4224_24BIT 		3
 #define 	FMT_RGBK4444_16BIT 		4
-#define 	FMT_RGB444_24BIT 			9
-#define 	FMT_SD_PROG 				12 // NOT USED
+#define 	FMT_RGB444_24BIT 		9
+#define 	FMT_SD_PROG 			12 // NOT USED
 
 #define 	EXT_PORT0 			0
 #define 	EXT_PORT1 			1
@@ -25,8 +25,8 @@
 #define 	MUL_PORT2 			6
 #define 	MUL_PORT3 			7
 
-#define 	CLK_DOUBLE_EDGE 				0
-#define 	CLK_DOUBLE_FREQ 				1
+#define 	CLK_DOUBLE_EDGE 			0
+#define 	CLK_DOUBLE_FREQ 			1
 #define 	CLK_DOUBLE_EDGE_FREQ 		2
 #define 	CLK_DOUBLE_4TIME_FREQ 		3
 
@@ -40,207 +40,207 @@
 
 typedef struct
 {
-	unsigned		enable				:	 1;
-	unsigned		conv_en				:	 1;
-	unsigned		intl_en				:	 1;
-	unsigned		intpl_en			: 	 1;
-	unsigned		hsde_connect_en		:	 1;
-	unsigned		flush				:	 1;
-	unsigned		vs_mask				:	 1;
-	unsigned		RESERVE0			:	 1;
-	unsigned		pxclk_pol			:	 1;
-	unsigned		hs_active_low		:	 1;
-	unsigned		vs_active_low		:	 1;
-	unsigned		field_bfield_low	:	 1;
-	unsigned		de_active_low		:	 1;
-	unsigned		gen_field_en		:	 1;
-	unsigned		stream_en			:	 1;
-	unsigned		RESERVE1			:	 1;
-	unsigned		fmt					:	 4;
-	unsigned		data_order			:	 3;
-	unsigned		RESERVE2			:	 1;
-	unsigned		skip				:	 4;
-	unsigned		RESERVE3			:	 3;
-	unsigned		capture				:	 1;
+	reg_t		enable				:	 1;
+	reg_t		conv_en				:	 1;
+	reg_t		intl_en				:	 1;
+	reg_t		intpl_en			: 	 1;
+	reg_t		hsde_connect_en		:	 1;
+	reg_t		flush				:	 1;
+	reg_t		vs_mask				:	 1;
+	reg_t							:	 1;
+	reg_t		pxclk_pol			:	 1;
+	reg_t		hs_active_low		:	 1;
+	reg_t		vs_active_low		:	 1;
+	reg_t		field_bfield_low	:	 1;
+	reg_t		de_active_low		:	 1;
+	reg_t		gen_field_en		:	 1;
+	reg_t		stream_en			:	 1;
+	reg_t							:	 1;
+	reg_t		fmt					:	 4;
+	reg_t		data_order			:	 3;
+	reg_t							:	 1;
+	reg_t		skip				:	 4;
+	reg_t							:	 3;
+	reg_t		capture				:	 1;
 }	VIN_CTRL;
 
 typedef union
 {
-	unsigned long		nREG;
+	reg_t				nREG;
 	VIN_CTRL			bREG;
 }	VIN_CTRL_u;
 
 typedef struct
 {
-	unsigned	luten				:	 3;
-	unsigned	lutif				:	 1;
-	unsigned	y2ren				:	 1;
-	unsigned	y2rm				:	 3;
-	unsigned	r2yen				:	 1;
-	unsigned	r2ym				:	 3;
-	unsigned	align				:	 2;
-	unsigned	RESERVE0			:    2;
-	unsigned	fvs					:	 1;
-	unsigned	RESERVE1			:    3;
-	unsigned	vs_delay			:	 4;
-	unsigned	RESERVE2			:    8;
+	reg_t	luten				:	 3;
+	reg_t	lutif				:	 1;
+	reg_t	y2ren				:	 1;
+	reg_t	y2rm				:	 3;
+	reg_t	r2yen				:	 1;
+	reg_t	r2ym				:	 3;
+	reg_t	align				:	 2;
+	reg_t						:    2;
+	reg_t	fvs					:	 1;
+	reg_t						:    3;
+	reg_t	vs_delay			:	 4;
+	reg_t						:    8;
 }	VIN_MISC;
 
 typedef union
 {
-	unsigned	long		nREG;
+	reg_t					nREG;
 	VIN_MISC				bREG;
 }	VIN_MISC_u;
 
 typedef struct
 {
-	unsigned	hblank				:	 4;
-	unsigned	vblank				:	 4;
-	unsigned	field_pos				:	 4;
-	unsigned	RESERVE0			:	 4;
-	unsigned	pre_sta_loc			:	 2;
-	unsigned	sync_byte			:	 2;
-	unsigned	RESERVE1			:	12;
+	reg_t	hblank				:	 4;
+	reg_t	vblank				:	 4;
+	reg_t	field_pos			:	 4;
+	reg_t						:	 4;
+	reg_t	pre_sta_loc			:	 2;
+	reg_t	sync_byte			:	 2;
+	reg_t						:	12;
 }	VIN_SYNC_M0;
 
 typedef union
 {
-	unsigned	long		nREG;
+	reg_t			nREG;
 	VIN_SYNC_M0		bREG;
 }	VIN_SYNC_M0_u;
 
 typedef struct
 {
-	unsigned	pre_first			:	10;
-	unsigned	pre_second			:	10;
-	unsigned	pre_third			:	10;
-	unsigned	RESERVE0			:	 2;
+	reg_t	pre_first			:	10;
+	reg_t	pre_second			:	10;
+	reg_t	pre_third			:	10;
+	reg_t						:	 2;
 }	VIN_SYNC_M1;
 
 typedef union
 {
-	unsigned	long		nREG;
+	reg_t			nREG;
 	VIN_SYNC_M1		bREG;
 }	VIN_SYNC_M1_u;
 
 typedef	struct
 {
-	unsigned	width				:	16;
-	unsigned	height				:	16;
+	reg_t	width				:	16;
+	reg_t	height				:	16;
 }	VIN_SIZE;
 
 typedef union
 {
-	unsigned	long		nREG;
-	VIN_SIZE				bREG;
+	reg_t						nREG;
+	VIN_SIZE					bREG;
 }	VIN_SIZE_u;
 
 typedef	struct
 {
-	unsigned	offs_width			:	16;
-	unsigned	offs_height			:	16;
+	reg_t	offs_width			:	16;
+	reg_t	offs_height			:	16;
 }	VIN_OFFS;
 
 typedef union
 {
-	unsigned	long		nREG;
+	reg_t					nREG;
 	VIN_OFFS				bREG;
 }	VIN_OFFS_u;
 
 typedef	struct
 {
-	unsigned	update_int				:	 1;
-	unsigned	eof_int					:	 1;
-	unsigned	vs_int					:	 1;
-	unsigned	invs_int				:	 1;
-	unsigned	RESERVE0				:	 7;	
-	unsigned	frm_sq					:	 1;	
-	unsigned 	RESERVE1				:	 4;
-	unsigned	update_int_mask			:	 1;
-	unsigned	eof_int_mask			:	 1;
-	unsigned	vs_int_mask				: 	 1;
-	unsigned	invs_int_mask			: 	 1;
-	unsigned	RESERVE2				: 	11;	
-	unsigned	int_en					:	 1;
+	reg_t	update_int				:	 1;
+	reg_t	eof_int					:	 1;
+	reg_t	vs_int					:	 1;
+	reg_t	invs_int				:	 1;
+	reg_t							:	 7;	
+	reg_t	frm_sq					:	 1;	
+	reg_t 							:	 4;
+	reg_t	update_int_mask			:	 1;
+	reg_t	eof_int_mask			:	 1;
+	reg_t	vs_int_mask				: 	 1;
+	reg_t	invs_int_mask			: 	 1;
+	reg_t							: 	11;	
+	reg_t	int_en					:	 1;
 }	VIN_INT;
 
 typedef	union
 {
-	unsigned	long	nREG;
-	VIN_INT				bREG;
+	reg_t					nREG;
+	VIN_INT					bREG;
 }	VIN_INT_u;
 
 typedef	struct
 {
-	unsigned	width_cnt			:	16;
-	unsigned	height_cnt			:	16;
+	reg_t	width_cnt			:	16;
+	reg_t	height_cnt			:	16;
 }	VIN_STAT_CNT;
 
 typedef union
 {
-	unsigned	long		nREG;
+	reg_t					nREG;
 	VIN_STAT_CNT			bREG;
 }	VIN_STAT_CNT_u;
 
-typedef struct
+typedef	struct
 {
-	unsigned	RESERVE0			:   30;
-	unsigned	IND					:	 2;
+	reg_t	RESERVE0			:   30;
+	reg_t	IND					:	 2;
 }	VIN_LUT_CTRL;
 
 typedef union
 {
-	unsigned	long		nREG;
+	reg_t					nREG;
 	VIN_LUT_CTRL			bREG;
 }	VIN_LUT_CTRL_u;
 
 typedef	struct
 {
-	unsigned	value0			:	8;
-	unsigned	value1			:	8;
-	unsigned	value2			:	8;
-	unsigned	value3			:	8;
+	reg_t	value0			:	8;
+	reg_t	value1			:	8;
+	reg_t	value2			:	8;
+	reg_t	value3			:	8;
 }	VIN_LUT;
 
 typedef union
 {
-	unsigned	long 		nREG[54];
+	reg_t	 				nREG[54];
 	VIN_LUT 				bREG;
 }	VIN_LUT_C0_u;
 
 typedef union
 {
-	unsigned	long 		nREG[54];
+	reg_t	 				nREG[54];
 	VIN_LUT 				bREG;
 }	VIN_LUT_C1_u;
 
 typedef union
 {
-	unsigned	long 		nREG[54];
+	reg_t	 				nREG[54];
 	VIN_LUT 				bREG;
 }	VIN_LUT_C2_u;
 
 typedef	struct
 {
-	unsigned	width			:	16;
-	unsigned	height			:	16;
+	reg_t	width			:	16;
+	reg_t	height			:	16;
 }	VIN_CROP_SIZE;
 
 typedef union
 {
-	unsigned long			nREG;
+	reg_t					nREG;
 	VIN_CROP_SIZE			bREG;
 }	VIN_CROP_SIZE_u;
 
 typedef	struct
 {
-	unsigned	offs_width		:	16;
-	unsigned	offs_height		:	16;
+	reg_t	offs_width		:	16;
+	reg_t	offs_height		:	16;
 }	VIN_CROP_OFFS;
 
 typedef union
 {
-	unsigned long			nREG;
+	reg_t					nREG;
 	VIN_CROP_OFFS			bREG;
 }	VIN_CROP_OFFS_u;
 
@@ -255,28 +255,28 @@ typedef struct _VIOC_VIN
 	volatile VIN_OFFS_u 			uVIN_OFFS_INTL; 	// 	0x018  R/W  0x00000000 VIN Offset Interlaced Register
 	volatile VIN_CROP_SIZE_u 		uVIN_CROP_SIZE; 	// 	0x01c  R/W  0x00000000 VIN Crop Size Register
 	volatile VIN_CROP_OFFS_u 		uVIN_CROP_OFFS; 	// 	0x020  R/W  0x00000000 VIN Crop Offset Register
-	unsigned	int 				undef0[14]; 		// 	0x024 ~ 0x58
+	reg_t	 						undef0[14]; 		// 	0x024 ~ 0x58
 	volatile VIN_LUT_CTRL_u			uVIN_LUT_CTRL;		//   0x05c  R/W  0x00000000 VIN Look-up Table Control Register
 	volatile VIN_INT_u 				uVIN_INT; 			// 	0x060  R/W  0x00000000 VIN Iterrupt Register	
 
 	//TODO:VIN LUT struct
-	//unsigned	int 				undef1[231]; 		// 	0x064 ~ 0x3FC
-	//volatile VIN_LUT_C0_u 			uVIN_LUT_C0;		// 	0x400 ~ 0x4FC R/W VIN Look-up Table set in Channel 0
+	//reg_t				 				undef1[534]; 		// 	0x064 ~ 0xFFC
+	//volatile VIN_LUT_C0_u 			uVIN_LUT_C0;		// 	0x1000 ~ 0x10FC R/W VIN Look-up Table set in Channel 0
 	//volatile VIN_LUT_C1_u 			uVIN_LUT_C1;		// 	0x1100 ~ 0x11FC R/W VIN Look-up Table set in Channel 1
 	//volatile VIN_LUT_C2_u 			uVIN_LUT_C2;		// 	0x1200 ~ 0x12FC R/W VIN Look-up Table set in Channel 2
 } VIOC_VIN, *PVIOC_VIN;
 
 typedef struct
 {
-	unsigned		VALUE_K_CH0		:	10;
-	unsigned		VALUE_K_CH1		:	10;
-	unsigned		VALUE_K_CH2		:	10;
-	unsigned int	RESERVED0		:	 2;
+	reg_t		VALUE_K_CH0		:	10;
+	reg_t		VALUE_K_CH1		:	10;
+	reg_t		VALUE_K_CH2		:	10;
+	reg_t						:	 2;
 } VIN_LUT_C;
 
 typedef union
 {
-	unsigned long	nREG;
+	reg_t			nREG;
 	VIN_LUT_C		bREG;
 } VIN_LUT_C_u;
 
@@ -288,86 +288,86 @@ typedef struct _VIOC_VIN_LUT_C
 
 typedef struct
 {
-	unsigned	enable				:	 1;
-	unsigned					:	 3;
-	unsigned	byte_select			:	 2;
-	unsigned					:	 2;
-	unsigned	clk_mode			:	 3;
-	unsigned					:	 5;
-	unsigned	sel0					:	 3;
-	unsigned					:	 1;
-	unsigned	sel1					:	 3;
-	unsigned 					:	 1;
-	unsigned	sel2					: 	 3;
-	unsigned 					:	 1;
-	unsigned	sel3					:	 3;
-	unsigned 					:	 1;
+	reg_t	enable				:	 1;
+	reg_t						:	 3;
+	reg_t	byte_select			:	 2;
+	reg_t						:	 2;
+	reg_t	clk_mode			:	 3;
+	reg_t						:	 5;
+	reg_t	sel0				:	 3;
+	reg_t						:	 1;
+	reg_t	sel1				:	 3;
+	reg_t 						:	 1;
+	reg_t	sel2				: 	 3;
+	reg_t 						:	 1;
+	reg_t	sel3				:	 3;
+	reg_t 						:	 1;
 }	VIN_DEMUX_CTRL;
 
 typedef	union
 {
-	unsigned	long			nREG;
+	reg_t				nREG;
 	VIN_DEMUX_CTRL		bVIN_DEMUX_CTRL;
 }	VIN_DEMUX_CTRL_u;
 
 typedef	struct
 {
-	unsigned	hb					:	 4;
-	unsigned	vb					:	 4;
-	unsigned	fp					:	 4;
-	unsigned					:	 4;
-	unsigned	psl					:	 2;
-	unsigned	sync_byte			:	 2;
-	unsigned					:	12;
+	reg_t	hb					:	 4;
+	reg_t	vb					:	 4;
+	reg_t	fp					:	 4;
+	reg_t						:	 4;
+	reg_t	psl					:	 2;
+	reg_t	sync_byte			:	 2;
+	reg_t						:	12;
 }	VIN_DEMUX_BLANK0;
 
 typedef union
 {
-	unsigned	long		nREG;
+	reg_t			nREG;
 	VIN_DEMUX_BLANK0		bREG;
 }	VIN_DEMUX_BLANK0_u;
 
 typedef struct
 {
-	unsigned	pf					:	 8;
-	unsigned	ps					:	 8;
-	unsigned	pt					:	 8;
-	unsigned	RESERVE0			:	 8;
+	reg_t	pf					:	 8;
+	reg_t	ps					:	 8;
+	reg_t	pt					:	 8;
+	reg_t	RESERVE0			:	 8;
 }	VIN_DEMUX_BLANK1;
 
 typedef union
 {
-	unsigned	long		nREG;
+	reg_t			nREG;
 	VIN_DEMUX_BLANK1		bREG;
 }	VIN_DEMUX_BLANK1_u;
 
 typedef struct
 {
-	unsigned	dsel0				:	 4;
-	unsigned	dsel1				:	 4;
-	unsigned	dsel2				:	 4;
-	unsigned	dsel3				:	 4;
-	unsigned	RESERVE0			:	16;
+	reg_t	dsel0				:	 4;
+	reg_t	dsel1				:	 4;
+	reg_t	dsel2				:	 4;
+	reg_t	dsel3				:	 4;
+	reg_t	RESERVE0			:	16;
 }	VIN_DEMUX_MISC;
 
 typedef union
 {
-	unsigned	long		nREG;
+	reg_t			nREG;
 	VIN_DEMUX_MISC		bREG;
 }	VIN_DEMUX_MISC_u;
 
 typedef struct
 {
-	unsigned	idx0				:	 4;
-	unsigned	idx1				:	 4;
-	unsigned	idx2				:	 4;
-	unsigned	idx3				:	 4;
-	unsigned	RESERVE0			:	16;
+	reg_t	idx0				:	 4;
+	reg_t	idx1				:	 4;
+	reg_t	idx2				:	 4;
+	reg_t	idx3				:	 4;
+	reg_t	RESERVE0			:	16;
 }	VIN_DEMUX_STS;
 
 typedef	union
 {
-	unsigned	long		nREG;
+	reg_t					nREG;
 	VIN_DEMUX_STS			bREG;
 }	VIN_DEMUX_STS_u;
 

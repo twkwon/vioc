@@ -31,15 +31,33 @@ int lut_map_regs(struct vioc_lut_t *lut, struct test_data_reg_val_t *data)
 
 	/* DEV0_CFG */
 	map_reg(reg->uDEV0_CFG.bREG.EN,		dat[idx]); idx++;
+#if defined(__ARCH_TCC898X__)
 	map_reg(reg->uDEV0_CFG.bREG.SEL,	dat[idx]); idx++;
+#elif defined(__ARCH_TCC899X__)
+	idx++;	//TODO: DEVk_CFG[7:0].SEL does not exist in TCC899X
+#else
+	#error "ERROR: Not defined ARCH in configure"
+#endif
 
 	/* DEV1_CFG */
 	map_reg(reg->uDEV1_CFG.bREG.EN,		dat[idx]); idx++;
+#if defined(__ARCH_TCC898X__)
 	map_reg(reg->uDEV1_CFG.bREG.SEL,	dat[idx]); idx++;
+#elif defined(__ARCH_TCC899X__)
+	idx++;	//TODO: DEVk_CFG[7:0].SEL does not exist in TCC899X
+#else
+	#error "ERROR: Not defined ARCH in configure"
+#endif
 
 	/* DEV2_CFG */
 	map_reg(reg->uDEV2_CFG.bREG.EN,		dat[idx]); idx++;
+#if defined(__ARCH_TCC898X__)
 	map_reg(reg->uDEV2_CFG.bREG.SEL,	dat[idx]); idx++;
+#elif defined(__ARCH_TCC899X__)
+	idx++;	//TODO: DEVk_CFG[7:0].SEL does not exist in TCC899X
+#else
+	#error "ERROR: Not defined ARCH in configure"
+#endif
 
 	/* VIOC0_CFG */
 	map_reg(reg->uVIOC0_CFG.bREG.EN,	dat[idx]); idx++;
