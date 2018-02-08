@@ -33,7 +33,7 @@ int main(int argc, char **argv)
 {
 	char *file_name;
 	char *pmap_name;
-	unsigned long debug_lvl;
+	unsigned int debug_lvl;
 
 	if (argc < 5) {
 		printf("\nUasge:\n");

@@ -34,9 +34,9 @@ extern unsigned int g_dbg_lvl;
 /**
  * Set the Debug Level variable.
  */
-static inline unsigned long SET_DEBUG_LEVEL(const unsigned long new)
+static inline unsigned int SET_DEBUG_LEVEL(const unsigned int new)
 {
-    unsigned long old = g_dbg_lvl;
+    unsigned int old = g_dbg_lvl;
     g_dbg_lvl = new;
     return old;
 }

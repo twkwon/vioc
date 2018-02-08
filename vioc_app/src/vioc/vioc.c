@@ -16,10 +16,10 @@ static int vioc_config_path(struct test_case_t *);
 static int vioc_config_disp_path(struct test_case_t *);
 static int vioc_verify_regs(struct test_case_t *);
 static int vioc_set_dma_address(struct test_case_t *);
-static void vioc_get_dma_address(unsigned char, unsigned int,
+static void vioc_get_dma_address(unsigned char, addr_t,
 										unsigned int, unsigned int,
 										unsigned int, unsigned int,
-										unsigned int *, unsigned int *, unsigned int *);
+										addr_t *, addr_t *, addr_t *);
 static void vioc_get_dma_offset(unsigned int, unsigned int,
 									unsigned int *, unsigned int *);
 
