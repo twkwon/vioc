@@ -10,9 +10,11 @@ CROSS_COMPILE=aarch64-linux-gnu-gcc
 # Select TCC Architecture #
 # - __ARCH_TCC898X__      #
 # - __ARCH_TCC899X__      #
+# - __ARCH_TCC803X__      #
 ###########################
 #arch_chip=TCC898X
 arch_chip=TCC899X
+#arch_chip=TCC803X
 ARCH="__ARCH_${arch_chip}__"
 
 echo ""

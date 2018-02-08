@@ -10,9 +10,15 @@ CROSS_COMPILE=arm-none-linux-gnueabi-gcc
 # - __ARCH_TCC899X__      #
 # - __ARCH_TCC803X__      #
 ###########################
-#ARCH=__ARCH_TCC898X__
-ARCH=__ARCH_TCC899X__
-#ARCH=__ARCH_TCC803X__
+#arch_chip=TCC898X
+arch_chip=TCC899X
+#arch_chip=TCC803X
+ARCH="__ARCH_${arch_chip}__"
+
+echo ""
+echo $ARCH
+echo ""
+sleep 1
 
 echo "-----------------"
 echo " autoreconf -vfi "
