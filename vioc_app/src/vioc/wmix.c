@@ -38,6 +38,7 @@ int wmix_map_regs(struct vioc_wmix_t *wmix, struct test_data_reg_val_t *data)
 	map_reg(reg->uCTRL.bREG.STR,	dat[idx]); idx++;
 	map_reg(reg->uCTRL.bREG.OVP,	dat[idx]); idx++;
 
+#if defined(__ARCH_TCC898X__) || defined(__ARCH_TCC899X__)
 	/* MBG0 */
 	map_reg(reg->uBG.bREG.BG1, dat[idx]); idx++;
 	map_reg(reg->uBG.bREG.BG0, dat[idx]); idx++;
@@ -45,6 +46,13 @@ int wmix_map_regs(struct vioc_wmix_t *wmix, struct test_data_reg_val_t *data)
 	/* MBG1 */
 	map_reg(reg->uBG.bREG.BG3, dat[idx]); idx++;
 	map_reg(reg->uBG.bREG.BG2, dat[idx]); idx++;
+#elif defined(__ARCH_TCC803X__)
+	/* MBG */
+	map_reg(reg->uBG.bREG.BG3, dat[idx]); idx++;
+	map_reg(reg->uBG.bREG.BG2, dat[idx]); idx++;
+	map_reg(reg->uBG.bREG.BG1, dat[idx]); idx++;
+	map_reg(reg->uBG.bREG.BG0, dat[idx]); idx++;
+#endif
 
 	/* SIZE */
 	map_reg(reg->uSIZE.bREG.HEIGHT,	dat[idx]); idx++;
@@ -71,6 +79,7 @@ int wmix_map_regs(struct vioc_wmix_t *wmix, struct test_data_reg_val_t *data)
 	map_reg(reg->uPOS3.bREG.XPOS,	dat[idx]); idx++;
 
 	/*-----------------------------------------------------*/
+#if defined(__ARCH_TCC898X__) || defined(__ARCH_TCC899X__)
 	/* MKEY00 */
 	map_reg(reg->uKEY0.bREG.KEYEN,	dat[idx]); idx++;
 	map_reg(reg->uKEY0.bREG.KEYR,	dat[idx]); idx++;
@@ -83,10 +92,23 @@ int wmix_map_regs(struct vioc_wmix_t *wmix, struct test_data_reg_val_t *data)
 	map_reg(reg->uKEY0.bREG.KEYMR,	dat[idx]); idx++;
 
 	/* MKEY03 */
-	map_reg(reg->uKEY1.bREG.KEYMG,	dat[idx]); idx++;
-	map_reg(reg->uKEY1.bREG.KEYMB,	dat[idx]); idx++;
+	map_reg(reg->uKEY0.bREG.KEYMG,	dat[idx]); idx++;
+	map_reg(reg->uKEY0.bREG.KEYMB,	dat[idx]); idx++;
+#elif defined(__ARCH_TCC803X__)
+	/* MKEY00 */
+	map_reg(reg->uKEY0.bREG.KEYEN,	dat[idx]); idx++;
+	map_reg(reg->uKEY0.bREG.KEYR,	dat[idx]); idx++;
+	map_reg(reg->uKEY0.bREG.KEYG,	dat[idx]); idx++;
+	map_reg(reg->uKEY0.bREG.KEYB,	dat[idx]); idx++;
+
+	/* MKEY01 */
+	map_reg(reg->uKEY0.bREG.KEYMR,	dat[idx]); idx++;
+	map_reg(reg->uKEY0.bREG.KEYMG,	dat[idx]); idx++;
+	map_reg(reg->uKEY0.bREG.KEYMB,	dat[idx]); idx++;
+#endif
 
 	/*-----------------------------------------------------*/
+#if defined(__ARCH_TCC898X__) || defined(__ARCH_TCC899X__)
 	/* MKEY10 */
 	map_reg(reg->uKEY1.bREG.KEYEN,	dat[idx]); idx++;
 	map_reg(reg->uKEY1.bREG.KEYR,	dat[idx]); idx++;
@@ -101,8 +123,21 @@ int wmix_map_regs(struct vioc_wmix_t *wmix, struct test_data_reg_val_t *data)
 	/* MKEY13 */
 	map_reg(reg->uKEY1.bREG.KEYMG,	dat[idx]); idx++;
 	map_reg(reg->uKEY1.bREG.KEYMB,	dat[idx]); idx++;
+#elif defined(__ARCH_TCC803X__)
+	/* MKEY10 */
+	map_reg(reg->uKEY1.bREG.KEYEN,	dat[idx]); idx++;
+	map_reg(reg->uKEY1.bREG.KEYR,	dat[idx]); idx++;
+	map_reg(reg->uKEY1.bREG.KEYG,	dat[idx]); idx++;
+	map_reg(reg->uKEY1.bREG.KEYB,	dat[idx]); idx++;
+
+	/* MKEY11 */
+	map_reg(reg->uKEY1.bREG.KEYMR,	dat[idx]); idx++;
+	map_reg(reg->uKEY1.bREG.KEYMG,	dat[idx]); idx++;
+	map_reg(reg->uKEY1.bREG.KEYMB,	dat[idx]); idx++;
+#endif
 
 	/*-----------------------------------------------------*/
+#if defined(__ARCH_TCC898X__) || defined(__ARCH_TCC899X__)
 	/* MKEY20 */
 	map_reg(reg->uKEY2.bREG.KEYEN,	dat[idx]); idx++;
 	map_reg(reg->uKEY2.bREG.KEYR,	dat[idx]); idx++;
@@ -117,6 +152,18 @@ int wmix_map_regs(struct vioc_wmix_t *wmix, struct test_data_reg_val_t *data)
 	/* MKEY23 */
 	map_reg(reg->uKEY2.bREG.KEYMG,	dat[idx]); idx++;
 	map_reg(reg->uKEY2.bREG.KEYMB,	dat[idx]); idx++;
+#elif defined(__ARCH_TCC803X__)
+	/* MKEY20 */
+	map_reg(reg->uKEY2.bREG.KEYEN,	dat[idx]); idx++;
+	map_reg(reg->uKEY2.bREG.KEYR,	dat[idx]); idx++;
+	map_reg(reg->uKEY2.bREG.KEYG,	dat[idx]); idx++;
+	map_reg(reg->uKEY2.bREG.KEYB,	dat[idx]); idx++;
+
+	/* MKEY21 */
+	map_reg(reg->uKEY2.bREG.KEYMR,	dat[idx]); idx++;
+	map_reg(reg->uKEY2.bREG.KEYMG,	dat[idx]); idx++;
+	map_reg(reg->uKEY2.bREG.KEYMB,	dat[idx]); idx++;
+#endif
 
 	/* STAT */
 	map_reg(reg->uSTATUS.bREG.DN_INTL,		dat[idx]); idx++;
@@ -161,6 +208,7 @@ int wmix_map_regs(struct vioc_wmix_t *wmix, struct test_data_reg_val_t *data)
 	map_reg(reg->uCCON0.bREG.CCON1_00,	dat[idx]); idx++;
 	map_reg(reg->uCCON0.bREG.CCON0_00,	dat[idx]); idx++;
 
+#if defined(__ARCH_TCC898X__) || defined(__ARCH_TCC899X__)
 	/* ROPC00 */
 	map_reg(reg->uROPC0.bREG.ASEL,		dat[idx]); idx++;
 	map_reg(reg->uROPC0.bREG.ROPMODE,	dat[idx]); idx++;
@@ -175,6 +223,18 @@ int wmix_map_regs(struct vioc_wmix_t *wmix, struct test_data_reg_val_t *data)
 
 	/* MAT02 */
 	map_reg(reg->uPAT0.bREG.GREEN,		dat[idx]); idx++;
+#elif defined(__ARCH_TCC803X__)
+	/* ROPC0 */
+	map_reg(reg->uROPC0.bREG.ALPHA1,	dat[idx]); idx++;
+	map_reg(reg->uROPC0.bREG.ALPHA0,	dat[idx]); idx++;
+	map_reg(reg->uROPC0.bREG.ASEL,		dat[idx]); idx++;
+	map_reg(reg->uROPC0.bREG.ROPMODE,	dat[idx]); idx++;
+
+	/* MAT0 */
+	map_reg(reg->uPAT0.bREG.RED,		dat[idx]); idx++;
+	map_reg(reg->uPAT0.bREG.GREEN,		dat[idx]); idx++;
+	map_reg(reg->uPAT0.bREG.BLUE,		dat[idx]); idx++;
+#endif
 
 	/*-----------------------------------------------------*/
 	/* ACON1 */
@@ -197,6 +257,7 @@ int wmix_map_regs(struct vioc_wmix_t *wmix, struct test_data_reg_val_t *data)
 	map_reg(reg->uCCON1.bREG.CCON1_00,	dat[idx]); idx++;
 	map_reg(reg->uCCON1.bREG.CCON0_00,	dat[idx]); idx++;
 
+#if defined(__ARCH_TCC898X__) || defined(__ARCH_TCC899X__)
 	/* ROPC10 */
 	map_reg(reg->uROPC1.bREG.ASEL,		dat[idx]); idx++;
 	map_reg(reg->uROPC1.bREG.ROPMODE,	dat[idx]); idx++;
@@ -211,6 +272,18 @@ int wmix_map_regs(struct vioc_wmix_t *wmix, struct test_data_reg_val_t *data)
 
 	/* MAT11 */
 	map_reg(reg->uPAT1.bREG.GREEN,		dat[idx]); idx++;
+#elif defined(__ARCH_TCC803X__)
+	/* ROPC1 */
+	map_reg(reg->uROPC1.bREG.ALPHA1,	dat[idx]); idx++;
+	map_reg(reg->uROPC1.bREG.ALPHA0,	dat[idx]); idx++;
+	map_reg(reg->uROPC1.bREG.ASEL,		dat[idx]); idx++;
+	map_reg(reg->uROPC1.bREG.ROPMODE,	dat[idx]); idx++;
+
+	/* MAT1 */
+	map_reg(reg->uPAT1.bREG.RED,		dat[idx]); idx++;
+	map_reg(reg->uPAT1.bREG.GREEN,		dat[idx]); idx++;
+	map_reg(reg->uPAT1.bREG.BLUE,		dat[idx]); idx++;
+#endif
 
 	/*-----------------------------------------------------*/
 	/* ACON2 */
@@ -233,6 +306,7 @@ int wmix_map_regs(struct vioc_wmix_t *wmix, struct test_data_reg_val_t *data)
 	map_reg(reg->uCCON2.bREG.CCON1_00,	dat[idx]); idx++;
 	map_reg(reg->uCCON2.bREG.CCON0_00,	dat[idx]); idx++;
 
+#if defined(__ARCH_TCC898X__) || defined(__ARCH_TCC899X__)
 	/* ROPC20 */
 	map_reg(reg->uROPC2.bREG.ASEL,		dat[idx]); idx++;
 	map_reg(reg->uROPC2.bREG.ROPMODE,	dat[idx]); idx++;
@@ -247,6 +321,18 @@ int wmix_map_regs(struct vioc_wmix_t *wmix, struct test_data_reg_val_t *data)
 
 	/* MAT21 */
 	map_reg(reg->uPAT2.bREG.GREEN,		dat[idx]); idx++;
+#elif defined(__ARCH_TCC803X__)
+	/* ROPC2 */
+	map_reg(reg->uROPC2.bREG.ALPHA1,	dat[idx]); idx++;
+	map_reg(reg->uROPC2.bREG.ALPHA0,	dat[idx]); idx++;
+	map_reg(reg->uROPC2.bREG.ASEL,		dat[idx]); idx++;
+	map_reg(reg->uROPC2.bREG.ROPMODE,	dat[idx]); idx++;
+
+	/* MAT2 */
+	map_reg(reg->uPAT2.bREG.RED,		dat[idx]); idx++;
+	map_reg(reg->uPAT2.bREG.GREEN,		dat[idx]); idx++;
+	map_reg(reg->uPAT2.bREG.BLUE,		dat[idx]); idx++;
+#endif
 
 	return (idx - reg_start_offset);
 }
@@ -292,6 +378,7 @@ int wmix_verify_regs(struct vioc_wmix_t *wmix)
 		ret = -1;
 	}
 
+#if defined(__ARCH_TCC898X__) || defined(__ARCH_TCC899X__)
 	/* MBG0 */
 	dv = read_reg(&d->uBG.nREG[0]);
 	sv = read_reg(&s->uBG.nREG[0]);
@@ -301,7 +388,6 @@ int wmix_verify_regs(struct vioc_wmix_t *wmix)
 		printf("\tWMIX.uBG.nREG[0]: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
-
 	/* MBG1 */
 	dv = read_reg(&d->uBG.nREG[1]);
 	sv = read_reg(&s->uBG.nREG[1]);
@@ -311,6 +397,17 @@ int wmix_verify_regs(struct vioc_wmix_t *wmix)
 		printf("\tWMIX.uBG.nREG[1]: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
+#elif defined(__ARCH_TCC803X__)
+	/* MBG */
+	dv = read_reg(&d->uBG);
+	sv = read_reg(&s->uBG);
+	if (dv == sv) {
+		printf("\tWMIX.uBG: 0x%08x\n", sv);
+	} else {
+		printf("\tWMIX.uBG: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+#endif
 
 	/* SIZE */
 	dv = read_reg(&d->uSIZE);
@@ -363,6 +460,7 @@ int wmix_verify_regs(struct vioc_wmix_t *wmix)
 	}
 
 	/*-----------------------------------------------------*/
+#if defined(__ARCH_TCC898X__) || defined(__ARCH_TCC899X__)
 	/* MKEY00 */
 	dv = read_reg(&d->uKEY0.nREG[0]);
 	sv = read_reg(&s->uKEY0.nREG[0]);
@@ -402,8 +500,30 @@ int wmix_verify_regs(struct vioc_wmix_t *wmix)
 		printf("\tWMIX.uKEY0.nREG[3]: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
+#elif defined(__ARCH_TCC803X__)
+	/* MKEY00 */
+	dv = read_reg(&d->uKEY0.nREG[0]);
+	sv = read_reg(&s->uKEY0.nREG[0]);
+	if (dv == sv) {
+		printf("\tWMIX.uKEY0.nREG[0]: 0x%08x\n", sv);
+	} else {
+		printf("\tWMIX.uKEY0.nREG[0]: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* MKEY01 */
+	dv = read_reg(&d->uKEY0.nREG[1]);
+	sv = read_reg(&s->uKEY0.nREG[1]);
+	if (dv == sv) {
+		printf("\tWMIX.uKEY0.nREG[1]: 0x%08x\n", sv);
+	} else {
+		printf("\tWMIX.uKEY0.nREG[1]: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+#endif
 
 	/*-----------------------------------------------------*/
+#if defined(__ARCH_TCC898X__) || defined(__ARCH_TCC899X__)
 	/* MKEY10 */
 	dv = read_reg(&d->uKEY1.nREG[0]);
 	sv = read_reg(&s->uKEY1.nREG[0]);
@@ -443,8 +563,30 @@ int wmix_verify_regs(struct vioc_wmix_t *wmix)
 		printf("\tWMIX.uKEY1.nREG[3]: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
+#elif defined(__ARCH_TCC803X__)
+	/* MKEY10 */
+	dv = read_reg(&d->uKEY1.nREG[0]);
+	sv = read_reg(&s->uKEY1.nREG[0]);
+	if (dv == sv) {
+		printf("\tWMIX.uKEY1.nREG[0]: 0x%08x\n", sv);
+	} else {
+		printf("\tWMIX.uKEY1.nREG[0]: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* MKEY11 */
+	dv = read_reg(&d->uKEY1.nREG[1]);
+	sv = read_reg(&s->uKEY1.nREG[1]);
+	if (dv == sv) {
+		printf("\tWMIX.uKEY1.nREG[1]: 0x%08x\n", sv);
+	} else {
+		printf("\tWMIX.uKEY1.nREG[1]: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+#endif
 
 	/*-----------------------------------------------------*/
+#if defined(__ARCH_TCC898X__) || defined(__ARCH_TCC899X__)
 	/* MKEY20 */
 	dv = read_reg(&d->uKEY2.nREG[0]);
 	sv = read_reg(&s->uKEY2.nREG[0]);
@@ -484,6 +626,27 @@ int wmix_verify_regs(struct vioc_wmix_t *wmix)
 		printf("\tWMIX.uKEY2.nREG[3]: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
+#elif defined(__ARCH_TCC803X__)
+	/* MKEY20 */
+	dv = read_reg(&d->uKEY2.nREG[0]);
+	sv = read_reg(&s->uKEY2.nREG[0]);
+	if (dv == sv) {
+		printf("\tWMIX.uKEY2.nREG[0]: 0x%08x\n", sv);
+	} else {
+		printf("\tWMIX.uKEY2.nREG[0]: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* MKEY21 */
+	dv = read_reg(&d->uKEY2.nREG[1]);
+	sv = read_reg(&s->uKEY2.nREG[1]);
+	if (dv == sv) {
+		printf("\tWMIX.uKEY2.nREG[1]: 0x%08x\n", sv);
+	} else {
+		printf("\tWMIX.uKEY2.nREG[1]: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+#endif
 
 	/* STAT */
 	dv = read_reg(&d->uSTATUS);
@@ -526,6 +689,7 @@ int wmix_verify_regs(struct vioc_wmix_t *wmix)
 		ret = -1;
 	}
 
+#if defined(__ARCH_TCC898X__) || defined(__ARCH_TCC899X__)
 	/* ROPC00 */
 	dv = read_reg(&d->uROPC0.nREG[0]);
 	sv = read_reg(&s->uROPC0.nREG[0]);
@@ -565,6 +729,27 @@ int wmix_verify_regs(struct vioc_wmix_t *wmix)
 		printf("\tWMIX.uPAT0.nREG[1]: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
+#elif defined(__ARCH_TCC803X__)
+	/* ROPC0 */
+	dv = read_reg(&d->uROPC0);
+	sv = read_reg(&s->uROPC0);
+	if (dv == sv) {
+		printf("\tWMIX.uROPC0: 0x%08x\n", sv);
+	} else {
+		printf("\tWMIX.uROPC0: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* MAT0 */
+	dv = read_reg(&d->uPAT0);
+	sv = read_reg(&s->uPAT0);
+	if (dv == sv) {
+		printf("\tWMIX.uPAT0: 0x%08x\n", sv);
+		ret = -1;
+	} else {
+		printf("\tWMIX.uPAT0: 0x%08x != 0x%08x\n", sv, dv);
+	}
+#endif
 
 	/*-----------------------------------------------------*/
 	/* ACON1 */
@@ -587,6 +772,7 @@ int wmix_verify_regs(struct vioc_wmix_t *wmix)
 		ret = -1;
 	}
 
+#if defined(__ARCH_TCC898X__) || defined(__ARCH_TCC899X__)
 	/* ROPC10 */
 	dv = read_reg(&d->uROPC1.nREG[0]);
 	sv = read_reg(&s->uROPC1.nREG[0]);
@@ -596,6 +782,7 @@ int wmix_verify_regs(struct vioc_wmix_t *wmix)
 		printf("\tWMIX.uROPC1.nREG[0]: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
+
 	/* ROPC11 */
 	dv = read_reg(&d->uROPC1.nREG[1]);
 	sv = read_reg(&s->uROPC1.nREG[1]);
@@ -625,6 +812,27 @@ int wmix_verify_regs(struct vioc_wmix_t *wmix)
 		printf("\tWMIX.uPAT1.nREG[1]: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
+#elif defined(__ARCH_TCC803X__)
+	/* ROPC1 */
+	dv = read_reg(&d->uROPC1);
+	sv = read_reg(&s->uROPC1);
+	if (dv == sv) {
+		printf("\tWMIX.uROPC1: 0x%08x\n", sv);
+	} else {
+		printf("\tWMIX.uROPC1: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* MAT1 */
+	dv = read_reg(&d->uPAT1);
+	sv = read_reg(&s->uPAT1);
+	if (dv == sv) {
+		printf("\tWMIX.uPAT1: 0x%08x\n", sv);
+	} else {
+		printf("\tWMIX.uPAT1: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+#endif
 
 	/*-----------------------------------------------------*/
 	/* ACON2 */
@@ -647,6 +855,7 @@ int wmix_verify_regs(struct vioc_wmix_t *wmix)
 		ret = -1;
 	}
 
+#if defined(__ARCH_TCC898X__) || defined(__ARCH_TCC899X__)
 	/* ROPC20 */
 	dv = read_reg(&d->uROPC2.nREG[0]);
 	sv = read_reg(&s->uROPC2.nREG[0]);
@@ -686,6 +895,27 @@ int wmix_verify_regs(struct vioc_wmix_t *wmix)
 		printf("\tWMIX.uPAT2.nREG[1]: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
+#elif defined(__ARCH_TCC803X__)
+	/* ROPC2 */
+	dv = read_reg(&d->uROPC2);
+	sv = read_reg(&s->uROPC2);
+	if (dv == sv) {
+		printf("\tWMIX.uROPC2: 0x%08x\n", sv);
+	} else {
+		printf("\tWMIX.uROPC2: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+
+	/* MAT20 */
+	dv = read_reg(&d->uPAT2);
+	sv = read_reg(&s->uPAT2);
+	if (dv == sv) {
+		printf("\tWMIX.uPAT2: 0x%08x\n", sv);
+	} else {
+		printf("\tWMIX.uPAT2: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+#endif
 
 	return ret;
 }

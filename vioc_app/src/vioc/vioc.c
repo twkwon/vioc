@@ -857,7 +857,10 @@ static int vioc_config_disp_path(struct test_case_t *tc)
 	int ret = 0;
 	addr_t base0, base1, base2;
 	unsigned int offset0, offset1;
-	unsigned int fmt, fmt10;
+	unsigned int fmt;
+#if !defined(__ARCH_TCC803X__)
+	unsigned int fmt10;
+#endif
 	unsigned int width, height;
 	unsigned int y2r, y2rmd, r2y, r2ymd;
 	struct vioc_rdma_t *rdma;
@@ -879,10 +882,12 @@ static int vioc_config_disp_path(struct test_case_t *tc)
 		rdma_set_fmt(rdma, fmt);
 	}
 
+#if !defined(__ARCH_TCC803X__)
 	if (ISSET(rdma->auto_set, AUTO_DMA_FMT10)) {
 		fmt10 = wdma->reg.uCTRL.bREG.FMT10;
 		rdma_set_fmt10(rdma, fmt10);
 	}
+#endif
 
 	if (ISSET(rdma->auto_set, AUTO_DMA_SIZE)) {
 		width = wdma->reg.uSIZE.bREG.WIDTH;
@@ -1096,6 +1101,7 @@ static int vioc_set_dma_address(struct test_case_t *tc)
 			height = wdma->reg.uSIZE.bREG.HEIGHT;
 			format = wdma->reg.uCTRL.bREG.FMT;
 
+#if !defined(__ARCH_TCC803X__)
 			switch (wdma->reg.uCTRL.bREG.FMT10 & 0x3) {
 			case DATA_FMT_16BIT:
 				/* FMT[1:0] - b01: 16bit format */
@@ -1116,6 +1122,7 @@ static int vioc_set_dma_address(struct test_case_t *tc)
 				vioc_get_dma_address(format, base0, width, height, start_x, start_y, &base0, &base1, &base2);
 				break;
 			}
+#endif
 
 			wdma->reg.nBASE0 = base0;
 			wdma->reg.nBASE1 = base1;

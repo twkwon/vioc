@@ -35,7 +35,7 @@ typedef	struct
 	reg_t		R2YMD	:  2;
 	reg_t		DITS	:  1;
 	reg_t		DIT		:  1;
-	reg_t		NUVIH	:  1;	//22 tcc899x N/A
+	reg_t		NUVIH	:  1;
 	reg_t		UVI  	:  1;
 	reg_t		ASEL 	:  1;
 	reg_t		DM_3D	:  2;
@@ -90,6 +90,21 @@ typedef	union
 	VIOC_RDMA_OFFS		bREG;
 } VIOC_RDMA_OFFS_u;
 
+//typedef	struct
+//{
+//	reg_t	XSCALE		: 3;
+//	reg_t				:13;
+//	reg_t	YSCALE		: 3;
+//	reg_t				: 1;
+//	reg_t	ISSUE		:12;
+//} VIOC_RDMA_SCALE;
+//
+//typedef	union
+//{
+//	reg_t				nREG;
+//	VIOC_RDMA_SCALE		bREG;
+//} VIOC_RDMA_SCALE_u;
+
 typedef	struct
 {
 	reg_t	FMT			: 5;
@@ -111,12 +126,10 @@ typedef	union
 
 typedef	struct
 {
-	reg_t	ALPHA0		: 10;
-	reg_t				: 2;
-	reg_t	SEL			: 1;
-	reg_t				: 3;
-	reg_t	ALPHA1		: 10;
-	reg_t				: 6;
+	reg_t	ALPHA0		: 8;
+	reg_t				: 8;
+	reg_t	ALPHA1		: 8;
+	reg_t				: 8;
 } VIOC_RDMA_ALPHA;
 
 typedef	union
@@ -203,6 +216,7 @@ typedef	struct _VIOC_RDMA
 	volatile reg_t					nBASE1;			// 0x14  R/W  0x00000000  RDMA Base1 Address for Each Images Register
 	volatile reg_t					nBASE2;			// 0x18  R/W  0x00000000  RDMA Base2 Address for Each Images Register
 	volatile VIOC_RDMA_OFFS_u  		uOFFSET;		// 0x1C  R/W  0x00000000  RDMA Offset Information for Each Images Register
+	//volatile VIOC_RDMA_SCALE_u		uMISC;			// 0x20  R/W  0x00000000  RDMA SCALE. for Each images Register
 	volatile VIOC_RDMA_MISC_u		uMISC;			// 0x20  R/W  0x00000000  RDMA Misc. for Each images Register
 	volatile VIOC_RDMA_ALPHA_u 		uALPHA;			// 0x24  R/W  0x00000000  RDMA Alpha Information for Each Imgaes Register
 	volatile VIOC_RDMA_STATUS_u		uSTATUS;		// 0x28  R/W	0x00000000  RDMA Status Register

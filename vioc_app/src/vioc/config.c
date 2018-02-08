@@ -64,8 +64,12 @@ int config_map_regs(struct vioc_config_t *config, struct test_data_reg_val_t *da
 	reg_start_offset = REG_START_OFFSET_CONFIG;
 	idx = reg_start_offset;
 
+#if defined(__ARCH_TCC898X__) || defined(__ARCH_TCC899X__)
 	/* CFG_PATH_EDR */
 	map_reg(reg->uPATH_EDR.bREG.EDR_S,		dat[idx]); idx++;
+#elif defined(__ARCH_TCC803X__)
+	idx++;
+#endif
 
 	/* CFG_MISC0 */
 	map_reg(reg->uMISC0.bREG.RD14,			dat[idx]); idx++;
@@ -110,6 +114,7 @@ int config_verify_regs(struct vioc_config_t *config)
 	//	return ret;
 	//}
 
+#if defined(__ARCH_TCC898X__) || defined(__ARCH_TCC899X__)
 	/* CFG_PATH_EDR */
 	dv = read_reg(&d->uPATH_EDR);
 	sv = read_reg(&s->uPATH_EDR);
@@ -119,6 +124,7 @@ int config_verify_regs(struct vioc_config_t *config)
 		printf("\tCONFIG.uPATH_EDR: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
+#endif
 
 	/* CFG_MISC0 */
 	dv = read_reg(&d->uMISC0);
@@ -143,6 +149,7 @@ int config_config(struct test_case_t *tc)
 	config_reg = tc->config.addr;
 	config_val = &tc->config.reg;
 
+#if defined(__ARCH_TCC898X__) || defined(__ARCH_TCC899X__)
 	/* CFG_PATH_EDR */
 	val = read_reg(&config_reg->uPATH_EDR);
 	BITCSET(val, V_CONFIG_PATH_EDR_MASK, config_val->uPATH_EDR.bREG.EDR_S << V_CONFIG_PATH_EDR_SHIFT);
@@ -154,6 +161,7 @@ int config_config(struct test_case_t *tc)
 		ret = -1;
 		goto exit;
 	}
+#endif
 
 	/* CFG_MISC0 */
 	val = read_reg(&config_reg->uMISC0);
@@ -213,15 +221,17 @@ err:
 static int plugin_rdma(struct test_case_t *tc, enum vioc_components comp)
 {
 	int ret = 0;
+
+#if defined(__ARCH_TCC803X__)
+	return ret;
+#else
 	unsigned int loop;
 	struct vioc_rdma_t *rdma;
-#if defined(__ARCH_TCC898X__)
+	#if defined(__ARCH_TCC898X__) || defined(__ARCH_TCC803X__)
 	volatile VIOC_CONFIG_PATH_u *cfg_path_rdma;
-#elif defined(__ARCH_TCC899X__)
+	#elif defined(__ARCH_TCC899X__)
 	volatile VIOC_CONFIG_TYPE_SEL_u *cfg_path_rdma;
-#else
-	#error "ERROR: Not defined ARCH in configure"
-#endif
+	#endif
 
 	switch (comp) {
 	case VC_DISP_RDMA:
@@ -252,13 +262,9 @@ static int plugin_rdma(struct test_case_t *tc, enum vioc_components comp)
 	case 5:
 	case 8:
 	case 9:
-#if defined(__ARCH_TCC898X__)
+	#if defined(__ARCH_TCC898X__)
 	case 10:
-#elif defined(__ARCH_TCC899X__)
-	// RDMA10 of TCC899X is VRDMA
-#else
-	#error "ERROR: Not defined ARCH in configure"
-#endif
+	#endif
 		DBG(DL_VIOC, "RDMA%d is GRDMA, so it doesn't need plug-in\n", rdma->info.id);
 		ret = 0;
 		goto err_comp;
@@ -276,11 +282,11 @@ static int plugin_rdma(struct test_case_t *tc, enum vioc_components comp)
 	case 7:
 		cfg_path_rdma = &tc->config.addr->uRDMA07;
 		break;
-#if defined(__ARCH_TCC899X__)
+	#if defined(__ARCH_TCC899X__)
 	case 10:
 		cfg_path_rdma = &tc->config.addr->uRDMA10;
 		break;
-#endif
+	#endif
 	case 11:
 		cfg_path_rdma = &tc->config.addr->uRDMA11;
 		break;
@@ -320,6 +326,7 @@ err_rdma_id:
 	DBG_ERR("plug-in RDMA%d\n", rdma->info.id);
 err_comp:
 	return ret;
+#endif
 }
 
 static int plugin_sc(struct test_case_t *tc, enum vioc_components comp)
@@ -347,14 +354,18 @@ static int plugin_sc(struct test_case_t *tc, enum vioc_components comp)
 	case 4:
 		cfg_path_sc = &tc->config.addr->uSC4;
 		break;
-#if defined(__ARCH_TCC898X__)
-	// TCC898X has 5 scalers (SC0~SC4)
-#elif defined(__ARCH_TCC899X__)
+#if defined(__ARCH_TCC899X__) || defined(__ARCH_TCC803X__)
 	case 5:
 		cfg_path_sc = &tc->config.addr->uSC5;
 		break;
-#else
-	#error "ERROR: Not defined ARCH in configure"
+#endif
+#if defined(__ARCH_TCC803X__)
+	case 6:
+		cfg_path_sc = &tc->config.addr->uSC6;
+		break;
+	case 7:
+		cfg_path_sc = &tc->config.addr->uSC7;
+		break;
 #endif
 	default:
 		ret = -1;
@@ -377,9 +388,17 @@ static int plugin_sc(struct test_case_t *tc, enum vioc_components comp)
 	if (tc->config.addr->uSC4.bREG.SELECT == sc->info.plugin) {
 		BITCSET(tc->config.addr->uSC4.nREG, V_CONFIG_EN_MASK, 0x0 << V_CONFIG_EN_SHIFT);
 	}
-#if defined(__ARCH_TCC899X__)
+#if defined(__ARCH_TCC899X__) || defined(__ARCH_TCC803X__)
 	if (tc->config.addr->uSC5.bREG.SELECT == sc->info.plugin) {
 		BITCSET(tc->config.addr->uSC5.nREG, V_CONFIG_EN_MASK, 0x0 << V_CONFIG_EN_SHIFT);
+	}
+#endif
+#if defined(__ARCH_TCC803X__)
+	if (tc->config.addr->uSC6.bREG.SELECT == sc->info.plugin) {
+		BITCSET(tc->config.addr->uSC6.nREG, V_CONFIG_EN_MASK, 0x0 << V_CONFIG_EN_SHIFT);
+	}
+	if (tc->config.addr->uSC7.bREG.SELECT == sc->info.plugin) {
+		BITCSET(tc->config.addr->uSC7.nREG, V_CONFIG_EN_MASK, 0x0 << V_CONFIG_EN_SHIFT);
 	}
 #endif
 
@@ -451,15 +470,20 @@ int config_plugout_sc(struct test_case_t *tc, unsigned int id)
 	case 4:
 		cfg_path_sc = &tc->config.addr->uSC4;
 		break;
-#if defined(__ARCH_TCC898X__)
-	// TCC898X has 5 scalers (SC0~SC4)
-#elif defined(__ARCH_TCC899X__)
+#if defined(__ARCH_TCC899X__) || defined(__ARCH_TCC803X__)
 	case 5:
 		cfg_path_sc = &tc->config.addr->uSC5;
 		break;
-#else
-	#error "ERROR: Not defined ARCH in configure"
 #endif
+#if defined(__ARCH_TCC803X__)
+	case 6:
+		cfg_path_sc = &tc->config.addr->uSC6;
+		break;
+	case 7:
+		cfg_path_sc = &tc->config.addr->uSC7;
+		break;
+#endif
+
 	default:
 		ret = -1;
 		goto err;
@@ -601,9 +625,18 @@ static int reset_wdma_ctrl(struct test_case_t *tc, enum vioc_components comp, un
 		return ret;
 	}
 
-	cfg_reset = &tc->config.addr->uSOFTRESET;
+	if (wdma->info.id <= 8) {
+		cfg_reset = &tc->config.addr->uSOFTRESET;
+		BITCSET(cfg_reset->nREG[1], 0x1 << (0 + wdma->info.id), reset << (0 + wdma->info.id));
+	}
 
-	BITCSET(cfg_reset->nREG[1], 0x1 << (0 + wdma->info.id), reset << (0 + wdma->info.id));
+#if defined(__ARCH_TCC803X__)
+	if (wdma->info.id >= 9 && wdma->info.id <= 12) {
+		volatile VIOC_POWER_BLOCKS_VIN_WDMA_u *cfg_reset4;
+		cfg_reset4 = &tc->config.addr->uSOFTRESET4;
+		BITCSET(cfg_reset4->nREG, 0x1 << (wdma->info.id - 9), reset << (wdma->info.id - 9));
+	}
+#endif
 
 	DBG(DL_VIOC, "WDMA%d.reset = %s\n", wdma->info.id, reset ? "reset" : "normal");
 	return ret;
@@ -685,9 +718,18 @@ static int reset_vin_ctrl(struct test_case_t *tc, enum vioc_components comp, uns
 		return ret;
 	}
 
-	cfg_reset = &tc->config.addr->uSOFTRESET;
+	if (vin->info.id <= 3) {
+		cfg_reset = &tc->config.addr->uSOFTRESET;
+		BITCSET(cfg_reset->nREG[0], 0x1 << (24 + vin->info.id), reset << (24 + vin->info.id));
+	}
 
-	BITCSET(cfg_reset->nREG[0], 0x1 << (24 + vin->info.id), reset << (24 + vin->info.id));
+#if defined(__ARCH_TCC803X__)
+	if (vin->info.id >= 4 && vin->info.id <= 7) {
+		volatile VIOC_POWER_BLOCKS_VIN_WDMA_u *cfg_reset4;
+		cfg_reset4 = &tc->config.addr->uSOFTRESET4;
+		BITCSET(cfg_reset4->nREG, 0x1 << (vin->info.id + 4), reset << (vin->info.id + 4));
+	}
+#endif
 
 	DBG(DL_VIOC, "VIN%d.reset = %s\n", vin->info.id, reset ? "reset" : "normal");
 	return ret;
@@ -696,7 +738,11 @@ static int reset_vin_ctrl(struct test_case_t *tc, enum vioc_components comp, uns
 static int reset_sc_ctrl(struct test_case_t *tc, enum vioc_components comp, unsigned int reset)
 {
 	int ret = 0;
+#if defined(__ARCH_TCC803X__)
+	volatile VIOC_POWER_BLOCKS_SC_u *cfg_reset;
+#else
 	volatile VIOC_POWER_BLOCKS2_u *cfg_reset;
+#endif
 	struct vioc_sc_t *sc;
 
 	switch (comp) {
@@ -709,7 +755,11 @@ static int reset_sc_ctrl(struct test_case_t *tc, enum vioc_components comp, unsi
 		return ret;
 	}
 
+#if defined(__ARCH_TCC803X__)
+	cfg_reset = &tc->config.addr->uSOFTRESET3;
+#else
 	cfg_reset = &tc->config.addr->uSOFTRESET2;
+#endif
 
 	BITCSET(cfg_reset->nREG, 0x1 << (16 + sc->info.id), reset << (16 + sc->info.id));
 

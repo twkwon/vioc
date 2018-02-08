@@ -33,8 +33,8 @@ int lut_map_regs(struct vioc_lut_t *lut, struct test_data_reg_val_t *data)
 	map_reg(reg->uDEV0_CFG.bREG.EN,		dat[idx]); idx++;
 #if defined(__ARCH_TCC898X__)
 	map_reg(reg->uDEV0_CFG.bREG.SEL,	dat[idx]); idx++;
-#elif defined(__ARCH_TCC899X__)
-	idx++;	//TODO: DEVk_CFG[7:0].SEL does not exist in TCC899X
+#elif defined(__ARCH_TCC899X__) || defined(__ARCH_TCC803X__)
+	idx++;	//TODO: DEVk_CFG[7:0].SEL does not exist.
 #else
 	#error "ERROR: Not defined ARCH in configure"
 #endif
@@ -43,8 +43,8 @@ int lut_map_regs(struct vioc_lut_t *lut, struct test_data_reg_val_t *data)
 	map_reg(reg->uDEV1_CFG.bREG.EN,		dat[idx]); idx++;
 #if defined(__ARCH_TCC898X__)
 	map_reg(reg->uDEV1_CFG.bREG.SEL,	dat[idx]); idx++;
-#elif defined(__ARCH_TCC899X__)
-	idx++;	//TODO: DEVk_CFG[7:0].SEL does not exist in TCC899X
+#elif defined(__ARCH_TCC899X__) || defined(__ARCH_TCC803X__)
+	idx++;	//TODO: DEVk_CFG[7:0].SEL does not exist.
 #else
 	#error "ERROR: Not defined ARCH in configure"
 #endif
@@ -53,8 +53,8 @@ int lut_map_regs(struct vioc_lut_t *lut, struct test_data_reg_val_t *data)
 	map_reg(reg->uDEV2_CFG.bREG.EN,		dat[idx]); idx++;
 #if defined(__ARCH_TCC898X__)
 	map_reg(reg->uDEV2_CFG.bREG.SEL,	dat[idx]); idx++;
-#elif defined(__ARCH_TCC899X__)
-	idx++;	//TODO: DEVk_CFG[7:0].SEL does not exist in TCC899X
+#elif defined(__ARCH_TCC899X__) || defined(__ARCH_TCC803X__)
+	idx++;	//TODO: DEVk_CFG[7:0].SEL does not exist.
 #else
 	#error "ERROR: Not defined ARCH in configure"
 #endif
@@ -75,6 +75,7 @@ int lut_map_regs(struct vioc_lut_t *lut, struct test_data_reg_val_t *data)
 	map_reg(reg->uVIOC3_CFG.bREG.EN,	dat[idx]); idx++;
 	map_reg(reg->uVIOC3_CFG.bREG.SEL,	dat[idx]); idx++;
 
+#if defined(__ARCH_TCC898X__) || defined(__ARCH_TCC899X__)
 	/* TABLE_IND */
 	map_reg(reg->uTABLE_IND.bREG.IND,	dat[idx]); idx++;
 
@@ -103,6 +104,16 @@ int lut_map_regs(struct vioc_lut_t *lut, struct test_data_reg_val_t *data)
 	/* MIX_CFG */
 	map_reg(reg->uMIX_CFG.bREG.R2YSEL,	dat[idx]); idx++;
 	map_reg(reg->uMIX_CFG.bREG.BYP,		dat[idx]); idx++;
+#elif defined(__ARCH_TCC803X__)
+	idx++;			// TABLE_IND
+	idx++;			// UPDATE_PEND
+	idx++;idx++;	// CSC_COEFF11_12
+	idx++;idx++;	// CSC_COEFF13_21
+	idx++;idx++;	// CSC_COEFF22_23
+	idx++;idx++;	// CSC_COEFF31_32
+	idx++;			// CSC_COEFF33
+	idx++;idx++;	// MIX_CFG
+#endif
 
 	return (idx - reg_start_offset);
 }
@@ -218,6 +229,7 @@ int lut_verify_regs(struct vioc_lut_t *lut)
 		ret = -1;
 	}
 
+#if !defined(__ARCH_TCC803X__)
 	/* TABLE_IND */
 	dv = read_reg(&d->uTABLE_IND);
 	sv = read_reg(&s->uTABLE_IND);
@@ -297,6 +309,7 @@ int lut_verify_regs(struct vioc_lut_t *lut)
 		printf("\tLUT.uMIX_CFG: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
+#endif
 
 	return ret;
 }

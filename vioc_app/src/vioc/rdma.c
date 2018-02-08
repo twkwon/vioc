@@ -12,12 +12,20 @@ void rdma_en_ctrl(struct vioc_rdma_t *rdma, unsigned int enable)
 
 void rdma_set_fmt(struct vioc_rdma_t *rdma, unsigned int fmt)
 {
+#if defined(__ARCH_TCC898X__) || defined(__ARCH_TCC899X__)
 	BITCSET(rdma->addr->uMISC.nREG, 0x1f << 0, fmt << 0);
+#elif defined(__ARCH_TCC803X__)
+	BITCSET(rdma->addr->uCTRL.nREG, 0x1f << 0, fmt << 0);
+#endif
 }
 
 void rdma_set_fmt10(struct vioc_rdma_t *rdma, unsigned int fmt10)
 {
+#if defined(__ARCH_TCC898X__) || defined(__ARCH_TCC899X__)
 	BITCSET(rdma->addr->uMISC.nREG, 0x7 << 5, fmt10 << 5);
+#elif defined(__ARCH_TCC803X__)
+	// N/A
+#endif
 }
 
 void rdma_set_y2r(struct vioc_rdma_t *rdma, unsigned int y2r)
@@ -27,7 +35,11 @@ void rdma_set_y2r(struct vioc_rdma_t *rdma, unsigned int y2r)
 
 void rdma_set_y2rmd(struct vioc_rdma_t *rdma, unsigned int y2rmd)
 {
+#if defined(__ARCH_TCC898X__) || defined(__ARCH_TCC899X__)
 	BITCSET(rdma->addr->uMISC.nREG, 0x7 << 8, y2rmd << 8);
+#elif defined(__ARCH_TCC803X__)
+	BITCSET(rdma->addr->uCTRL.nREG, 0x3 << 9, y2rmd << 9);
+#endif
 }
 
 void rdma_set_r2y(struct vioc_rdma_t *rdma, unsigned int r2y)
@@ -37,7 +49,11 @@ void rdma_set_r2y(struct vioc_rdma_t *rdma, unsigned int r2y)
 
 void rdma_set_r2ymd(struct vioc_rdma_t *rdma, unsigned int r2ymd)
 {
-	BITCSET(rdma->addr->uMISC.nREG, 0x7, r2ymd << 12);
+#if defined(__ARCH_TCC898X__) || defined(__ARCH_TCC899X__)
+	BITCSET(rdma->addr->uMISC.nREG, 0x7 << 12, r2ymd << 12);
+#elif defined(__ARCH_TCC803X__)
+	BITCSET(rdma->addr->uCTRL.nREG, 0x3 << 18, r2ymd << 18);
+#endif
 }
 
 void rdma_set_size(struct vioc_rdma_t *rdma, unsigned int width, unsigned int height)
@@ -83,17 +99,24 @@ int rdma_map_regs(struct vioc_rdma_t *rdma, struct test_data_reg_val_t *data)
 	map_reg(reg->uCTRL.bREG.DM_3D,	dat[idx]); idx++;
 	map_reg(reg->uCTRL.bREG.ASEL,	dat[idx]); idx++;
 	map_reg(reg->uCTRL.bREG.UVI,	dat[idx]); idx++;
-#if defined(__ARCH_TCC898X__)
+
+#if defined(__ARCH_TCC898X__) || defined(__ARCH_TCC803X__)
 	map_reg(reg->uCTRL.bREG.NUVIH,	dat[idx]); idx++;
 #elif defined(__ARCH_TCC899X__)
 	idx++;	//TODO: CTRL[22].NUVIH does not exist in TCC899X
-#else
-	#error "ERROR: Not defined ARCH in configure"
 #endif
+
 	map_reg(reg->uCTRL.bREG.DIT,	dat[idx]); idx++;
 	map_reg(reg->uCTRL.bREG.DITS,	dat[idx]); idx++;
 
+#if defined(__ARCH_TCC898X__) || defined(__ARCH_TCC899X__)
 	map_reg(reg->uCTRL.bREG.R2YMD,	dat[idx]); idx++;
+#elif defined(__ARCH_TCC803X__)
+	map_reg(reg->uCTRL.bREG.R2YMD,	dat[idx]);
+	if (dat[idx] == -1) {BITCSET(auto_set, AUTO_DMA_R2YMD, AUTO_DMA_R2YMD);}
+	idx++;
+#endif
+
 	map_reg(reg->uCTRL.bREG.R2Y,	dat[idx]);
 	if (dat[idx] == -1) {BITCSET(auto_set, AUTO_DMA_R2Y, AUTO_DMA_R2Y);}
 	idx++;
@@ -103,14 +126,26 @@ int rdma_map_regs(struct vioc_rdma_t *rdma, struct test_data_reg_val_t *data)
 	map_reg(reg->uCTRL.bREG.SWAP,	dat[idx]); idx++;
 	map_reg(reg->uCTRL.bREG.AEN,	dat[idx]); idx++;
 
+#if defined(__ARCH_TCC898X__) || defined(__ARCH_TCC899X__)
 	map_reg(reg->uCTRL.bREG.Y2RMD,	dat[idx]); idx++;
+#elif defined(__ARCH_TCC803X__)
+	map_reg(reg->uCTRL.bREG.Y2RMD,	dat[idx]);
+	if (dat[idx] == -1) {BITCSET(auto_set, AUTO_DMA_Y2RMD, AUTO_DMA_Y2RMD);}
+	idx++;
+#endif
+
 	map_reg(reg->uCTRL.bREG.Y2R,	dat[idx]);
 	if (dat[idx] == -1) {BITCSET(auto_set, AUTO_DMA_Y2R, AUTO_DMA_Y2R);}
 	idx++;
 
 	map_reg(reg->uCTRL.bREG.BR,		dat[idx]); idx++;
+#if defined(__ARCH_TCC898X__) || defined(__ARCH_TCC899X__)
 	map_reg(reg->uCTRL.bREG.R2YM2,	dat[idx]); idx++;
 	map_reg(reg->uCTRL.bREG.Y2RM2,	dat[idx]); idx++;
+#elif defined(__ARCH_TCC803X__)
+	idx++;
+	idx++;
+#endif
 
 	map_reg(reg->uCTRL.bREG.FMT,	dat[idx]);
 	if (dat[idx] == -1) {BITCSET(auto_set, AUTO_DMA_FMT, AUTO_DMA_FMT);}
@@ -146,6 +181,7 @@ int rdma_map_regs(struct vioc_rdma_t *rdma, struct test_data_reg_val_t *data)
 	if (dat[idx] == -1) {BITCSET(auto_set, AUTO_DMA_OFFS, AUTO_DMA_OFFS);}
 	idx++;
 
+#if defined(__ARCH_TCC898X__) || defined(__ARCH_TCC899X__)
 	/* MISC */
 	map_reg(reg->uMISC.bREG.ISSUE,	dat[idx]); idx++;
 	map_reg(reg->uMISC.bREG.LPEN,	dat[idx]); idx++;
@@ -165,6 +201,18 @@ int rdma_map_regs(struct vioc_rdma_t *rdma, struct test_data_reg_val_t *data)
 		BITCSET(auto_set, AUTO_DMA_FMT, AUTO_DMA_FMT);
 	}
 	idx++;
+#elif defined(__ARCH_TCC803X__)
+	/* RDMASCALE */
+	//map_reg(reg->uSCALE.bREG.ISSUE,  dat[idx]); idx++;
+	//map_reg(reg->uSCALE.bREG.YSCALE, dat[idx]); idx++;
+	//map_reg(reg->uSCALE.bREG.XSCALE, dat[idx]); idx++;
+	idx++;	// issue
+	idx++;	// lpen
+	idx++;	// r2ymd
+	idx++;	// y2rmd
+	idx++;	// fmt10
+	idx++;	// fmt
+#endif
 
 	/* ALPHA */
 	map_reg(reg->uALPHA.bREG.ALPHA1, dat[idx]); idx++;

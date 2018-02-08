@@ -8,6 +8,8 @@
 #include <arch/tcc898x/vioc_regs.h>
 #elif defined(__ARCH_TCC899X__)
 #include <arch/tcc899x/vioc_regs.h>
+#elif defined(__ARCH_TCC803X__)
+#include <arch/tcc803x/vioc_regs.h>
 #else
 #error "ERROR: Not defined ARCH in configure"
 #endif

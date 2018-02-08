@@ -53,7 +53,13 @@ int wdma_map_regs(struct vioc_wdma_t *wdma, struct test_data_reg_val_t *data)
 	map_reg(reg->uCTRL.bREG.SWAP,		dat[idx]); idx++;
 	map_reg(reg->uCTRL.bREG.R2YMD,		dat[idx]); idx++;
 	map_reg(reg->uCTRL.bREG.R2Y,		dat[idx]); idx++;
+
+#if defined(__ARCH_TCC898X__) || defined(__ARCH_TCC899X__)
 	map_reg(reg->uCTRL.bREG.FMT10,		dat[idx]); idx++;
+#elif defined(__ARCH_TCC803X__)
+	idx++;
+#endif
+
 	map_reg(reg->uCTRL.bREG.FMT,		dat[idx]); idx++;
 
 	/* RATE */
@@ -83,6 +89,7 @@ int wdma_map_regs(struct vioc_wdma_t *wdma, struct test_data_reg_val_t *data)
 	map_reg(reg->uOFFSET.bREG.OFFSET1, dat[idx]); idx++;
 	map_reg(reg->uOFFSET.bREG.OFFSET0, dat[idx]); idx++;
 
+#if defined(__ARCH_TCC898X__) || defined(__ARCH_TCC899X__)
 	/* BG0 */
 	map_reg(reg->uBG.bREG.BG1, dat[idx]); idx++;
 	map_reg(reg->uBG.bREG.BG0, dat[idx]); idx++;
@@ -90,6 +97,13 @@ int wdma_map_regs(struct vioc_wdma_t *wdma, struct test_data_reg_val_t *data)
 	/* BG1 */
 	map_reg(reg->uBG.bREG.BG3, dat[idx]); idx++;
 	map_reg(reg->uBG.bREG.BG2, dat[idx]); idx++;
+#elif defined(__ARCH_TCC803X__)
+	/* BG */
+	map_reg(reg->uBG.bREG.BG3, dat[idx]); idx++;
+	map_reg(reg->uBG.bREG.BG2, dat[idx]); idx++;
+	map_reg(reg->uBG.bREG.BG1, dat[idx]); idx++;
+	map_reg(reg->uBG.bREG.BG0, dat[idx]); idx++;
+#endif
 
 	/* PTS */
 	map_reg(reg->uPTS.bREG.PTS, dat[idx]); idx++;
@@ -271,6 +285,7 @@ int wdma_verify_regs(struct vioc_wdma_t *wdma)
 		ret = -1;
 	}
 
+#if defined(__ARCH_TCC898X__) || defined(__ARCH_TCC899X__)
 	/* BG0 */
 	dv = read_reg(&d->uBG.nREG[0]);
 	sv = read_reg(&s->uBG.nREG[0]);
@@ -290,6 +305,17 @@ int wdma_verify_regs(struct vioc_wdma_t *wdma)
 		printf("\tWDMA.uBG[1]: 0x%08x != 0x%08x\n", sv, dv);
 		ret = -1;
 	}
+#elif defined(__ARCH_TCC803X__)
+	/* BG */
+	dv = read_reg(&d->uBG);
+	sv = read_reg(&s->uBG);
+	if (dv == sv) {
+		printf("\tWDMA.uBG: 0x%08x\n", sv);
+	} else {
+		printf("\tWDMA.uBG: 0x%08x != 0x%08x\n", sv, dv);
+		ret = -1;
+	}
+#endif
 
 	/* PTS */
 	dv = read_reg(&d->uRATE);

@@ -111,10 +111,12 @@ typedef	union
 
 typedef	struct
 {
-	unsigned	ALPHA0   	:  8;
-	unsigned	RESERVE0     :  8;
-	unsigned	ALPHA1   	:  8;
-	unsigned	RESERVE1     :  8;
+	unsigned	ALPHA0		: 10;
+	unsigned				: 2;
+	unsigned	SEL			: 1;
+	unsigned				: 3;
+	unsigned	ALPHA1		: 10;
+	unsigned				: 6;
 } VIOC_RDMA_ALPHA;
 
 typedef	union
