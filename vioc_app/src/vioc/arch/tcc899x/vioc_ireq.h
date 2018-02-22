@@ -650,21 +650,21 @@ typedef	struct	_VIOC_IREQ_CONFIG
 	volatile VIOC_CONFIG_PATH_u			uSAR0;				// 0x198
 	volatile VIOC_CONFIG_PATH_u			uSAR1;				// 0x19C
 	reg_t 								reserved12[2];		// 0x200, 0x204
-	volatile VIOC_CONFIG_TYPE_SEL_u		uRDMA02;			// 0x208;
-	volatile VIOC_CONFIG_TYPE_SEL_u		uRDMA03;			// 0x20C;
+	volatile VIOC_CONFIG_TYPE_SEL_u		uRDMA02;			// 0x208
+	volatile VIOC_CONFIG_TYPE_SEL_u		uRDMA03;			// 0x20C
 	reg_t 								reserved13[2];		// 0x210, 0x214
-	volatile VIOC_CONFIG_TYPE_SEL_u		uRDMA06;			// 0x218;
-	volatile VIOC_CONFIG_TYPE_SEL_u		uRDMA07;			// 0x21C;
-	reg_t 								reserved14[3];		// 0x220~0x208
-	volatile VIOC_CONFIG_TYPE_SEL_u		uRDMA10;			// 0x22C;
-	volatile VIOC_CONFIG_TYPE_SEL_u		uRDMA11;			// 0x230;
-	volatile VIOC_CONFIG_TYPE_SEL_u		uRDMA12;			// 0x234;
-	volatile VIOC_CONFIG_TYPE_SEL_u		uRDMA13;			// 0x238;
+	volatile VIOC_CONFIG_TYPE_SEL_u		uRDMA06;			// 0x218
+	volatile VIOC_CONFIG_TYPE_SEL_u		uRDMA07;			// 0x21C
+	reg_t 								reserved14[2];		// 0x220, 0x224
+	volatile VIOC_CONFIG_TYPE_SEL_u		uRDMA10;			// 0x228
+	volatile VIOC_CONFIG_TYPE_SEL_u		uRDMA11;			// 0x22C
+	volatile VIOC_CONFIG_TYPE_SEL_u		uRDMA12;			// 0x230
+	volatile VIOC_CONFIG_TYPE_SEL_u		uRDMA13;			// 0x234
+	volatile VIOC_CONFIG_TYPE_SEL_u		uRDMA14;			// 0x238
 	reg_t 								reserved15;			// 0x23C
-	volatile VIOC_CONFIG_TYPE_SEL_u		uRDMA14;			// 0x240;
-	volatile VIOC_CONFIG_TYPE_SEL_u		uRDMA16;			// 0x244;
-	volatile VIOC_CONFIG_TYPE_SEL_u		uRDMA17;			// 0x248;
-	reg_t 								reserved16[13];		// 0x24C~0x27C
+	volatile VIOC_CONFIG_TYPE_SEL_u		uRDMA16;			// 0x240
+	volatile VIOC_CONFIG_TYPE_SEL_u		uRDMA17;			// 0x244
+	reg_t 								reserved16[14];		// 0x248~0x27C
 	volatile VIOC_CONFIG_TYPE_SEL_u		uMC0;				// 0x280;
 	volatile VIOC_CONFIG_TYPE_SEL_u		uMC1;				// 0x284;
 
