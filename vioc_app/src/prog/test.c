@@ -74,7 +74,14 @@ int test_main(char *file_name, char *pmap_name)
 	 */
 	image.base_vaddr = (addr_t *)vioc_mmap(pmap.base, IMAGE_NUM * IMAGE_SIZE);
 	image.base_paddr = (addr_t)pmap.base;
-	memset(image.base_vaddr, 0, sizeof(IMAGE_NUM * IMAGE_SIZE));
+
+	//TODO: memset error on 64bit
+	#ifndef __ARM64__
+	memset(image.base_vaddr, 0, (IMAGE_NUM * IMAGE_SIZE));
+	#else
+	for (i = 0; i < (IMAGE_NUM * IMAGE_SIZE); i++)
+		*((unsigned char *)(image.base_vaddr) + i) = 0;
+	#endif
 	DBG(DL_TEST, "Image base: paddr(0x%08x) -> vaddr(%p)\n", image.base_paddr, image.base_vaddr);
 
 	for (i = 0; i < MAX_NUM_OF_RDMA + MAX_NUM_OF_WDMA; i++) {
@@ -437,7 +444,14 @@ static int setup_image_file(struct test_case_t *tc, struct image_file_t *img)
 		 */
 		output_len = tcc_get_image_size(tc->output_file[i].fmt,
 						tc->output_file[i].width, tc->output_file[i].height);
-		memset((unsigned char *)tc->output_file[i].vaddr, 0, output_len);
+
+		//TODO: memset error on 64bit
+		#ifndef __ARM64__
+		memset(tc->output_file[i].vaddr, 0, output_len);
+		#else
+		for (int j = 0; j < output_len; j++)
+			*((unsigned char *)(tc->output_file[i].vaddr) + j) = 0;
+		#endif
 	}
 
 	if (g_dbg_lvl == DL_VERIFY) {

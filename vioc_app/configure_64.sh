@@ -33,7 +33,7 @@ echo " configure       "
 echo "-----------------"
 ./configure \
 		CC=$CROSS_COMPILE \
-		CFLAGS="-s -Wall -Werror -static -D$ARCH" \
+		CFLAGS="-s -Wall -Werror -static -D$ARCH -D__ARM64__" \
 		--host=aarch64-linux-gnu \
 		--target=aarch64-linux-gnu \
 		--prefix=$PREFIX
