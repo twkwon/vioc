@@ -137,3 +137,17 @@ char *string_malloc(char *sz)
 	return ret;
 }
 
+void to_continue(const char *string, int line)
+{
+	char c;
+
+	printf("\n\nDo you want to quit? [y/n] -- %s(%d)", string, line);
+	c = getchar();
+	if (c == 'y' || c == 'Y') {
+		end_of_app = 1;
+		exit_function(0);
+	} else {
+		printf("\n\n-----------------------\n\n");
+	}
+	getchar();
+}

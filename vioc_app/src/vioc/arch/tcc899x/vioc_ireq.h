@@ -488,7 +488,7 @@ typedef struct {
 	reg_t							: 27;
 } VIOC_POWER_BLOCKS4_PWDN;
 
-typedef struct {
+typedef union {
 	reg_t						nREG;
 	VIOC_POWER_BLOCKS4_PWDN		bREG;
 } VIOC_POWER_BLOCKS4_PWDN_u;
@@ -527,7 +527,7 @@ typedef struct {
 	reg_t							: 4;
 } VIOC_POWER_BLOCKS2;
 
-typedef struct {
+typedef union {
 	reg_t					nREG;
 	VIOC_POWER_BLOCKS2		bREG;
 } VIOC_POWER_BLOCKS2_u;
@@ -606,7 +606,7 @@ typedef	struct	_VIOC_IREQ_CONFIG
 	reg_t 								reserved4[2];		// 0x68, 0x6C
 	volatile VIOC_CONFIG_PATH_u 		uFCENC0;			// 0x70
 	volatile VIOC_CONFIG_PATH_u 		uDCENC1;			// 0x74
-	reg_t 								reserved5[3];		// 0x78,0x7C, 0x80
+	reg_t 								reserved5[3];		// 0x78, 0x7C, 0x80
 	volatile VIOC_CONFIG_MISC1_u 		uMISC1;				// 0x84
 	reg_t 								reserved6[10];		// 0x88~0xAC
 	volatile VIOC_CONFIG_PATH_AFBC_u	uAFBC_DEC;			// 0xB0
@@ -649,7 +649,7 @@ typedef	struct	_VIOC_IREQ_CONFIG
 	volatile VIOC_CONFIG_PATH_u			uPM2;				// 0x194
 	volatile VIOC_CONFIG_PATH_u			uSAR0;				// 0x198
 	volatile VIOC_CONFIG_PATH_u			uSAR1;				// 0x19C
-	reg_t 								reserved12[2];		// 0x200, 0x204
+	reg_t 								reserved12[26];		// 0x1A0~0x204
 	volatile VIOC_CONFIG_TYPE_SEL_u		uRDMA02;			// 0x208
 	volatile VIOC_CONFIG_TYPE_SEL_u		uRDMA03;			// 0x20C
 	reg_t 								reserved13[2];		// 0x210, 0x214

@@ -1,6 +1,8 @@
 #ifndef __DEBUG_H__
 #define __DEBUG_H__
 
+extern void to_continue(const char *string, int line);
+
 /** @file
  * This file defines debug levels.
  * Debugging support vanishes in non-debug builds.
