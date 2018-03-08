@@ -7,69 +7,69 @@
 [WDMA08_FMT07] PASS
 [WDMA08_FMT08] PASS
 [WDMA08_FMT09] PASS
-[WDMA08_FMT10] FAIL: compare reference and output file
-[WDMA08_FMT11] FAIL: compare reference and output file
+[WDMA08_FMT10] PASS
+[WDMA08_FMT11] PASS
 [WDMA08_FMT12] PASS
 [WDMA08_FMT13] PASS
 [WDMA08_FMT14] PASS
-[WDMA08_FMT15] FAIL: compare reference and output file
-[WDMA08_FMT16] FAIL: compare reference and output file
+[WDMA08_FMT15] PASS
+[WDMA08_FMT16] PASS
 [WDMA08_FMT17] PASS
 [WDMA08_FMT18] PASS
 [WDMA08_FMT19] PASS
 [WDMA08_FMT20] PASS
-[WDMA08_FMT21] FAIL: compare reference and output file
-[WDMA08_FMT22] FAIL: compare reference and output file
+[WDMA08_FMT21] PASS
+[WDMA08_FMT22] PASS
 [WDMA08_FMT23] PASS
 [WDMA08_FMT24] PASS
 [WDMA08_FMT25] PASS
-[WDMA08_FMT26] FAIL: compare reference and output file
-[WDMA08_FMT27] FAIL: compare reference and output file
+[WDMA08_FMT26] PASS
+[WDMA08_FMT27] PASS
 [WDMA08_FMT28] PASS
 [WDMA08_FMT29] PASS
 [WDMA08_FMT30] PASS
-[WDMA08_FMT31] FAIL: compare reference and output file
-[WDMA08_FMT32] FAIL: compare reference and output file
+[WDMA08_FMT31] PASS
+[WDMA08_FMT32] PASS
 [WDMA08_FMT33] PASS
 [WDMA08_FMT34] PASS
 [WDMA08_FMT35] PASS
-[WDMA08_FMT36] FAIL: compare reference and output file
-[WDMA08_FMT37] FAIL: compare reference and output file
+[WDMA08_FMT36] PASS
+[WDMA08_FMT37] PASS
 [WDMA08_FMT38] PASS
 [WDMA08_FMT39] PASS
 [WDMA08_FMT40] PASS
-[WDMA08_FMT41] FAIL: compare reference and output file
-[WDMA08_FMT42] FAIL: compare reference and output file
+[WDMA08_FMT41] PASS
+[WDMA08_FMT42] PASS
 [WDMA08_FMT43] PASS
 [WDMA08_FMT44] PASS
 [WDMA08_FMT45] PASS
-[WDMA08_FMT46] FAIL: compare reference and output file
-[WDMA08_FMT47] FAIL: compare reference and output file
+[WDMA08_FMT46] PASS
+[WDMA08_FMT47] PASS
 [WDMA08_FMT48] PASS
 [WDMA08_FMT49] PASS
 [WDMA08_FMT50] PASS
-[WDMA08_FMT51] FAIL: compare reference and output file
-[WDMA08_FMT52] FAIL: compare reference and output file
+[WDMA08_FMT51] PASS
+[WDMA08_FMT52] PASS
 [WDMA08_FMT53] PASS
 [WDMA08_FMT54] PASS
 [WDMA08_FMT55] PASS
-[WDMA08_FMT56] FAIL: compare reference and output file
-[WDMA08_FMT57] FAIL: compare reference and output file
+[WDMA08_FMT56] PASS
+[WDMA08_FMT57] PASS
 [WDMA08_FMT58] PASS
 [WDMA08_FMT59] PASS
 [WDMA08_FMT60] PASS
-[WDMA08_FMT61] FAIL: compare reference and output file
+[WDMA08_FMT61] PASS
 [WDMA08_FMT62] PASS
 [WDMA08_FMT63] PASS
 [WDMA08_FMT64] PASS
 [WDMA08_FMT65] PASS
-[WDMA08_FMT66] FAIL: compare reference and output file
-[WDMA08_FMT67] FAIL: compare reference and output file
+[WDMA08_FMT66] PASS
+[WDMA08_FMT67] PASS
 [WDMA08_FMT68] PASS
 [WDMA08_FMT69] PASS
 [WDMA08_FMT70] PASS
-[WDMA08_FMT71] FAIL: compare reference and output file
-[WDMA08_FMT72] FAIL: compare reference and output file
+[WDMA08_FMT71] PASS
+[WDMA08_FMT72] PASS
 [WDMA08_FMT73] PASS
 [WDMA08_FMT74] PASS
 [WDMA08_SWAP0] PASS
