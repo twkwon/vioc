@@ -426,9 +426,6 @@ static int plugin_lut(struct test_case_t *tc, enum vioc_components comp)
 {
 	int ret = 0;
 
-	//TODO:LUT
-	DBG_WARN(DL_WARN, "TODO: this is empty funtion!!!\n");
-
 	return ret;
 }
 
@@ -767,27 +764,9 @@ static int reset_sc_ctrl(struct test_case_t *tc, enum vioc_components comp, unsi
 	return ret;
 }
 
-//TODO:LUT
 static int reset_lut_ctrl(struct test_case_t *tc, enum vioc_components comp, unsigned int reset)
 {
 	int ret = 0;
-	//volatile VIOC_POWER_BLOCKS_u *cfg_reset;
-	//struct vioc_lut_t *lut;
-	//
-	//switch (comp) {
-	//case VC_LUT:
-	//	lut = &tc->lut;
-	//	break;
-	//default:
-	//	ret = -1;
-	//	DBG_ERR("component id(%d) is not LUT\n", comp);
-	//	return ret;
-	//}
-	//
-	//cfg_reset = &tc->config.addr->uSOFTRESET;
-	//
-	//BITCSET(cfg_reset->nREG[0], 0x1 << (28 + lut->info.id), reset << (28 + lut->info.id));
-	//
-	//DBG(DL_VIOC, "LUT%d.reset = %s\n", lut->info.id, reset ? "reset" : "normal");
+
 	return ret;
 }
