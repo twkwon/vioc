@@ -9,6 +9,7 @@
 #define	VIOC_LUT_COMP2		5
 #define	VIOC_LUT_COMP3		6
 
+#define LUT_TABLE_OFFSET    1
 #define LUT_COLOR_DEPTH		10
 #define LUT_TABLE_SIZE		(1 << LUT_COLOR_DEPTH)
 

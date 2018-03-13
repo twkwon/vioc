@@ -121,15 +121,48 @@ int lut_map_regs(struct vioc_lut_t *lut, struct test_data_reg_val_t *data)
 int lut_setup(struct vioc_lut_t *lut)
 {
 	int ret = 0;
+    unsigned int i, ind_v, reg_off, lut_index;
+    unsigned int r, g, b;
+    volatile unsigned int color = 0;
+
+	int lut_table_addr_offset;
+	addr_t *lut_table_addr;
+	
 
 	/* check EN and UPD regs that is enabled */
-	//TODO:LUT disable these bits
+	// -> no need
+
+	// disable vioc_lut0, vioc_lut1
+	lut->addr->uVIOC0_CFG.nREG = 0;
+	lut->addr->uVIOC1_CFG.nREG = 0;
+
+	/* set lut table */
+	lut_table_addr_offset = OFFSET_LUT_TABLE_FROM_LUT;
+	lut_table_addr = (unsigned int *)((unsigned int *)lut->addr + INT32_OFFSET(lut_table_addr_offset));
+
+	lut_index = lut->info.id;
+	write_reg(&lut->addr->uCTRL.nREG, lut_index);
+
+	/* -> color inversion */
+    for(i = 0; i < LUT_TABLE_SIZE; i++)
+    {
+		r = (LUT_TABLE_SIZE - i) - 1;
+		g = (LUT_TABLE_SIZE - i) - 1;
+		b = (LUT_TABLE_SIZE - i) - 1;
+		
+        color = ((r & 0x3FF) << 20) | ((g & 0x3FF) << 10) | (b & 0x3FF);
+        ind_v = i >> 8;
+		write_reg(&lut->addr->uTABLE_IND.nREG, ind_v);
+        reg_off = (0xFF & i);
+		//write_reg((unsigned int)lut_table_addr + (reg_off * 0x4), color);
+		write_reg(((unsigned long)lut_table_addr + (reg_off * 0x4)), color);
+    }
+
+   if(lut_index >= VIOC_LUT_COMP0)
+   		write_reg(&lut->addr->uUPDATE_PEND.nREG, 1 << ((lut_index - VIOC_LUT_COMP0) << LUT_TABLE_OFFSET));
 
 	/* set physical register */
 	*lut->addr = lut->reg;
-
-	/* set lut table */
-	//TODO:LUT set lut table
 
 	return ret;
 }
