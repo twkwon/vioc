@@ -258,6 +258,13 @@ static int run_test_single(struct test_case_t *test_case, struct test_data_t *te
 		goto exit;
 	}
 
+	/* Added by @alank */
+	//ret = config_reset(test_case);
+	//if (ret) {
+	//	DBG_ERR("config_reset()\n");
+	//	goto exit;
+	//}
+
 exit:
 	return ret;
 }
