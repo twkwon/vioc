@@ -1,0 +1,29 @@
+
+#wdma00 stop 
+./mem -o 0x12002800 -w 0x008b000C
+
+#rdma04 stop 
+./mem -o 0x12000800 -w 0x0021040C
+
+#disp01 stop 
+./mem -o 0x12000100 -w 0x1106BE60
+
+#wmix1 all mix mode
+./mem -o 0x1200a040 -w 0x157f0000
+
+#rdma00~03 stop
+#./mem -o 0x12000400 -w 0x01210C0C
+#./mem -o 0x12000400 -w 0x00210400 
+#./mem -o 0x12000500 -w 0x00210400 
+#./mem -o 0x12000600 -w 0x00210400 
+#./mem -o 0x12000700 -w 0x00210400 
+
+#SCs plug-out
+#./mem -o 0x1200a044 -w 0x00000000
+#./mem -o 0x1200a048 -w 0x00000000
+#./mem -o 0x1200a04C -w 0x00000000
+#./mem -o 0x1200a050 -w 0x00000000
+
+#disp0 stop
+#./mem -o 0x12000000 -w 0x080C82A0
+

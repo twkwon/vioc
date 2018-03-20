@@ -1,0 +1,15 @@
+
+
+wdma00 정지
+./mem -o 0x12002800 -w 0x008b000C
+
+rdma04 정지
+./mem -o 0x12000800 -w 0x0021040C
+
+disp01 정지
+./mem -o 0x12000100 -w 0x1106BE60
+
+wmix1 all mix mode
+./mem -o 0x1200a040 -w 0x157f0000
+
+
