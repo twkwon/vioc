@@ -121,7 +121,10 @@ int lut_map_regs(struct vioc_lut_t *lut, struct test_data_reg_val_t *data)
 int lut_setup(struct vioc_lut_t *lut)
 {
 	int ret = 0;
-    unsigned int i, ind_v, reg_off, lut_index;
+    unsigned int i,  reg_off, lut_index;
+#if defined(__ARCH_TCC898X__) || defined(__ARCH_TCC899X__)
+    unsigned int ind_v;
+#endif
     unsigned int r, g, b;
     volatile unsigned int color = 0;
 
@@ -150,16 +153,29 @@ int lut_setup(struct vioc_lut_t *lut)
 		g = (LUT_TABLE_SIZE - i) - 1;
 		b = (LUT_TABLE_SIZE - i) - 1;
 		
+#if defined(__ARCH_TCC898X__) || defined(__ARCH_TCC899X__)
+
         color = ((r & 0x3FF) << 20) | ((g & 0x3FF) << 10) | (b & 0x3FF);
         ind_v = i >> 8;
 		write_reg(&lut->addr->uTABLE_IND.nREG, ind_v);
         reg_off = (0xFF & i);
 		//write_reg((unsigned int)lut_table_addr + (reg_off * 0x4), color);
 		write_reg(((unsigned long)lut_table_addr + (reg_off * 0x4)), color);
+
+#elif defined(__ARCH_TCC803X__)
+
+        color = ((r & 0xFF) << 16) | ((g & 0xFF) << 8) | (b & 0xFF);
+        reg_off = (0xFF & i);
+		//write_reg((unsigned int)lut_table_addr + (reg_off * 0x4), color);
+		write_reg(((unsigned long)lut_table_addr + (reg_off * 0x4)), color);
+
+#endif
     }
 
+#if defined(__ARCH_TCC898X__) || defined(__ARCH_TCC899X__)
    if(lut_index >= VIOC_LUT_COMP0)
    		write_reg(&lut->addr->uUPDATE_PEND.nREG, 1 << ((lut_index - VIOC_LUT_COMP0) << LUT_TABLE_OFFSET));
+#endif
 
 	/* set physical register */
 	*lut->addr = lut->reg;
