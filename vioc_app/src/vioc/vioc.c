@@ -1101,7 +1101,7 @@ static int vioc_set_dma_address(struct test_case_t *tc)
 			height = wdma->reg.uSIZE.bREG.HEIGHT;
 			format = wdma->reg.uCTRL.bREG.FMT;
 
-#if !defined(__ARCH_TCC803X__)
+#if defined(__ARCH_TCC898X__) || defined(__ARCH_TCC899X__)
 			switch (wdma->reg.uCTRL.bREG.FMT10 & 0x3) {
 			case DATA_FMT_16BIT:
 				/* FMT[1:0] - b01: 16bit format */
@@ -1122,6 +1122,12 @@ static int vioc_set_dma_address(struct test_case_t *tc)
 				vioc_get_dma_address(format, base0, width, height, start_x, start_y, &base0, &base1, &base2);
 				break;
 			}
+#elif defined(__ARCH_TCC803X__)
+			/* Only 8bit format */
+			vioc_get_dma_offset(format, width, &offset0, &offset1);
+			vioc_get_dma_address(format, base0, width, height, start_x, start_y, &base0, &base1, &base2);
+#else
+			#error "ERROR: Not defined __ARCH_TCCXXXX__"
 #endif
 
 			wdma->reg.nBASE0 = base0;
