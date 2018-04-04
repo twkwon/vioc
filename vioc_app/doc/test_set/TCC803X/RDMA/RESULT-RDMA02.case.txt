@@ -1,0 +1,48 @@
+[RDMA02_FMT01] FAIL: compare reference and output file
+[RDMA02_FMT02] FAIL: compare reference and output file
+[RDMA02_FMT03] FAIL: compare reference and output file
+[RDMA02_FMT04] FAIL: compare reference and output file
+[RDMA02_FMT05] FAIL: compare reference and output file
+[RDMA02_FMT06] FAIL: compare reference and output file
+[RDMA02_FMT07] FAIL: compare reference and output file
+[RDMA02_FMT08] FAIL: compare reference and output file
+[RDMA02_FMT09] PASS
+[RDMA02_FMT13] FAIL: compare reference and output file
+[RDMA02_FMT14] FAIL: compare reference and output file
+[RDMA02_FMT19] FAIL: compare reference and output file
+[RDMA02_FMT25] FAIL: compare reference and output file
+[RDMA02_FMT30] FAIL: compare reference and output file
+[RDMA02_FMT45] FAIL: compare reference and output file
+[RDMA02_FMT50] FAIL: compare reference and output file
+[RDMA02_SWAP0] PASS
+[RDMA02_SWAP1] PASS
+[RDMA02_SWAP2] PASS
+[RDMA02_SWAP3] PASS
+[RDMA02_SWAP4] PASS
+[RDMA02_SWAP5] PASS
+[RDMA02_BR0] FAIL: compare reference and output file
+[RDMA02_BR1] FAIL: compare reference and output file
+[RDMA02_Y2R01] FAIL: compare reference and output file
+[RDMA02_Y2R02] FAIL: compare reference and output file
+[RDMA02_Y2R05] FAIL: compare reference and output file
+[RDMA02_Y2R06] FAIL: compare reference and output file
+[RDMA02_Y2RMD01] FAIL: compare reference and output file
+[RDMA02_Y2RMD02] FAIL: compare reference and output file
+[RDMA02_Y2RMD03] FAIL: compare reference and output file
+[RDMA02_Y2RMD04] FAIL: compare reference and output file
+[RDMA02_Y2RMD05] FAIL: compare reference and output file
+[RDMA02_Y2RMD06] FAIL: compare reference and output file
+[RDMA02_R2Y01] FAIL: compare reference and output file
+[RDMA02_R2Y02] FAIL: compare reference and output file
+[RDMA02_R2Y03] FAIL: compare reference and output file
+[RDMA02_R2Y04] FAIL: compare reference and output file
+[RDMA02_R2Y05] FAIL: compare reference and output file
+[RDMA02_R2Y06] FAIL: compare reference and output file
+[RDMA02_R2Y07] FAIL: compare reference and output file
+[RDMA02_R2Y08] FAIL: compare reference and output file
+[RDMA02_R2YMD01] FAIL: compare reference and output file
+[RDMA02_R2YMD02] FAIL: compare reference and output file
+[RDMA02_R2YMD03] FAIL: compare reference and output file
+[RDMA02_R2YMD04] FAIL: compare reference and output file
+[RDMA02_R2YMD05] FAIL: compare reference and output file
+[RDMA02_R2YMD06] FAIL: compare reference and output file
