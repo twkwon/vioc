@@ -1,0 +1,4 @@
+./vioc_r LUT0.case video 1 1
+./pre_setting.txt
+./vioc_r LUT0_all.case video 0 1
+
