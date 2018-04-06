@@ -25,10 +25,10 @@ extern unsigned int g_dbg_lvl;
 #define DL_VIOC	(0x00010000)
 /** Display messages about verification module */
 #define DL_VERIFY	(0x00100000)
+/** Don't reset vioc components after oneshot for debugging */
+#define DL_DONT_RESET_VIOC_AFTER_ONESHOT	(0x01000000)
 ///** Display messages */
-//#define DL_TEST	(0x01000000)
-///** Display messages */
-//#define DL_TEST	(0x10000000)
+//#define DL_XXX	(0x10000000)
 
 /** All debug messages off */
 #define DBG_OFF		(0)
