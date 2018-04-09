@@ -1,0 +1,22 @@
+
+cd WMIX04
+./vioc_r WMIX04.case video 1 1
+cd ..
+
+cd WMIX03
+./vioc_r WMIX03.case video 1 1
+cd ..
+
+cd WMIX02
+./vioc_r WMIX02.case video 1 1
+cd ..
+
+cd WMIX01
+./vioc_r WMIX01.case video 1 1
+cd ..
+
+./pre_setting.txt
+cd WMIX00
+./vioc_r WMIX00.case video 0 1
+cd ..
+
