@@ -209,6 +209,7 @@ typedef	struct _VIOC_WMIX
 	volatile VIOC_WMIX_CTRL_u 		uCTRL; 			// 0x00  R/W  0x00000005 WMIX Control Register
 	volatile VIOC_WMIX_BG_u 		uBG; 			// 0x04  R/W  0x00000000 WMIX Background Color 0, 1 Register
 	volatile VIOC_WMIX_SIZE_u 		uSIZE; 			// 0x08  R/W  0x00000000 WMIx Size Register
+	volatile reg_t                  reserved0;      // 0x0C
 	volatile VIOC_WMIX_POS_u 		uPOS0; 			// 0x10  R/W  0x00000000 WMIX Position 0 Register
 	volatile VIOC_WMIX_POS_u 		uPOS1; 			// 0x14  R/W  0x00000000 WMIX Position 1 Register
 	volatile VIOC_WMIX_POS_u 		uPOS2; 			// 0x18  R/W  0x00000000 WMIX Position 2 Register
