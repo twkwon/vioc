@@ -455,7 +455,7 @@ typedef struct {
 	reg_t							: 8;
 } VIOC_POWER_BLOCKS_SC;
 
-typedef struct {
+typedef union {
 	reg_t					nREG;
 	VIOC_POWER_BLOCKS_SC	bREG;
 } VIOC_POWER_BLOCKS_SC_u;
@@ -474,7 +474,7 @@ typedef struct {
 	reg_t							:16;
 } VIOC_POWER_BLOCKS_VIN_WDMA;
 
-typedef struct {
+typedef union {
 	reg_t						nREG;
 	VIOC_POWER_BLOCKS_VIN_WDMA	bREG;
 } VIOC_POWER_BLOCKS_VIN_WDMA_u;
@@ -527,6 +527,8 @@ typedef	struct	_VIOC_IREQ_CONFIG
 	volatile VIOC_POWER_BLOCKS_SC_u		uSOFTRESET3;		// 0x12C		(SWR3 is Scaler)
 
 	volatile VIOC_CONFIG_PATH_u 		uVIQE1;				// 0x130
+
+	reg_t 								reserved9[27];		// 0x134~0x19C
 
 	volatile VIOC_POWER_BLOCKS_VIN_WDMA_u uPOWERDOWN3;		// 0x1A0		(PWDN3 is VIN and WDMA)
 	volatile VIOC_POWER_BLOCKS_VIN_WDMA_u uSOFTRESET4;		// 0x1A4		(SWR4 is VIN and WDMA)

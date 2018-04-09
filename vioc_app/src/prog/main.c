@@ -54,6 +54,7 @@ int main(int argc, char **argv)
 		printf("    0x00001000 - Display messages about parser module\n");
 		printf("    0x00010000 - Display messages about vioc module\n");
 		printf("    0x00100000 - Display messages about verification module\n");
+		printf("    0x01000000 - Don't reset vioc components after oneshot for debugging\n");
 		printf("    0x00000000 - All debug messages off\n");
 		printf("    0xffffffff - All debug messages on\n");
 		printf("If you exit, press Ctrl-C\n");

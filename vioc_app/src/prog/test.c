@@ -258,12 +258,16 @@ static int run_test_single(struct test_case_t *test_case, struct test_data_t *te
 		goto exit;
 	}
 
-	/* Added by @alank */
-	//ret = config_reset(test_case);
-	//if (ret) {
-	//	DBG_ERR("config_reset()\n");
-	//	goto exit;
-	//}
+	/* Reset vioc components that are used this time.
+	 * Don't reset if you want to check vioc registers.
+	 */
+	if (!(g_dbg_lvl & DL_DONT_RESET_VIOC_AFTER_ONESHOT)) {
+		ret = config_reset(test_case);
+		if (ret) {
+			DBG_ERR("config_reset()\n");
+			goto exit;
+		}
+	}
 
 exit:
 	return ret;
@@ -461,7 +465,7 @@ static int setup_image_file(struct test_case_t *tc, struct image_file_t *img)
 		#endif
 	}
 
-	if (g_dbg_lvl == DL_VERIFY) {
+	if (g_dbg_lvl & DL_VERIFY) {
 		/* for debugging - verify input_files */
 		verify_image_buf(tc);
 	}
