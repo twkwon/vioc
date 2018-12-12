@@ -6,7 +6,7 @@
  */
 #define SIZE_OF_TEST_NAME	(64)
 
-#define MMAP_DEFAULT_ADDR	(BASE_ADDR_VIOC)	/* VIOC base address */
+#define MMAP_DEFAULT_ADDR	(HwVIOC_BASE)		/* VIOC base address */
 #define MMAP_DEFAULT_LEN	(0x00101000)		/* 1 MByte +  4 KBytes */
 
 #define MAX_NUM_OF_VIOC_COMPONENTS		(32)	/* max 32 vioc components */

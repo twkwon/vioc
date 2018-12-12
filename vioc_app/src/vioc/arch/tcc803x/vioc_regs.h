@@ -11,17 +11,17 @@
 #include "vioc_vin.h"
 
 /* offset from vioc base address */
-#define OFFSET_RDMA_FROM_VIOC_BASE(id)	(HwVIOC_RDMA00 + (HwVIOC_RDMA_GAP * id) - BASE_ADDR_VIOC)
-#define OFFSET_WDMA_FROM_VIOC_BASE(id)	(HwVIOC_WDMA00 + (HwVIOC_WDMA_GAP * id) - BASE_ADDR_VIOC)
-#define OFFSET_WMIX_FROM_VIOC_BASE(id)	(HwVIOC_WMIX0 + (HwVIOC_WMIX_GAP * id) - BASE_ADDR_VIOC)
-#define OFFSET_SC_FROM_VIOC_BASE(id)	(HwVIOC_SC0 + (HwVIOC_SC_GAP * id) - BASE_ADDR_VIOC)
-#define OFFSET_LUT_FROM_VIOC_BASE		(HwVIOC_LUT - BASE_ADDR_VIOC)
-#define OFFSET_LUT_TABLE_FROM_VIOC_BASE	(HwVIOC_LUT_TAB - BASE_ADDR_VIOC)
+#define OFFSET_RDMA_FROM_VIOC_BASE(id)	(HwVIOC_RDMA00 + (HwVIOC_RDMA_GAP * id) - HwVIOC_BASE)
+#define OFFSET_WDMA_FROM_VIOC_BASE(id)	(HwVIOC_WDMA00 + (HwVIOC_WDMA_GAP * id) - HwVIOC_BASE)
+#define OFFSET_WMIX_FROM_VIOC_BASE(id)	(HwVIOC_WMIX0 + (HwVIOC_WMIX_GAP * id) - HwVIOC_BASE)
+#define OFFSET_SC_FROM_VIOC_BASE(id)	(HwVIOC_SC0 + (HwVIOC_SC_GAP * id) - HwVIOC_BASE)
+#define OFFSET_LUT_FROM_VIOC_BASE		(HwVIOC_LUT - HwVIOC_BASE)
+#define OFFSET_LUT_TABLE_FROM_VIOC_BASE	(HwVIOC_LUT_TAB - HwVIOC_BASE)
 #define OFFSET_LUT_TABLE_FROM_LUT		(HwVIOC_LUT_TAB - HwVIOC_LUT)
-#define OFFSET_VIN_FROM_VIOC_BASE(id)	(HwVIOC_VIN00 + (HwVIOC_VIN_GAP * id) - BASE_ADDR_VIOC)
+#define OFFSET_VIN_FROM_VIOC_BASE(id)	(HwVIOC_VIN00 + (HwVIOC_VIN_GAP * id) - HwVIOC_BASE)
 #define OFFSET_VIN_LUT_FROM_VIN			(HwVIOC_VIN_LUT_GAP)
-#define OFFSET_OUTCFG_FROM_VIOC_BASE	(HwVIOC_OUTCFG - BASE_ADDR_VIOC)
-#define OFFSET_CONFIG_FROM_VIOC_BASE	(HwVIOC_CONFIG - BASE_ADDR_VIOC)
+#define OFFSET_OUTCFG_FROM_VIOC_BASE	(HwVIOC_OUTCFG - HwVIOC_BASE)
+#define OFFSET_CONFIG_FROM_VIOC_BASE	(HwVIOC_CONFIG - HwVIOC_BASE)
 
 /*******************************************************************************
 *
@@ -45,96 +45,99 @@
 *    TCC899x DataSheet PART 7 DISPLAY BUS
 *
 *******************************************************************************/
+/*
+ * You should set __VIOC_REMAP__ in configure.sh
+ */
+#define is_VIOC_REMAP	__VIOC_REMAP__
+
 #define HwVIOC_BASE                             (0x12000000)
-#define BASE_ADDR_VIOC                          HwVIOC_BASE
 
 /* DISP */
-#define HwVIOC_DISP0            ( (BASE_ADDR_VIOC  + 0x0000 + 0x0000)) // 64 words
-#define HwVIOC_DISP1            ( (BASE_ADDR_VIOC  + 0x0000 + 0x0100)) // 64 words
-#define HwVIOC_DISP2            ( (BASE_ADDR_VIOC  + 0x0000 + 0x0200)) // 64 words
+#define HwVIOC_DISP_GAP     	(is_VIOC_REMAP ? 0x1000 : 0x0100)
+#define HwVIOC_DISP0            (is_VIOC_REMAP ? (HwVIOC_BASE + 0x00000) : (HwVIOC_BASE + 0x0000))
+#define HwVIOC_DISP1            (is_VIOC_REMAP ? (HwVIOC_BASE + 0x01000) : (HwVIOC_BASE + 0x0100))
+#define HwVIOC_DISP2            (is_VIOC_REMAP ? (HwVIOC_BASE + 0x02000) : (HwVIOC_BASE + 0x0200))
 
 /* RDMA */
-#define HwVIOC_RDMA_GAP     	(0x100)
-#define HwVIOC_RDMA00           ( (BASE_ADDR_VIOC  + 0x0000 + 0x0400)) // 64 words
-#define HwVIOC_RDMA01           ( (BASE_ADDR_VIOC  + 0x0000 + 0x0500)) // 64 words
-#define HwVIOC_RDMA02           ( (BASE_ADDR_VIOC  + 0x0000 + 0x0600)) // 64 words
-#define HwVIOC_RDMA03           ( (BASE_ADDR_VIOC  + 0x0000 + 0x0700)) // 64 words
-#define HwVIOC_RDMA04           ( (BASE_ADDR_VIOC  + 0x0000 + 0x0800)) // 64 words
-#define HwVIOC_RDMA05           ( (BASE_ADDR_VIOC  + 0x0000 + 0x0900)) // 64 words
-#define HwVIOC_RDMA06           ( (BASE_ADDR_VIOC  + 0x0000 + 0x0A00)) // 64 words
-#define HwVIOC_RDMA07           ( (BASE_ADDR_VIOC  + 0x0000 + 0x0B00)) // 64 words
-#define HwVIOC_RDMA08           ( (BASE_ADDR_VIOC  + 0x0000 + 0x0C00)) // 64 words
-#define HwVIOC_RDMA09           ( (BASE_ADDR_VIOC  + 0x0000 + 0x0D00)) // 64 words
-#define HwVIOC_RDMA10           ( (BASE_ADDR_VIOC  + 0x0000 + 0x0E00)) // 64 words
-#define HwVIOC_RDMA11           ( (BASE_ADDR_VIOC  + 0x0000 + 0x0F00)) // 64 words
-#define HwVIOC_RDMA12           ( (BASE_ADDR_VIOC  + 0x0000 + 0x1000)) // 64 words
-#define HwVIOC_RDMA13           ( (BASE_ADDR_VIOC  + 0x0000 + 0x1100)) // 64 words
-#define HwVIOC_RDMA14           ( (BASE_ADDR_VIOC  + 0x0000 + 0x1200)) // 64 words
-#define HwVIOC_RDMA15           ( (BASE_ADDR_VIOC  + 0x0000 + 0x1300)) // 64 words
-#define HwVIOC_RDMA16           ( (BASE_ADDR_VIOC  + 0x0000 + 0x1400)) // 64 words
-#define HwVIOC_RDMA17           ( (BASE_ADDR_VIOC  + 0x0000 + 0x1500)) // 64 words
+#define HwVIOC_RDMA_GAP     	(is_VIOC_REMAP ? 0x1000 : 0x0100)
+#define HwVIOC_RDMA00           (is_VIOC_REMAP ? (HwVIOC_BASE + 0x04000) : (HwVIOC_BASE + 0x0400))
+#define HwVIOC_RDMA01           (is_VIOC_REMAP ? (HwVIOC_BASE + 0x05000) : (HwVIOC_BASE + 0x0500))
+#define HwVIOC_RDMA02           (is_VIOC_REMAP ? (HwVIOC_BASE + 0x06000) : (HwVIOC_BASE + 0x0600))
+#define HwVIOC_RDMA03           (is_VIOC_REMAP ? (HwVIOC_BASE + 0x07000) : (HwVIOC_BASE + 0x0700))
+#define HwVIOC_RDMA04           (is_VIOC_REMAP ? (HwVIOC_BASE + 0x08000) : (HwVIOC_BASE + 0x0800))
+#define HwVIOC_RDMA05           (is_VIOC_REMAP ? (HwVIOC_BASE + 0x09000) : (HwVIOC_BASE + 0x0900))
+#define HwVIOC_RDMA06           (is_VIOC_REMAP ? (HwVIOC_BASE + 0x0A000) : (HwVIOC_BASE + 0x0A00))
+#define HwVIOC_RDMA07           (is_VIOC_REMAP ? (HwVIOC_BASE + 0x0B000) : (HwVIOC_BASE + 0x0B00))
+#define HwVIOC_RDMA08           (is_VIOC_REMAP ? (HwVIOC_BASE + 0x0C000) : (HwVIOC_BASE + 0x0C00))
+#define HwVIOC_RDMA09           (is_VIOC_REMAP ? (HwVIOC_BASE + 0x0D000) : (HwVIOC_BASE + 0x0D00))
+#define HwVIOC_RDMA10           (is_VIOC_REMAP ? (HwVIOC_BASE + 0x0E000) : (HwVIOC_BASE + 0x0E00))
+#define HwVIOC_RDMA11           (is_VIOC_REMAP ? (HwVIOC_BASE + 0x0F000) : (HwVIOC_BASE + 0x0F00))
+#define HwVIOC_RDMA12           (is_VIOC_REMAP ? (HwVIOC_BASE + 0x10000) : (HwVIOC_BASE + 0x1000))
+#define HwVIOC_RDMA13           (is_VIOC_REMAP ? (HwVIOC_BASE + 0x11000) : (HwVIOC_BASE + 0x1100))
+#define HwVIOC_RDMA14           (is_VIOC_REMAP ? (HwVIOC_BASE + 0x12000) : (HwVIOC_BASE + 0x1200))
+#define HwVIOC_RDMA15           (is_VIOC_REMAP ? (HwVIOC_BASE + 0x13000) : (HwVIOC_BASE + 0x1300))
+#define HwVIOC_RDMA16           (is_VIOC_REMAP ? (HwVIOC_BASE + 0x14000) : (HwVIOC_BASE + 0x1400))
+#define HwVIOC_RDMA17           (is_VIOC_REMAP ? (HwVIOC_BASE + 0x15000) : (HwVIOC_BASE + 0x1500))
 
-#define HwVIOC_MC0              ( (BASE_ADDR_VIOC  + 0x0000 + 0x1600)) // 64 words
-#define HwVIOC_MC1              ( (BASE_ADDR_VIOC  + 0x0000 + 0x1700)) // 64 words
-
+/* MC */
+#define HwVIOC_MC0              (is_VIOC_REMAP ? (HwVIOC_BASE + 0x16000) : (HwVIOC_BASE + 0x1600))
+#define HwVIOC_MC1              (is_VIOC_REMAP ? (HwVIOC_BASE + 0x17000) : (HwVIOC_BASE + 0x1700))
 
 /* WMIX */
-#define HwVIOC_WMIX_GAP     	(0x100)
-#define HwVIOC_WMIX0            ( (BASE_ADDR_VIOC  + 0x0000 + 0x1800)) // 64 words
-#define HwVIOC_WMIX1            ( (BASE_ADDR_VIOC  + 0x0000 + 0x1900)) // 64 words
-#define HwVIOC_WMIX2            ( (BASE_ADDR_VIOC  + 0x0000 + 0x1A00)) // 64 words
-#define HwVIOC_WMIX3            ( (BASE_ADDR_VIOC  + 0x0000 + 0x1B00)) // 64 words
-#define HwVIOC_WMIX4            ( (BASE_ADDR_VIOC  + 0x0000 + 0x1C00)) // 64 words
-#define HwVIOC_WMIX5            ( (BASE_ADDR_VIOC  + 0x0000 + 0x1D00)) // 64 words
-#define HwVIOC_WMIX6            ( (BASE_ADDR_VIOC  + 0x0000 + 0x1E00)) // 64 words
+#define HwVIOC_WMIX_GAP     	(is_VIOC_REMAP ? 0x1000 : 0x0100)
+#define HwVIOC_WMIX0            (is_VIOC_REMAP ? (HwVIOC_BASE + 0x18000) : (HwVIOC_BASE + 0x1800))
+#define HwVIOC_WMIX1            (is_VIOC_REMAP ? (HwVIOC_BASE + 0x19000) : (HwVIOC_BASE + 0x1900))
+#define HwVIOC_WMIX2            (is_VIOC_REMAP ? (HwVIOC_BASE + 0x1A000) : (HwVIOC_BASE + 0x1A00))
+#define HwVIOC_WMIX3            (is_VIOC_REMAP ? (HwVIOC_BASE + 0x1B000) : (HwVIOC_BASE + 0x1B00))
+#define HwVIOC_WMIX4            (is_VIOC_REMAP ? (HwVIOC_BASE + 0x1C000) : (HwVIOC_BASE + 0x1C00))
+#define HwVIOC_WMIX5            (is_VIOC_REMAP ? (HwVIOC_BASE + 0x1D000) : (HwVIOC_BASE + 0x1D00))
+#define HwVIOC_WMIX6            (is_VIOC_REMAP ? (HwVIOC_BASE + 0x1E000) : (HwVIOC_BASE + 0x1E00))
 
-#define HwVIOC_WMIX0_ALPHA      ( (BASE_ADDR_VIOC  + 0x0000 + 0x1860)) // 64 words
-#define HwVIOC_WMIX1_ALPHA      ( (BASE_ADDR_VIOC  + 0x0000 + 0x1960)) // 64 words
-#define HwVIOC_WMIX2_ALPHA      ( (BASE_ADDR_VIOC  + 0x0000 + 0x1A60)) // 64 words
+#define HwVIOC_WMIX0_ALPHA      (is_VIOC_REMAP ? (HwVIOC_BASE + 0x18060) : (HwVIOC_BASE + 0x1860))
+#define HwVIOC_WMIX1_ALPHA      (is_VIOC_REMAP ? (HwVIOC_BASE + 0x19060) : (HwVIOC_BASE + 0x1960))
+#define HwVIOC_WMIX2_ALPHA      (is_VIOC_REMAP ? (HwVIOC_BASE + 0x1A060) : (HwVIOC_BASE + 0x1A60))
 
 /* SCALER */
-#define HwVIOC_SC_GAP     		(0x100)
-#define HwVIOC_SC0              ( (BASE_ADDR_VIOC  + 0x0000 + 0x2000)) // 64 words
-#define HwVIOC_SC1              ( (BASE_ADDR_VIOC  + 0x0000 + 0x2100)) // 64 words
-#define HwVIOC_SC2              ( (BASE_ADDR_VIOC  + 0x0000 + 0x2200)) // 64 words
-#define HwVIOC_SC3              ( (BASE_ADDR_VIOC  + 0x0000 + 0x2300)) // 64 words
-#define HwVIOC_SC4              ( (BASE_ADDR_VIOC  + 0x0000 + 0x2400)) // 64 words
+#define HwVIOC_SC_GAP     		(is_VIOC_REMAP ? 0x1000 : 0x0100)
+#define HwVIOC_SC0              (is_VIOC_REMAP ? (HwVIOC_BASE + 0x20000) : (HwVIOC_BASE + 0x2000))
+#define HwVIOC_SC1              (is_VIOC_REMAP ? (HwVIOC_BASE + 0x21000) : (HwVIOC_BASE + 0x2100))
+#define HwVIOC_SC2              (is_VIOC_REMAP ? (HwVIOC_BASE + 0x22000) : (HwVIOC_BASE + 0x2200))
+#define HwVIOC_SC3              (is_VIOC_REMAP ? (HwVIOC_BASE + 0x23000) : (HwVIOC_BASE + 0x2300))
+#define HwVIOC_SC4              (is_VIOC_REMAP ? (HwVIOC_BASE + 0x24000) : (HwVIOC_BASE + 0x2400))
 #if defined(__ARCH_TCC899X__) || defined(__ARCH_TCC803X__)
-#define HwVIOC_SC5              ( (BASE_ADDR_VIOC  + 0x0000 + 0x2500)) // 64 words
+#define HwVIOC_SC5              (is_VIOC_REMAP ? (HwVIOC_BASE + 0x25000) : (HwVIOC_BASE + 0x2500))
 #endif
 #if defined(__ARCH_TCC803X__)
-#define HwVIOC_SC6              ( (BASE_ADDR_VIOC  + 0x0000 + 0x2600)) // 64 words
-#define HwVIOC_SC7              ( (BASE_ADDR_VIOC  + 0x0000 + 0x2700)) // 64 words
+#define HwVIOC_SC6              (is_VIOC_REMAP ? (HwVIOC_BASE + 0x26000) : (HwVIOC_BASE + 0x2600))
+#define HwVIOC_SC7              (is_VIOC_REMAP ? (HwVIOC_BASE + 0x27000) : (HwVIOC_BASE + 0x2700))
 #endif
 
 /* WDMA */
-#define HwVIOC_WDMA_GAP     	(0x100)
-#define HwVIOC_WDMA00           ( (BASE_ADDR_VIOC  + 0x0000 + 0x2800)) // 64 words
-#define HwVIOC_WDMA01           ( (BASE_ADDR_VIOC  + 0x0000 + 0x2900)) // 64 words
-#define HwVIOC_WDMA02           ( (BASE_ADDR_VIOC  + 0x0000 + 0x2A00)) // 64 words
-#define HwVIOC_WDMA03           ( (BASE_ADDR_VIOC  + 0x0000 + 0x2B00)) // 64 words
-#define HwVIOC_WDMA04           ( (BASE_ADDR_VIOC  + 0x0000 + 0x2C00)) // 64 words
-#define HwVIOC_WDMA05           ( (BASE_ADDR_VIOC  + 0x0000 + 0x2D00)) // 64 words
-#define HwVIOC_WDMA06           ( (BASE_ADDR_VIOC  + 0x0000 + 0x2E00)) // 64 words
-#define HwVIOC_WDMA07           ( (BASE_ADDR_VIOC  + 0x0000 + 0x2F00)) // 64 words
-#define HwVIOC_WDMA08           ( (BASE_ADDR_VIOC  + 0x0000 + 0x3000)) // 64 words
+#define HwVIOC_WDMA_GAP     	(is_VIOC_REMAP ? 0x1000 : 0x0100)
+#define HwVIOC_WDMA00           (is_VIOC_REMAP ? (HwVIOC_BASE + 0x28000) : (HwVIOC_BASE + 0x2800))
+#define HwVIOC_WDMA01           (is_VIOC_REMAP ? (HwVIOC_BASE + 0x29000) : (HwVIOC_BASE + 0x2900))
+#define HwVIOC_WDMA02           (is_VIOC_REMAP ? (HwVIOC_BASE + 0x2A000) : (HwVIOC_BASE + 0x2A00))
+#define HwVIOC_WDMA03           (is_VIOC_REMAP ? (HwVIOC_BASE + 0x2B000) : (HwVIOC_BASE + 0x2B00))
+#define HwVIOC_WDMA04           (is_VIOC_REMAP ? (HwVIOC_BASE + 0x2C000) : (HwVIOC_BASE + 0x2C00))
+#define HwVIOC_WDMA05           (is_VIOC_REMAP ? (HwVIOC_BASE + 0x2D000) : (HwVIOC_BASE + 0x2D00))
+#define HwVIOC_WDMA06           (is_VIOC_REMAP ? (HwVIOC_BASE + 0x2E000) : (HwVIOC_BASE + 0x2E00))
+#define HwVIOC_WDMA07           (is_VIOC_REMAP ? (HwVIOC_BASE + 0x2F000) : (HwVIOC_BASE + 0x2F00))
+#define HwVIOC_WDMA08           (is_VIOC_REMAP ? (HwVIOC_BASE + 0x30000) : (HwVIOC_BASE + 0x3000))
 
-#define HwVIOC_DISP_GAP     	(0x100)
-#define HwVIOC_DISP0_MIX        ( (BASE_ADDR_VIOC  + 0x0000 + 0x3200)) // NOT USED
-#define HwVIOC_DISP0_MD         ( (BASE_ADDR_VIOC  + 0x0000 + 0x3300)) // NOT USED
-#define HwVIOC_DISP1_MIX        ( (BASE_ADDR_VIOC  + 0x0000 + 0x3400)) // NOT USED
-#define HwVIOC_DISP1_MD         ( (BASE_ADDR_VIOC  + 0x0000 + 0x3500)) // NOT USED
-#define HwVIOC_DISP2_MIX        ( (BASE_ADDR_VIOC  + 0x0000 + 0x3600)) // NOT USED
-#define HwVIOC_DISP2_MD         ( (BASE_ADDR_VIOC  + 0x0000 + 0x3700)) // NOT USED
-
-
+/* Not used */
+#define HwVIOC_DISP0_MIX        (is_VIOC_REMAP ? (HwVIOC_BASE + 0x32000) : (HwVIOC_BASE + 0x3200))
+#define HwVIOC_DISP0_MD         (is_VIOC_REMAP ? (HwVIOC_BASE + 0x33000) : (HwVIOC_BASE + 0x3300))
+#define HwVIOC_DISP1_MIX        (is_VIOC_REMAP ? (HwVIOC_BASE + 0x34000) : (HwVIOC_BASE + 0x3400))
+#define HwVIOC_DISP1_MD         (is_VIOC_REMAP ? (HwVIOC_BASE + 0x35000) : (HwVIOC_BASE + 0x3500))
+#define HwVIOC_DISP2_MIX        (is_VIOC_REMAP ? (HwVIOC_BASE + 0x36000) : (HwVIOC_BASE + 0x3600))
+#define HwVIOC_DISP2_MD         (is_VIOC_REMAP ? (HwVIOC_BASE + 0x37000) : (HwVIOC_BASE + 0x3700))
 
 /* DEINTLS */
-#define HwVIOC_DEINTLS          ( (BASE_ADDR_VIOC  + 0x0000 + 0x3800)) // 64 words
-#define HwVIOC_FDLY0            ( (BASE_ADDR_VIOC  + 0x0000 + 0x3900)) // 64 words
-#define HwVIOC_FDLY1            ( (BASE_ADDR_VIOC  + 0x0000 + 0x3A00)) // 64 words
-#define HwVIOC_FIFO             ( (BASE_ADDR_VIOC  + 0x0000 + 0x3B00)) // 64 words
-#define HwVIOC_DEBLOCK          ( (BASE_ADDR_VIOC  + 0x0000 + 0x3C00)) // 64 words
+#define HwVIOC_DEINTLS          (is_VIOC_REMAP ? (HwVIOC_BASE + 0x38000) : (HwVIOC_BASE + 0x3800))
+#define HwVIOC_FDLY0            (is_VIOC_REMAP ? (HwVIOC_BASE + 0x39000) : (HwVIOC_BASE + 0x3900))
+#define HwVIOC_FDLY1            (is_VIOC_REMAP ? (HwVIOC_BASE + 0x3A000) : (HwVIOC_BASE + 0x3A00))
+#define HwVIOC_FIFO             (is_VIOC_REMAP ? (HwVIOC_BASE + 0x3B000) : (HwVIOC_BASE + 0x3B00))
+#define HwVIOC_DEBLOCK          (is_VIOC_REMAP ? (HwVIOC_BASE + 0x3C000) : (HwVIOC_BASE + 0x3C00))
 
 //******************************************************************************
 // [15:14] == 2'b01
@@ -142,67 +145,58 @@
 /* VIN */
 #define HwVIOC_VIN_GAP			(0x1000)
 #define HwVIOC_VIN_LUT_GAP		(0x400)
-#define HwVIOC_VINDEMUX         ( (BASE_ADDR_VIOC  + 0xA800         ))
-#define HwVIOC_VIN00            ( (BASE_ADDR_VIOC  + 0x4000         ))
-#define HwVIOC_VIN01            ( (BASE_ADDR_VIOC  + 0x4400         ))
-#define HwVIOC_VIN10            ( (BASE_ADDR_VIOC  + 0x5000         ))
-#define HwVIOC_VIN11            ( (BASE_ADDR_VIOC  + 0x5400         ))
-#define HwVIOC_VIN20            ( (BASE_ADDR_VIOC  + 0x6000         ))
-#define HwVIOC_VIN21            ( (BASE_ADDR_VIOC  + 0x6400         ))
-#define HwVIOC_VIN30            ( (BASE_ADDR_VIOC  + 0x7000         ))
-#define HwVIOC_VIN31            ( (BASE_ADDR_VIOC  + 0x7400         ))
+#define HwVIOC_VIN00            (is_VIOC_REMAP ? (HwVIOC_BASE + 0x40000) : (HwVIOC_BASE + 0x4000))
+#define HwVIOC_VIN01            (is_VIOC_REMAP ? (HwVIOC_BASE + 0x40400) : (HwVIOC_BASE + 0x4400))
+#define HwVIOC_VIN10            (is_VIOC_REMAP ? (HwVIOC_BASE + 0x41000) : (HwVIOC_BASE + 0x5000))
+#define HwVIOC_VIN11            (is_VIOC_REMAP ? (HwVIOC_BASE + 0x41400) : (HwVIOC_BASE + 0x5400))
+#define HwVIOC_VIN20            (is_VIOC_REMAP ? (HwVIOC_BASE + 0x42000) : (HwVIOC_BASE + 0x6000))
+#define HwVIOC_VIN21            (is_VIOC_REMAP ? (HwVIOC_BASE + 0x42400) : (HwVIOC_BASE + 0x6400))
+#define HwVIOC_VIN30            (is_VIOC_REMAP ? (HwVIOC_BASE + 0x43000) : (HwVIOC_BASE + 0x7000))
+#define HwVIOC_VIN31            (is_VIOC_REMAP ? (HwVIOC_BASE + 0x43400) : (HwVIOC_BASE + 0x7400))
+#define HwVIOC_VINDEMUX0        (is_VIOC_REMAP ? (HwVIOC_BASE + 0x47000) : (HwVIOC_BASE + 0xA800))
+#define HwVIOC_VINDEMUX1        (is_VIOC_REMAP ? (HwVIOC_BASE + 0x48000) : (HwVIOC_BASE + 0xAC00))
+
 
 //******************************************************************************
 // [15:14] == 2'b10
 //******************************************************************************
-#define HwVIOC_FILT2D           ( (BASE_ADDR_VIOC  + 0x8000        ))
-#define HwVIOC_LUT              ( (BASE_ADDR_VIOC  + 0x9000        ))
-#define HwVIOC_LUT_TAB          ( (BASE_ADDR_VIOC  + 0x9400        ))
-#define HwVIOC_CONFIG           ( (BASE_ADDR_VIOC  + 0xA000        ))
-#define HwVIOC_IREQ             ( (BASE_ADDR_VIOC  + 0xA000 + 0x000)) //  16 word
-#define HwVIOC_PCONFIG          ( (BASE_ADDR_VIOC  + 0xA000 + 0x040)) //  32 word
-#define HwVIOC_POWER            ( (BASE_ADDR_VIOC  + 0xA000 + 0x0C0)) //  16 word
-#define HwVIOC_FCODEC           ( (BASE_ADDR_VIOC  + 0xB000        ))
+#define HwVIOC_LUT              (is_VIOC_REMAP ? (HwVIOC_BASE + 0x45000) : (HwVIOC_BASE + 0x9000))
+#define HwVIOC_LUT_TAB          (is_VIOC_REMAP ? (HwVIOC_BASE + 0x45400) : (HwVIOC_BASE + 0x9400))
+#define HwVIOC_CONFIG           (is_VIOC_REMAP ? (HwVIOC_BASE + 0x46000) : (HwVIOC_BASE + 0xA000))
+//#define HwVIOC_IREQ             ( (HwVIOC_BASE + 0xA000 + 0x000))
+//#define HwVIOC_PCONFIG          ( (HwVIOC_BASE + 0xA000 + 0x040))
+//#define HwVIOC_POWER            ( (HwVIOC_BASE + 0xA000 + 0x0C0))
+//#define HwVIOC_FCODEC           ( (HwVIOC_BASE + 0xB000        ))
 
 //******************************************************************************
 // [15:14] == 2'b11
 //******************************************************************************
 /* VIOC TIMER */
-#define HwVIOC_TIMER_BASE       ( (BASE_ADDR_VIOC  + 0xC000        ))
-#define HwVIOC_TIMER            ( (BASE_ADDR_VIOC  + 0xC000        ))
+//#define HwVIOC_TIMER_BASE       ( (HwVIOC_BASE + 0xC000        ))
+//#define HwVIOC_TIMER            ( (HwVIOC_BASE + 0xC000        ))
 
 /* VIQE */
-#define HwVIOC_VIQE0_BASE       ( (BASE_ADDR_VIOC  + 0xD000        ))
-#define HwVIOC_VIQE1_BASE       ( (BASE_ADDR_VIOC  + 0x10000        ))
-#define  HwVIOC_VIQE0                           (HwVIOC_VIQE0_BASE)
-#define  HwVIOC_VIQE1                           (HwVIOC_VIQE1_BASE)
-#define HwVIOC_MMU_BASE         ( (BASE_ADDR_VIOC  + 0xF000        ))
-#define HwVIOC_MMU              ( (BASE_ADDR_VIOC  + 0xF000        ))
+//#define HwVIOC_VIQE0_BASE       ( (HwVIOC_BASE + 0xD000        ))
+//#define HwVIOC_VIQE1_BASE       ( (HwVIOC_BASE + 0x10000        ))
+//#define  HwVIOC_VIQE0                           (HwVIOC_VIQE0_BASE)
+//#define  HwVIOC_VIQE1                           (HwVIOC_VIQE1_BASE)
+//#define HwVIOC_MMU_BASE         ( (HwVIOC_BASE + 0xF000        ))
+//#define HwVIOC_MMU              ( (HwVIOC_BASE + 0xF000        ))
 
 
 /* CPUIF */
-#define BASE_ADDR_CPUIF                         (0x12100000)
-#define HwVIOC_CPUIF            ( (BASE_ADDR_CPUIF + 0x0000        ))
-#define HwVIOC_CPUIF0           ( (BASE_ADDR_CPUIF + 0x0000        ))
-// [09:08] == 2'b00,
-// [09:08] == 2'b00, [07:06] == 2'b01, [05] == 1'b0
-// [09:08] == 2'b00, [07:06] == 2'b01, [05] == 1'b1
-// [09:08] == 2'b00, [07:06] == 2'b10, [05] == 1'b0
-// [09:08] == 2'b00, [07:06] == 2'b10, [05] == 1'b1
-#define HwVIOC_CPUIF1           ( (BASE_ADDR_CPUIF + 0x0100        ))
+//#define BASE_ADDR_CPUIF                         (0x12100000)
+//#define HwVIOC_CPUIF            ( (BASE_ADDR_CPUIF + 0x0000        ))
+//#define HwVIOC_CPUIF0           ( (BASE_ADDR_CPUIF + 0x0000        ))
+//#define HwVIOC_CPUIF1           ( (BASE_ADDR_CPUIF + 0x0100        ))
 
-// [09:08] == 2'b01,
-// [09:08] == 2'b01, [07:06] == 2'b01, [05] == 1'b0
-// [09:08] == 2'b01, [07:06] == 2'b01, [05] == 1'b1
-// [09:08] == 2'b01, [07:06] == 2'b10, [05] == 1'b0
-// [09:08] == 2'b01, [07:06] == 2'b10, [05] == 1'b1
 /* OUT CONFIGURE */
-#define HwVIOC_OUTCFG           ( (BASE_ADDR_CPUIF + 0x0200        )) // [09:08] == 2'b10,
+#define HwVIOC_OUTCFG           				(0x12100200)
 
 
-#define HwNTSCPAL_BASE                          (0x12200000)
-#define HwTVE_BASE								(0x12200000)
-#define HwNTSCPAL_ENC_CTRL_BASE                 (0x12200800)
+//#define HwNTSCPAL_BASE                          (0x12200000)
+//#define HwTVE_BASE								(0x12200000)
+//#define HwNTSCPAL_ENC_CTRL_BASE                 (0x12200800)
 
 // Encoder Mode Control A
 #define	HwTVECMDA_PWDENC_PD							Hw7											// Power down mode for entire digital logic of TV encoder
